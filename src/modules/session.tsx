@@ -1,5 +1,5 @@
 import { execAsync } from "astal";
-import { App, Astal, Gtk } from "astal/gtk3";
+import { App, Astal, Gtk } from "astal/gtk4";
 import PopupWindow from "../widgets/popupwindow";
 
 const Item = ({ icon, label, cmd, isDefault }: { icon: string; label: string; cmd: string; isDefault?: boolean }) => (

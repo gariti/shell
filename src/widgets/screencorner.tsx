@@ -1,5 +1,5 @@
 import type { Binding } from "astal";
-import { Gtk, type Widget } from "astal/gtk3";
+import { Gtk, type Widget } from "astal/gtk4";
 import type cairo from "cairo";
 
 type Place = "topleft" | "topright" | "bottomleft" | "bottomright";

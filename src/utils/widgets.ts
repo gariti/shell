@@ -1,13 +1,13 @@
-import { Binding, register } from "astal";
-import { Astal, astalify, Gtk, Widget, type ConstructProps } from "astal/gtk3";
+import { Binding } from "astal";
+import { Astal, astalify, Gtk, hook, Widget } from "astal/gtk4";
 import AstalHyprland from "gi://AstalHyprland";
-import type { AstalWidget } from "./types";
 
 export const setupCustomTooltip = (
-    self: AstalWidget,
+    self: JSX.Element,
     text: string | Binding<string>,
     labelProps: Widget.LabelProps = {}
 ) => {
+    return;
     if (!text) return null;
 
     self.set_has_tooltip(true);
@@ -61,26 +61,43 @@ export const setupCustomTooltip = (
     return window;
 };
 
-export const setupChildClickthrough = (self: AstalWidget) =>
+export const setupChildClickthrough = (self: JSX.Element) =>
     self.connect("size-allocate", () => self.get_window()?.set_child_input_shapes());
 
-@register()
-export class MenuItem extends astalify(Gtk.MenuItem) {
-    constructor(props: ConstructProps<MenuItem, Gtk.MenuItem.ConstructorProps, { onActivate: [] }>) {
-        super(props as any);
-    }
-}
+const providers = new Map<JSX.Element, Gtk.CssProvider>();
 
-@register()
-export class Calendar extends astalify(Gtk.Calendar) {
-    constructor(props: ConstructProps<Calendar, Gtk.Calendar.ConstructorProps>) {
-        super(props as any);
-    }
-}
+const normaliseCss = (css: string) => (css.includes("{") || css.includes("}") ? css : `* { ${css} }`);
 
-@register()
-export class FlowBox extends astalify(Gtk.FlowBox) {
-    constructor(props: ConstructProps<FlowBox, Gtk.FlowBox.ConstructorProps>) {
-        super(props as any);
+export const getCss = (self: JSX.Element) => providers.get(self) ?? "";
+
+export const setCss = (self: JSX.Element, css: string | Binding<string>) => {
+    if (providers.has(self)) {
+        const p = providers.get(self)!;
+        providers.delete(self);
+        self.get_style_context().remove_provider(p);
+        p.run_dispose();
+    } else {
+        self.connect("destroy", () => providers.delete(self));
     }
-}
+
+    const provider = new Gtk.CssProvider();
+    self.get_style_context().add_provider(provider, Gtk.STYLE_PROVIDER_PRIORITY_USER);
+    providers.set(self, provider);
+
+    if (typeof css === "string") {
+        css = normaliseCss(css);
+        provider.load_from_data(css, css.length);
+    } else {
+        hook(self, css, (_, v) => {
+            v = normaliseCss(v);
+            provider.load_from_data(v, v.length);
+        });
+    }
+};
+
+export const toggleClassName = (self: JSX.Element, className: string, value: boolean) => {
+    if (value) self.add_css_class(className);
+    else self.remove_css_class(className);
+};
+
+export const FlowBox = astalify(Gtk.FlowBox);

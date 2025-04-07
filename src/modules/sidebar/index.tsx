@@ -1,6 +1,6 @@
 import type { Monitor } from "@/services/monitors";
 import { bind, idle, register, Variable } from "astal";
-import { App, Astal, Gdk, Gtk, Widget } from "astal/gtk3";
+import { App, Astal, Gdk, Gtk, Widget } from "astal/gtk4";
 import { sidebar as config } from "config";
 import Audio from "./audio";
 import Connectivity from "./connectivity";

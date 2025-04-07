@@ -1,5 +1,5 @@
 import { Binding, register } from "astal";
-import { App, Astal, Gdk, Widget } from "astal/gtk3";
+import { App, Astal, Gdk, Widget } from "astal/gtk4";
 import { bar } from "config";
 import AstalHyprland from "gi://AstalHyprland";
 

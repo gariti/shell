@@ -4,7 +4,7 @@ import { getAppCategoryIcon } from "@/utils/icons";
 import { launch } from "@/utils/system";
 import { type FlowBox, setupCustomTooltip } from "@/utils/widgets";
 import { bind, execAsync, Gio, register, Variable } from "astal";
-import { Astal, Gtk, Widget } from "astal/gtk3";
+import { Astal, Gtk, Widget } from "astal/gtk4";
 import { launcher as config } from "config";
 import type AstalApps from "gi://AstalApps";
 import { close, ContentBox, type LauncherContent, limitLength } from "./util";

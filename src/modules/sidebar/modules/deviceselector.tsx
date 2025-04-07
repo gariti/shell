@@ -1,5 +1,5 @@
 import { bind, execAsync, Variable, type Binding } from "astal";
-import { Astal, Gtk } from "astal/gtk3";
+import { Astal, Gtk } from "astal/gtk4";
 import AstalWp from "gi://AstalWp";
 
 const Device = ({

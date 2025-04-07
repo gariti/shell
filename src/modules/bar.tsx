@@ -1,15 +1,13 @@
-import type SideBar from "@/modules/sidebar";
 import type { Monitor } from "@/services/monitors";
 import Players from "@/services/players";
 import Updates from "@/services/updates";
-import { getAppCategoryIcon } from "@/utils/icons";
+import { getAppCategoryIcon, lookupIcon } from "@/utils/icons";
 import { bindCurrentTime, osIcon } from "@/utils/system";
-import type { AstalWidget } from "@/utils/types";
-import { setupCustomTooltip } from "@/utils/widgets";
+import { setCss, setupCustomTooltip, toggleClassName } from "@/utils/widgets";
 import ScreenCorner from "@/widgets/screencorner";
 import { execAsync, GLib, Variable } from "astal";
 import { bind, kebabify } from "astal/binding";
-import { App, Astal, Gtk, Widget } from "astal/gtk3";
+import { App, Astal, Gdk, Gtk, hook, Widget } from "astal/gtk4";
 import { bar as config } from "config";
 import AstalBattery from "gi://AstalBattery";
 import AstalBluetooth from "gi://AstalBluetooth";
@@ -18,6 +16,7 @@ import AstalNetwork from "gi://AstalNetwork";
 import AstalNotifd from "gi://AstalNotifd";
 import AstalTray from "gi://AstalTray";
 import AstalWp from "gi://AstalWp";
+import Pango from "gi://Pango";
 
 interface ClassNameProps {
     beforeSpacer: boolean;
@@ -59,13 +58,13 @@ const formatSeconds = (sec: number) => {
 };
 
 const hookFocusedClientProp = (
-    self: AstalWidget,
+    self: JSX.Element,
     prop: keyof AstalHyprland.Client,
     callback: (c: AstalHyprland.Client | null) => void
 ) => {
     let id: number | null = null;
     let lastClient: AstalHyprland.Client | null = null;
-    self.hook(hyprland, "notify::focused-client", () => {
+    hook(self, hyprland, "notify::focused-client", () => {
         if (id) lastClient?.disconnect(id);
         lastClient = hyprland.focusedClient; // Can be null
         id = lastClient?.connect(`notify::${kebabify(prop)}`, () => callback(lastClient));
@@ -76,17 +75,22 @@ const hookFocusedClientProp = (
 };
 
 const switchPane = (monitor: Monitor, name: string) => {
-    const sidebar = App.get_window(`sidebar${monitor.id}`) as SideBar | null;
-    if (sidebar) {
-        if (sidebar.visible && sidebar.shown.get() === name) sidebar.hide();
-        else sidebar.show();
-        sidebar.shown.set(name);
-    }
+    // const sidebar = App.get_window(`sidebar${monitor.id}`) as SideBar | null;
+    // if (sidebar) {
+    //     if (sidebar.visible && sidebar.shown.get() === name) sidebar.hide();
+    //     else sidebar.show();
+    //     sidebar.shown.set(name);
+    // }
 };
 
-const getClassName = ({ beforeSpacer, afterSpacer, first, last }: ClassNameProps) =>
-    `${beforeSpacer ? "before-spacer" : ""} ${afterSpacer ? "after-spacer" : ""}` +
-    ` ${first ? "first" : ""} ${last ? "last" : ""}`;
+const getClassName = ({ beforeSpacer, afterSpacer, first, last }: ClassNameProps) => {
+    const classes = [];
+    if (beforeSpacer) classes.push("before-spacer");
+    if (afterSpacer) classes.push("after-spacer");
+    if (first) classes.push("first");
+    if (last) classes.push("last");
+    return classes;
+};
 
 const getModule = (module: string) => {
     module = module.toLowerCase();
@@ -110,8 +114,8 @@ const isSpacer = (module?: string) => module?.toLowerCase().endsWith("spacer") ?
 
 const OSIcon = ({ monitor, ...props }: ModuleProps) => (
     <button
-        className={`module os-icon ${getClassName(props)}`}
-        onClick={(_, event) => event.button === Astal.MouseButton.PRIMARY && switchPane(monitor, "dashboard")}
+        cssClasses={["module", "os-icon", ...getClassName(props)]}
+        onButtonPressed={(_, event) => event.get_button() === Gdk.BUTTON_PRIMARY && switchPane(monitor, "dashboard")}
     >
         {osIcon}
     </button>
@@ -120,7 +124,7 @@ const OSIcon = ({ monitor, ...props }: ModuleProps) => (
 const ActiveWindow = ({ monitor, ...props }: ModuleProps) => (
     <box
         vertical={bind(config.vertical)}
-        className={`module active-window ${getClassName(props)}`}
+        cssClasses={["module", "active-window", ...getClassName(props)]}
         setup={self => {
             const title = Variable("");
             const updateTooltip = (c: AstalHyprland.Client | null) =>
@@ -137,7 +141,7 @@ const ActiveWindow = ({ monitor, ...props }: ModuleProps) => (
         }}
     >
         <label
-            className="icon"
+            cssClasses={["icon"]}
             setup={self =>
                 hookFocusedClientProp(self, "class", c => {
                     self.label = c?.class ? getAppCategoryIcon(c.class) : "desktop_windows";
@@ -145,13 +149,13 @@ const ActiveWindow = ({ monitor, ...props }: ModuleProps) => (
             }
         />
         <label
-            truncate
-            angle={bind(config.vertical).as(v => (v ? 270 : 0))}
+            ellipsize={Pango.EllipsizeMode.END}
+            cssClasses={bind(config.vertical).as(v => (v ? ["vertical"] : []))}
             setup={self => {
                 const update = () =>
                     (self.label = hyprland.focusedClient?.title ? hyprland.focusedClient.title : "Desktop");
                 hookFocusedClientProp(self, "title", update);
-                self.hook(config.vertical, update);
+                hook(self, config.vertical, update);
             }}
         />
     </box>
@@ -161,12 +165,13 @@ const MediaPlaying = ({ monitor, ...props }: ModuleProps) => {
     const players = Players.get_default();
     const getLabel = (fallback = "") =>
         players.lastPlayer ? `${players.lastPlayer.title} - ${players.lastPlayer.artist}` : fallback;
+
     return (
         <button
-            onClick={(_, event) => {
-                if (event.button === Astal.MouseButton.PRIMARY) switchPane(monitor, "audio");
-                else if (event.button === Astal.MouseButton.SECONDARY) players.lastPlayer?.play_pause();
-                else if (event.button === Astal.MouseButton.MIDDLE) players.lastPlayer?.raise();
+            onButtonPressed={(_, event) => {
+                if (event.get_button() === Gdk.BUTTON_PRIMARY) switchPane(monitor, "audio");
+                else if (event.get_button() === Gdk.BUTTON_SECONDARY) players.lastPlayer?.play_pause();
+                else if (event.get_button() === Gdk.BUTTON_MIDDLE) players.lastPlayer?.raise();
             }}
             setup={self => {
                 const label = Variable(getLabel());
@@ -174,15 +179,15 @@ const MediaPlaying = ({ monitor, ...props }: ModuleProps) => {
                 setupCustomTooltip(self, bind(label));
             }}
         >
-            <box vertical={bind(config.vertical)} className={`module media-playing ${getClassName(props)}`}>
-                <icon
+            <box vertical={bind(config.vertical)} cssClasses={["module", "media-playing", ...getClassName(props)]}>
+                <image
                     setup={self =>
                         players.hookLastPlayer(self, "notify::identity", () => {
                             const icon = `caelestia-${players.lastPlayer?.identity
                                 .toLowerCase()
                                 .replaceAll(" ", "-")}-symbolic`;
-                            self.icon = players.lastPlayer
-                                ? Astal.Icon.lookup_icon(icon)
+                            self.iconName = players.lastPlayer
+                                ? lookupIcon(icon)
                                     ? icon
                                     : "caelestia-media-generic-symbolic"
                                 : "caelestia-media-none-symbolic";
@@ -190,12 +195,12 @@ const MediaPlaying = ({ monitor, ...props }: ModuleProps) => {
                     }
                 />
                 <label
-                    truncate
-                    angle={bind(config.vertical).as(v => (v ? 270 : 0))}
+                    ellipsize={Pango.EllipsizeMode.END}
+                    cssClasses={bind(config.vertical).as(v => (v ? ["vertical"] : []))}
                     setup={self => {
                         const update = () => (self.label = getLabel("No media"));
                         players.hookLastPlayer(self, ["notify::title", "notify::artist"], update);
-                        self.hook(config.vertical, update);
+                        hook(self, config.vertical, update);
                     }}
                 />
             </box>
@@ -210,8 +215,13 @@ const Workspace = ({ idx }: { idx: number }) => {
 
     const label = (
         <label
-            css={bind(config.modules.workspaces.xalign).as(a => `margin-left: ${a}px; margin-right: ${-a}px;`)}
             label={bind(config.modules.workspaces.labels).as(l => l[idx - 1] ?? String(idx))}
+            setup={self =>
+                setCss(
+                    self,
+                    bind(config.modules.workspaces.xalign).as(a => `margin-left: ${a}px; margin-right: ${-a}px;`)
+                )
+            }
         />
     );
 
@@ -223,17 +233,17 @@ const Workspace = ({ idx }: { idx: number }) => {
             setup={self => {
                 const updateOccupied = () => {
                     const occupied = hyprland.clients.some(c => c.workspace?.id === wsId.get());
-                    self.toggleClassName("occupied", occupied);
+                    toggleClassName(self, "occupied", occupied);
                 };
                 const updateFocused = () => {
-                    self.toggleClassName("focused", hyprland.focusedWorkspace?.id === wsId.get());
+                    toggleClassName(self, "focused", hyprland.focusedWorkspace?.id === wsId.get());
                     updateOccupied();
                 };
 
-                self.hook(hyprland, "client-added", updateOccupied);
-                self.hook(hyprland, "client-moved", updateOccupied);
-                self.hook(hyprland, "client-removed", updateOccupied);
-                self.hook(hyprland, "notify::focused-workspace", updateFocused);
+                hook(self, hyprland, "client-added", updateOccupied);
+                hook(self, hyprland, "client-moved", updateOccupied);
+                hook(self, hyprland, "client-removed", updateOccupied);
+                hook(self, hyprland, "notify::focused-workspace", updateFocused);
                 updateFocused();
             }}
             onDestroy={() => wsId.drop()}
@@ -248,15 +258,15 @@ const Workspace = ({ idx }: { idx: number }) => {
                             self.children = [
                                 label,
                                 ...clients.map(c => (
-                                    <label className="icon" label={bind(c, "class").as(getAppCategoryIcon)} />
+                                    <label cssClasses={["icon"]} label={bind(c, "class").as(getAppCategoryIcon)} />
                                 )),
                             ];
                         } else self.children = [label];
                     };
-                    self.hook(wsId, update);
-                    self.hook(hyprland, "client-added", update);
-                    self.hook(hyprland, "client-moved", update);
-                    self.hook(hyprland, "client-removed", update);
+                    hook(self, wsId, update);
+                    hook(self, hyprland, "client-added", update);
+                    hook(self, hyprland, "client-moved", update);
+                    hook(self, hyprland, "client-removed", update);
                     update();
                 }}
             />

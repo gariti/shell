@@ -1,5 +1,5 @@
 import { bind, Variable } from "astal";
-import { Astal, Gtk } from "astal/gtk3";
+import { Astal, Gtk } from "astal/gtk4";
 import AstalBluetooth from "gi://AstalBluetooth";
 
 const sortDevices = (a: AstalBluetooth.Device, b: AstalBluetooth.Device) => {

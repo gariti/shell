@@ -2,7 +2,7 @@ import Palette from "@/services/palette";
 import Updates from "@/services/updates";
 import { setupCustomTooltip } from "@/utils/widgets";
 import { bind, Variable } from "astal";
-import { Gtk } from "astal/gtk3";
+import { Gtk } from "astal/gtk4";
 
 const countNews = (news: string) => news.match(/^([0-9]{4}-[0-9]{2}-[0-9]{2} .+)$/gm)?.length ?? 0;
 

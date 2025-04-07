@@ -1,6 +1,6 @@
 import Notification from "@/widgets/notification";
 import { bind } from "astal";
-import { Astal, Gtk } from "astal/gtk3";
+import { Astal, Gtk } from "astal/gtk4";
 import AstalNotifd from "gi://AstalNotifd";
 
 const List = ({ compact }: { compact?: boolean }) => (

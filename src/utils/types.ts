@@ -1,7 +1,4 @@
-import type { astalify } from "astal/gtk3";
 import type AstalHyprland from "gi://AstalHyprland";
-
-export type AstalWidget = InstanceType<ReturnType<typeof astalify>>;
 
 export type Address = `0x${string}`;
 

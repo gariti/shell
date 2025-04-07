@@ -1,7 +1,7 @@
 import type { Monitor } from "@/services/monitors";
 import ScreenCorner from "@/widgets/screencorner";
 import { bind } from "astal/binding";
-import { Astal } from "astal/gtk3";
+import { Astal } from "astal/gtk4";
 import { bar } from "config";
 import Cairo from "gi://cairo";
 

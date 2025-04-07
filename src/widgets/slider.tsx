@@ -1,5 +1,5 @@
 import { bind, type Binding } from "astal";
-import { Gdk, Gtk, type Widget } from "astal/gtk3";
+import { Gdk, Gtk, type Widget } from "astal/gtk4";
 import type cairo from "cairo";
 
 export default ({

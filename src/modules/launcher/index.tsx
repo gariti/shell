@@ -1,6 +1,6 @@
 import PopupWindow from "@/widgets/popupwindow";
 import { bind, register, Variable } from "astal";
-import { Astal, Gtk, Widget } from "astal/gtk3";
+import { Astal, Gtk, Widget } from "astal/gtk4";
 import { launcher as config } from "config";
 import Actions from "./actions";
 import Modes from "./modes";

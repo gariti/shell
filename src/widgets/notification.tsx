@@ -2,7 +2,7 @@ import { desktopEntrySubs } from "@/utils/icons";
 import Thumbnailer from "@/utils/thumbnailer";
 import { setupCustomTooltip } from "@/utils/widgets";
 import { bind, GLib, register, timeout, Variable } from "astal";
-import { Astal, Gtk, Widget } from "astal/gtk3";
+import { Astal, Gtk, Widget } from "astal/gtk4";
 import { notifpopups as config } from "config";
 import AstalNotifd from "gi://AstalNotifd";
 

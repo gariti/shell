@@ -2,7 +2,7 @@ import Players from "@/services/players";
 import { osIcon, osId } from "@/utils/system";
 import Slider from "@/widgets/slider";
 import { bind, GLib, monitorFile, Variable } from "astal";
-import { Gtk } from "astal/gtk3";
+import { Gtk } from "astal/gtk4";
 import AstalMpris from "gi://AstalMpris";
 import Notifications from "./modules/notifications";
 import Upcoming from "./modules/upcoming";

@@ -1,4 +1,4 @@
-import { Astal } from "astal/gtk3";
+import { Astal } from "astal/gtk4";
 
 export default {
     style: {

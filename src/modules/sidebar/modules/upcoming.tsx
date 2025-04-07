@@ -1,7 +1,7 @@
 import Calendar, { type IEvent } from "@/services/calendar";
 import { setupCustomTooltip } from "@/utils/widgets";
 import { bind, GLib } from "astal";
-import { Gtk } from "astal/gtk3";
+import { Gtk } from "astal/gtk4";
 
 const getDateHeader = (events: IEvent[]) => {
     const date = events[0].startDate;

@@ -1,7 +1,7 @@
 import Calendar, { type IEvent } from "@/services/calendar";
 import { setupCustomTooltip } from "@/utils/widgets";
 import { bind, GLib, Variable } from "astal";
-import { Gtk } from "astal/gtk3";
+import { Gtk } from "astal/gtk4";
 import ical from "ical.js";
 
 const isLeapYear = (year: number) => year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0);

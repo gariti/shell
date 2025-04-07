@@ -1,7 +1,7 @@
 import Players from "@/services/players";
 import Slider from "@/widgets/slider";
 import { bind, timeout, Variable } from "astal";
-import { Gtk } from "astal/gtk3";
+import { Gtk } from "astal/gtk4";
 import AstalMpris from "gi://AstalMpris";
 
 const lengthStr = (length: number) =>

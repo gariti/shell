@@ -1,6 +1,6 @@
 import type { Monitor } from "@/services/monitors";
 import { idle, timeout } from "astal";
-import { App, Astal, Gtk } from "astal/gtk3";
+import { App, Astal, Gtk } from "astal/gtk4";
 import { notifpopups as config } from "config";
 import AstalNotifd from "gi://AstalNotifd";
 import { setupChildClickthrough } from "../utils/widgets";

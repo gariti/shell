@@ -2,7 +2,7 @@ import Palette from "@/services/palette";
 import Updates, { Repo as IRepo, Update as IUpdate } from "@/services/updates";
 import { MenuItem, setupCustomTooltip } from "@/utils/widgets";
 import { bind, execAsync, GLib, Variable } from "astal";
-import { Astal, Gtk } from "astal/gtk3";
+import { Astal, Gtk } from "astal/gtk4";
 
 const constructItem = (label: string, exec: string, quiet = true) =>
     new MenuItem({ label, onActivate: () => execAsync(exec).catch(e => !quiet && console.error(e)) });

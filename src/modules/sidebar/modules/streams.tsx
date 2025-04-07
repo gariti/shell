@@ -1,5 +1,5 @@
 import { bind, execAsync, Variable } from "astal";
-import { Gtk } from "astal/gtk3";
+import { Gtk } from "astal/gtk4";
 import AstalWp from "gi://AstalWp";
 
 interface IStream {

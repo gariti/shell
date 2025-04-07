@@ -1,5 +1,6 @@
 import { Apps } from "@/services/apps";
 import { Gio } from "astal";
+import { Gdk, Gtk } from "astal/gtk4";
 import type AstalApps from "gi://AstalApps";
 
 export const osIcons: Record<string, string> = {
@@ -155,4 +156,9 @@ export const getAppCategoryIcon = (nameOrApp: string | AstalApps.Application) =>
     if (categories)
         for (const [key, value] of Object.entries(categoryIcons)) if (categories.includes(key)) return value;
     return "terminal";
+};
+
+export const lookupIcon = (name: string) => {
+    const display = Gdk.Display.get_default();
+    return display ? Gtk.IconTheme.get_for_display(display).has_icon(name) : false;
 };

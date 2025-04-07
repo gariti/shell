@@ -1,5 +1,5 @@
 import { bind, execAsync, Variable, type Binding } from "astal";
-import { Gtk } from "astal/gtk3";
+import { Gtk } from "astal/gtk4";
 import AstalNetwork from "gi://AstalNetwork";
 
 const sortAPs = (saved: string[], a: AstalNetwork.AccessPoint, b: AstalNetwork.AccessPoint) => {

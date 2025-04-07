@@ -1,6 +1,6 @@
 import { FlowBox } from "@/utils/widgets";
 import type { Variable } from "astal";
-import { App, Gtk } from "astal/gtk3";
+import { App, Gtk } from "astal/gtk4";
 
 export type Mode = "apps" | "files" | "math";
 

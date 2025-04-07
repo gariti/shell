@@ -4,7 +4,7 @@ import Memory from "@/services/memory";
 import Storage from "@/services/storage";
 import Slider from "@/widgets/slider";
 import { bind, type Binding } from "astal";
-import { Gtk, type Widget } from "astal/gtk3";
+import { Gtk, type Widget } from "astal/gtk4";
 
 const fmt = (bytes: number, pow: number) => +(bytes / 1024 ** pow).toFixed(2);
 const format = ({ total, used }: { total: number; used: number }) => {

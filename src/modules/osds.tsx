@@ -1,7 +1,7 @@
 import Monitors, { type Monitor } from "@/services/monitors";
 import PopupWindow from "@/widgets/popupwindow";
 import { bind, execAsync, register, timeout, Variable, type Time } from "astal";
-import { App, Astal, Gtk, Widget } from "astal/gtk3";
+import { App, Astal, Gtk, Widget } from "astal/gtk4";
 import cairo from "cairo";
 import { osds as config } from "config";
 import AstalWp from "gi://AstalWp";

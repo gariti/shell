@@ -6,7 +6,7 @@ import { basename } from "@/utils/strings";
 import { notify } from "@/utils/system";
 import { setupCustomTooltip, type FlowBox } from "@/utils/widgets";
 import { bind, execAsync, GLib, readFile, register, type Variable } from "astal";
-import { Gtk, Widget } from "astal/gtk3";
+import { Gtk, Widget } from "astal/gtk4";
 import { launcher as config } from "config";
 import { setConfig } from "config/funcs";
 import fuzzysort from "fuzzysort";

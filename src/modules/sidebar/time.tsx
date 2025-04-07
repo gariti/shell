@@ -1,5 +1,5 @@
 import { bindCurrentTime } from "@/utils/system";
-import { Gtk } from "astal/gtk3";
+import { Gtk } from "astal/gtk4";
 import Calendar from "./modules/calendar";
 import Upcoming from "./modules/upcoming";
 
