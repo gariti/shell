@@ -28,7 +28,7 @@ export const awaitSidebar = (monitor: Monitor) =>
         const awaitSidebar = () => {
             sidebar = App.get_window(`sidebar${monitor.id}`) as SideBar | null;
             if (sidebar) resolve(sidebar);
-            else idle(awaitSidebar);
+            else if (!monitor.destroyed) idle(awaitSidebar);
         };
         idle(awaitSidebar);
     });

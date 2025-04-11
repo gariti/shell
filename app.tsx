@@ -77,12 +77,12 @@ App.start({
             <Launcher />;
             <Osds />;
             <Session />;
-            Monitors.get_default().forEach(m => <NotifPopups monitor={m} />);
-            Monitors.get_default().forEach(m => <SideBar monitor={m} />);
-            Monitors.get_default().forEach(m => <NavBar monitor={m} />);
-            Monitors.get_default().forEach(m => <Bar monitor={m} />);
-            Monitors.get_default().forEach(m => <ScreenCorners monitor={m} />);
-            Monitors.get_default().forEach(m => <BarScreenCorners monitor={m} />);
+            Monitors.get_default().applyAll(m => <NotifPopups monitor={m} />);
+            Monitors.get_default().applyAll(m => <SideBar monitor={m} />);
+            Monitors.get_default().applyAll(m => <NavBar monitor={m} />);
+            Monitors.get_default().applyAll(m => <Bar monitor={m} />);
+            Monitors.get_default().applyAll(m => <ScreenCorners monitor={m} />);
+            Monitors.get_default().applyAll(m => <BarScreenCorners monitor={m} />);
 
             // Init services
             timeout(5000, () => {

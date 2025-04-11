@@ -318,7 +318,7 @@ class LockOsd extends Widget.Window {
 
 export default () => {
     if (AstalWp.get_default()) <Volume audio={AstalWp.get_default()!.audio} />;
-    Monitors.get_default().forEach(monitor => <Brightness monitor={monitor} />);
+    Monitors.get_default().applyAll(monitor => <Brightness monitor={monitor} />);
 
     <LockOsd type="caps" icon="keyboard_capslock" />;
     <LockOsd right type="num" icon="filter_1" />;

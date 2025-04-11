@@ -19,7 +19,15 @@ export class Monitor extends GObject.Object {
     isDdc: boolean = false;
     busNum?: string;
 
+    readonly #subs: JSX.Element[] = [];
+
     #brightness: number = 0;
+    #destroyed: boolean = false;
+
+    @property(Boolean)
+    get destroyed() {
+        return this.#destroyed;
+    }
 
     @property(Number)
     get brightness() {
@@ -38,6 +46,15 @@ export class Monitor extends GObject.Object {
         ).catch(console.error);
     }
 
+    addSub(sub: JSX.Element) {
+        this.#subs.push(sub);
+    }
+
+    destroy() {
+        this.#destroyed = true;
+        for (const sub of this.#subs) sub.destroy();
+    }
+
     constructor(monitor: AstalHyprland.Monitor) {
         super();
 
@@ -50,6 +67,7 @@ export class Monitor extends GObject.Object {
         this.description = monitor.description;
 
         monitor.connect("notify::active-workspace", () => this.notify("active-workspace"));
+        monitor.connect("removed", () => this.destroy());
 
         execAsync("ddcutil detect --brief")
             .then(out => {
@@ -83,6 +101,7 @@ export default class Monitors extends GObject.Object {
     }
 
     readonly #map: Map<number, Monitor> = new Map();
+    readonly #subs: ((monitor: Monitor) => void)[] = [];
 
     @property(Object)
     get map() {
@@ -104,8 +123,10 @@ export default class Monitors extends GObject.Object {
         this.notify("list");
     }
 
-    forEach(fn: (monitor: Monitor) => void) {
-        for (const monitor of this.#map.values()) fn(monitor);
+    applyAll(fn: (monitor: Monitor) => JSX.Element) {
+        const subFn = (monitor: Monitor) => monitor.addSub(fn(monitor));
+        for (const monitor of this.#map.values()) subFn(monitor);
+        this.#subs.push(subFn);
     }
 
     constructor() {
@@ -117,8 +138,10 @@ export default class Monitors extends GObject.Object {
         if (this.#map.size > 0) this.#notify();
 
         hyprland.connect("monitor-added", (_, monitor) => {
-            this.#map.set(monitor.id, new Monitor(monitor));
+            const mon = new Monitor(monitor);
+            this.#map.set(monitor.id, mon);
             this.#notify();
+            this.#subs.forEach(fn => fn(mon));
         });
         hyprland.connect("monitor-removed", (_, id) => this.#map.delete(id) && this.#notify());
 
