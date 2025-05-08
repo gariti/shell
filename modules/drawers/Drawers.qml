@@ -1,5 +1,6 @@
 import "root:/widgets"
 import "root:/config"
+import "../osd"
 import Quickshell
 
 Variants {
@@ -9,6 +10,11 @@ Variants {
         id: scope
 
         required property ShellScreen modelData
+
+        readonly property Positions positions: Positions {
+            screen: scope.modelData
+            rightDrawers: [osd]
+        }
 
         Exclusions {
             screen: scope.modelData
@@ -34,18 +40,32 @@ Variants {
             anchors.left: true
             anchors.right: true
 
-            Border {
-                id: border
+            Backgrounds {
+                id: backgrounds
 
+                positions: scope.positions
                 visible: false
             }
 
             LayerShadow {
-                source: border
+                source: backgrounds
             }
 
             Interactions {
                 screen: scope.modelData
+            }
+
+            HorizWrapper {
+                id: osd
+
+                shouldBeVisible: true
+                content: content.content
+
+                Osd {
+                    id: content
+
+                    screen: scope.modelData
+                }
             }
         }
     }

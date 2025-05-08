@@ -5,7 +5,7 @@ Item {
     id: root
 
     required property bool osdVisible
-    required property real contentWidth
+    required property Item content
     property bool shouldBeVisible
 
     visible: width > 0
@@ -16,7 +16,7 @@ Item {
         when: root.osdVisible
 
         PropertyChanges {
-            root.width: contentWidth
+            root.width: content.width
             root.shouldBeVisible: true
         }
     }
