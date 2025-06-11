@@ -1,4 +1,6 @@
 import "root:/widgets"
+import "root:/services-niri"
+import "root:/config"
 import Quickshell
 import Quickshell.Wayland
 

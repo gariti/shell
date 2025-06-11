@@ -1,4 +1,4 @@
-import "root:/services"
+import "root:/services-niri"
 import QtQuick
 
 Image {

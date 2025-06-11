@@ -1,7 +1,7 @@
-import "root:/services"
+import "root:/services-niri"
 import "root:/config"
-import "root:/modules/bar/popouts" as BarPopouts
-import "root:/modules/osd" as Osd
+import "../bar/popouts" as BarPopouts
+import "../osd" as Osd
 import Quickshell
 import QtQuick
 

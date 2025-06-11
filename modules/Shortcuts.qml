@@ -1,5 +1,5 @@
 import "root:/widgets"
-import "root:/services"
+import "root:/services-niri"
 import Quickshell
 import Quickshell.Io
 

@@ -17,15 +17,15 @@ Singleton {
     }
 
     function increaseBrightness(): void {
-        const focusedName = Hyprland.focusedMonitor.name;
-        const monitor = monitors.find(m => focusedName === m.modelData.name);
+        // For Niri, use the first available monitor
+        const monitor = monitors.length > 0 ? monitors[0] : null;
         if (monitor)
             monitor.setBrightness(monitor.brightness + 0.1);
     }
 
     function decreaseBrightness(): void {
-        const focusedName = Hyprland.focusedMonitor.name;
-        const monitor = monitors.find(m => focusedName === m.modelData.name);
+        // For Niri, use the first available monitor  
+        const monitor = monitors.length > 0 ? monitors[0] : null;
         if (monitor)
             monitor.setBrightness(monitor.brightness - 0.1);
     }

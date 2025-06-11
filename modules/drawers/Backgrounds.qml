@@ -1,11 +1,11 @@
-import "root:/services"
+import "root:/services-niri"
 import "root:/config"
-import "root:/modules/osd" as Osd
-import "root:/modules/notifications" as Notifications
-import "root:/modules/session" as Session
-import "root:/modules/launcher" as Launcher
-import "root:/modules/dashboard" as Dashboard
-import "root:/modules/bar/popouts" as BarPopouts
+import "../osd" as Osd
+import "../notifications" as Notifications
+import "../session" as Session
+import "../launcher" as Launcher
+import "../dashboard" as Dashboard
+import "../bar/popouts" as BarPopouts
 import QtQuick
 import QtQuick.Shapes
 

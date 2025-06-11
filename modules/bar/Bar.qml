@@ -1,5 +1,5 @@
 import "root:/widgets"
-import "root:/services"
+import "root:/services-niri"
 import "root:/config"
 import "root:/modules/bar/popouts" as BarPopouts
 import "components"
@@ -14,48 +14,58 @@ Item {
     required property BarPopouts.Wrapper popouts
 
     function checkPopout(y: real): void {
+        // Niri compatibility: add null checks to prevent errors
+        if (!activeWindow || !statusIcons || !statusIconsInner || !tray) {
+            popouts.hasCurrent = false;
+            return;
+        }
+
         const spacing = Appearance.spacing.small;
         const aw = activeWindow.child;
-        const awy = activeWindow.y + aw.y;
+        const awy = activeWindow.y + (aw ? aw.y : 0);
 
         const ty = tray.y;
         const th = tray.implicitHeight;
         const trayItems = tray.items;
 
-        const n = statusIconsInner.network;
-        const ny = statusIcons.y + statusIconsInner.y + n.y - spacing / 2;
+        const n = statusIconsInner ? statusIconsInner.network : null;
+        const ny = (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (n ? n.y : 0) - spacing / 2;
 
-        const bls = statusIcons.y + statusIconsInner.y + statusIconsInner.bs - spacing / 2;
-        const ble = statusIcons.y + statusIconsInner.y + statusIconsInner.be + spacing / 2;
+        const bls = (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (statusIconsInner ? statusIconsInner.bs : 0) - spacing / 2;
+        const ble = (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (statusIconsInner ? statusIconsInner.be : 0) + spacing / 2;
 
-        const b = statusIconsInner.battery;
-        const by = statusIcons.y + statusIconsInner.y + b.y - spacing / 2;
+        const b = statusIconsInner ? statusIconsInner.battery : null;
+        const by = (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (b ? b.y : 0) - spacing / 2;
 
-        if (y >= awy && y <= awy + aw.implicitHeight) {
+        if (aw && y >= awy && y <= awy + aw.implicitHeight) {
             popouts.currentName = "activewindow";
-            popouts.currentCenter = Qt.binding(() => activeWindow.y + aw.y + aw.implicitHeight / 2);
-            popouts.hasCurrent = true;
-        } else if (y > ty && y < ty + th) {
+            popouts.currentCenter = Qt.binding(() => (activeWindow ? activeWindow.y : 0) + (aw ? aw.y : 0) + (aw ? aw.implicitHeight : 0) / 2);
+            if (popouts) popouts.hasCurrent = true;
+        } else if (trayItems && y > ty && y < ty + th) {
             const index = Math.floor(((y - ty) / th) * trayItems.count);
             const item = trayItems.itemAt(index);
 
-            popouts.currentName = `traymenu${index}`;
-            popouts.currentCenter = Qt.binding(() => tray.y + item.y + item.implicitHeight / 2);
-            popouts.hasCurrent = true;
-        } else if (y >= ny && y <= ny + n.implicitHeight + spacing) {
+            if (item) {
+                popouts.currentName = `traymenu${index}`;
+                popouts.currentCenter = Qt.binding(() => (tray ? tray.y : 0) + (item ? item.y : 0) + (item ? item.implicitHeight : 0) / 2);
+                if (popouts) popouts.hasCurrent = true;
+            } else {
+                if (popouts) popouts.hasCurrent = false;
+            }
+        } else if (n && y >= ny && y <= ny + n.implicitHeight + spacing) {
             popouts.currentName = "network";
-            popouts.currentCenter = Qt.binding(() => statusIcons.y + statusIconsInner.y + n.y + n.implicitHeight / 2);
-            popouts.hasCurrent = true;
+            popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (n ? n.y : 0) + (n ? n.implicitHeight : 0) / 2);
+            if (popouts) popouts.hasCurrent = true;
         } else if (y >= bls && y <= ble) {
             popouts.currentName = "bluetooth";
-            popouts.currentCenter = Qt.binding(() => statusIcons.y + statusIconsInner.y + statusIconsInner.bs + (statusIconsInner.be - statusIconsInner.bs) / 2);
-            popouts.hasCurrent = true;
-        } else if (y >= by && y <= by + b.implicitHeight + spacing) {
+            popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (statusIconsInner ? statusIconsInner.bs : 0) + ((statusIconsInner && statusIconsInner.be && statusIconsInner.bs) ? (statusIconsInner.be - statusIconsInner.bs) : 0) / 2);
+            if (popouts) popouts.hasCurrent = true;
+        } else if (b && y >= by && y <= by + b.implicitHeight + spacing) {
             popouts.currentName = "battery";
-            popouts.currentCenter = Qt.binding(() => statusIcons.y + statusIconsInner.y + b.y + b.implicitHeight / 2);
-            popouts.hasCurrent = true;
+            popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (b ? b.y : 0) + (b ? b.implicitHeight : 0) / 2);
+            if (popouts) popouts.hasCurrent = true;
         } else {
-            popouts.hasCurrent = false;
+            if (popouts) popouts.hasCurrent = false;
         }
     }
 
@@ -63,7 +73,7 @@ Item {
     anchors.bottom: parent.bottom
     anchors.left: parent.left
 
-    implicitWidth: child.implicitWidth + BorderConfig.thickness * 2
+    implicitWidth: (child ? child.implicitWidth : 0) + BorderConfig.thickness * 2
 
     Item {
         id: child
@@ -72,7 +82,15 @@ Item {
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
 
-        implicitWidth: Math.max(osIcon.implicitWidth, workspaces.implicitWidth, activeWindow.implicitWidth, tray.implicitWidth, clock.implicitWidth, statusIcons.implicitWidth, power.implicitWidth)
+        implicitWidth: Math.max(
+            osIcon.implicitWidth || 0,
+            workspaces.implicitWidth || 0,
+            activeWindow.implicitWidth || 0,
+            tray.implicitWidth || 0,
+            clock.implicitWidth || 0,
+            statusIcons.implicitWidth || 0,
+            power.implicitWidth || 0
+        )
 
         OsIcon {
             id: osIcon

@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import "root:/widgets"
-import "root:/services"
+import "root:/services-niri"
 import "root:/utils"
 import "root:/config"
 import QtQuick
@@ -48,13 +48,10 @@ Item {
     Item {
         id: child
 
-        property Item current: text1
-
         anchors.centerIn: parent
 
-        clip: true
-        implicitWidth: Math.max(icon.implicitWidth, current.implicitHeight)
-        implicitHeight: icon.implicitHeight + current.implicitWidth + current.anchors.topMargin
+        implicitWidth: Math.max(icon.implicitWidth, activeText.implicitHeight)
+        implicitHeight: icon.implicitHeight + activeText.implicitWidth + activeText.anchors.topMargin
 
         MaterialIcon {
             id: icon
@@ -66,29 +63,27 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        Title {
-            id: text1
-        }
+        StyledText {
+            id: activeText
 
-        Title {
-            id: text2
-        }
-
-        TextMetrics {
-            id: metrics
+            anchors.horizontalCenter: icon.horizontalCenter
+            anchors.top: icon.bottom
+            anchors.topMargin: Appearance.spacing.small
 
             text: Hyprland.activeClient?.title ?? qsTr("Desktop")
             font.pointSize: Appearance.font.size.smaller
             font.family: Appearance.font.family.mono
-            elide: Qt.ElideRight
-            elideWidth: root.height - icon.height
-
-            onTextChanged: {
-                const next = child.current === text1 ? text2 : text1;
-                next.text = elidedText;
-                child.current = next;
+            color: root.colour
+            elide: Text.ElideRight
+            
+            transform: Rotation {
+                angle: 90
+                origin.x: activeText.implicitHeight / 2
+                origin.y: activeText.implicitHeight / 2
             }
-            onElideWidthChanged: child.current.text = elidedText
+
+            width: implicitHeight
+            height: implicitWidth
         }
 
         Behavior on implicitWidth {

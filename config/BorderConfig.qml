@@ -1,13 +1,12 @@
 pragma Singleton
 
-import "root:/services"
 import Quickshell
 import QtQuick
 
 Singleton {
     id: root
 
-    readonly property color colour: Colours.palette.m3surface
-    readonly property int thickness: Appearance.padding.normal
-    readonly property int rounding: Appearance.rounding.large
+    readonly property color colour: "#141318" // Default dark surface color
+    readonly property int thickness: 10 // Default padding
+    readonly property int rounding: 25 // Default large rounding
 }

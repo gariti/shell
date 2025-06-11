@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import "root:/widgets"
-import "root:/services"
+import "root:/services-niri"
 import "root:/config"
 import Quickshell.Services.UPower
 import QtQuick

@@ -1,5 +1,5 @@
 import "root:/widgets"
-import "root:/services"
+import "root:/services-niri"
 import "root:/utils"
 import "root:/config"
 import Quickshell
@@ -18,7 +18,7 @@ Item {
     readonly property real size: childrenRect.height + (hasWindows ? Appearance.padding.normal : 0)
 
     readonly property int ws: groupOffset + index + 1
-    readonly property bool isOccupied: occupied[ws] ?? false
+    readonly property bool isOccupied: (occupied && occupied[ws]) ?? false
     readonly property bool hasWindows: isOccupied && BarConfig.workspaces.showWindows
 
     Layout.preferredWidth: childrenRect.width
@@ -32,8 +32,8 @@ Item {
         readonly property string activeLabel: BarConfig.workspaces.activeLabel || (root.isOccupied ? occupiedLabel : label)
 
         animate: true
-        text: Hyprland.activeWsId === root.ws ? activeLabel : root.isOccupied ? occupiedLabel : label
-        color: BarConfig.workspaces.occupiedBg || root.isOccupied || Hyprland.activeWsId === root.ws ? Colours.palette.m3onSurface : Colours.palette.m3outlineVariant
+        text: 1 === root.ws ? activeLabel : root.isOccupied ? occupiedLabel : label
+        color: BarConfig.workspaces.occupiedBg || root.isOccupied || 1 === root.ws ? Colours.palette.m3onSurface : Colours.palette.m3outlineVariant
         horizontalAlignment: StyledText.AlignHCenter
         verticalAlignment: StyledText.AlignVCenter
 
@@ -64,11 +64,11 @@ Item {
 
             Repeater {
                 model: ScriptModel {
-                    values: Hyprland.clients.filter(c => c.workspace?.id === root.ws)
+                    values: [] // Niri compatibility: no client data available
                 }
 
                 MaterialIcon {
-                    required property Hyprland.Client modelData
+                    required property var modelData
 
                     text: Icons.getAppCategoryIcon(modelData.wmClass, "terminal")
                     color: Colours.palette.m3onSurfaceVariant

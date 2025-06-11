@@ -1,12 +1,12 @@
 pragma ComponentBehavior: Bound
 
 import "root:/widgets"
-import "root:/services"
+import "root:/services-niri"
 import "root:/config"
 import "root:/modules/bar"
 import Quickshell
 import Quickshell.Wayland
-import Quickshell.Hyprland
+// import Quickshell.Hyprland  // Disabled for Niri compatibility
 import QtQuick
 import QtQuick.Effects
 
@@ -62,14 +62,15 @@ Variants {
                 }
             }
 
-            HyprlandFocusGrab {
-                active: visibilities.launcher || visibilities.session
-                windows: [win]
-                onCleared: {
-                    visibilities.launcher = false;
-                    visibilities.session = false;
-                }
-            }
+            // HyprlandFocusGrab disabled for Niri compatibility
+            // HyprlandFocusGrab {
+            //     active: visibilities.launcher || visibilities.session
+            //     windows: [win]
+            //     onCleared: {
+            //         visibilities.launcher = false;
+            //         visibilities.session = false;
+            //     }
+            // }
 
             StyledRect {
                 anchors.fill: parent

@@ -1,0 +1,55 @@
+#!/usr/bin/env fish
+
+# Caelestia shell IPC command script
+# This mimics the caelestia script functionality for shell interactions
+
+set -l shell_path "/etc/nixos/caelestia-shell"
+
+function show_help
+    echo 'Usage: caelestia shell COMMAND [ ...args ]'
+    echo
+    echo 'Available commands:'
+    echo '  help      - Show this help'
+    echo '  mpris     - MPRIS media control'
+    echo '  drawers   - Toggle drawers'
+    echo '  wallpaper - Wallpaper control' 
+    echo '  notifs    - Notification control'
+    echo
+    echo 'Example:'
+    echo '  caelestia shell mpris playPause'
+    echo '  caelestia shell drawers toggle dashboard'
+end
+
+if test "$argv[1]" = "shell"
+    # If no subcommand, show help
+    if test -z "$argv[2]"
+        show_help
+        exit
+    end
+    
+    if test "$argv[2]" = "help"
+        # Show available IPC commands via quickshell
+        if qs list --all | grep -q "Config path: $shell_path/shell-niri.qml"
+            qs -p $shell_path/shell-niri.qml ipc show
+        else
+            echo "Shell not running. Available commands:"
+            show_help
+        end
+        exit
+    end
+    
+    # Check if shell is running
+    if qs list --all | grep -q "Config path: $shell_path/shell-niri.qml"
+        # Forward IPC command to quickshell
+        qs -p $shell_path/shell-niri.qml ipc call $argv[2..]
+    else
+        echo "Error: Caelestia shell is not running"
+        echo "Start it with: systemctl --user start caelestia-shell.service"
+        exit 1
+    end
+else
+    # For now, only support shell commands
+    echo "Error: Only 'shell' commands are supported in this implementation"
+    echo "Usage: caelestia shell COMMAND"
+    exit 1
+end

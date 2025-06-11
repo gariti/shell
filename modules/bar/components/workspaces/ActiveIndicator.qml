@@ -1,5 +1,5 @@
 import "root:/widgets"
-import "root:/services"
+import "root:/services-niri"
 import "root:/config"
 import QtQuick
 import QtQuick.Effects
@@ -13,7 +13,7 @@ StyledRect {
     required property real maskHeight
     required property int groupOffset
 
-    readonly property int currentWsIdx: Hyprland.activeWsId - 1 - groupOffset
+    readonly property int currentWsIdx: 1 - 1 - groupOffset
     property real leading: getWsY(currentWsIdx)
     property real trailing: getWsY(currentWsIdx)
     property real currentSize: workspaces[currentWsIdx]?.size ?? 0
