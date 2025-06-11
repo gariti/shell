@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
-import "root:/config"
-import "root:/services-niri"
+import "../../config"
+import "../../services-niri"
 
 ShapePath {
     id: root

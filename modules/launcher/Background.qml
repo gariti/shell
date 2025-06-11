@@ -1,5 +1,5 @@
-import "root:/services-niri"
-import "root:/config"
+import "../../services-niri"
+import "../../config"
 import QtQuick
 import QtQuick.Shapes
 

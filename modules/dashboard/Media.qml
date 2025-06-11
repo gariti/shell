@@ -1,9 +1,9 @@
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
-import "root:/services-niri"
-import "root:/utils"
-import "root:/config"
+import "../../widgets"
+import "../../services-niri"
+import "../../utils"
+import "../../config"
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Mpris
@@ -545,7 +545,7 @@ Item {
 
             playing: root.shouldUpdate && (Players.active?.isPlaying ?? false)
             speed: BeatDetector.bpm / 300
-            source: "root:/assets/bongocat.gif"
+            source: "../../assets/bongocat.gif"
             asynchronous: true
             fillMode: AnimatedImage.PreserveAspectFit
         }

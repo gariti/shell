@@ -1,9 +1,9 @@
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
-import "root:/services-niri"
-import "root:/config"
-import "root:/modules/bar"
+import "../../widgets"
+import "../../services-niri"
+import "../../config"
+import "../bar"
 import Quickshell
 import Quickshell.Wayland
 // import Quickshell.Hyprland  // Disabled for Niri compatibility

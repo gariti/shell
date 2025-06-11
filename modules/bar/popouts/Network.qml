@@ -6,17 +6,31 @@ import QtQuick
 Column {
     id: root
 
-    spacing: Appearance.spacing.normal
+    spacing: 8
 
-    StyledText {
-        text: qsTr("Connected to: %1").arg(Network.active?.ssid ?? "None")
+    Text {
+        text: "Network"
+        font.pointSize: 12
+        font.bold: true
+        color: "#E5E1E9"
     }
 
-    StyledText {
-        text: qsTr("Strength: %1/100").arg(Network.active?.strength ?? 0)
+    Text {
+        text: Network && Network.active ? 
+              "Connected to: " + (Network.active.ssid || "Unknown") :
+              "Not connected"
+        font.pointSize: 10
+        color: "#C9C5D0"
+        wrapMode: Text.WordWrap
+        width: parent.width
     }
 
-    StyledText {
-        text: qsTr("Frequency: %1 MHz").arg(Network.active?.frequency ?? 0)
+    Text {
+        visible: Network && Network.active
+        text: Network && Network.active ? 
+              "Signal: " + (Network.active.strength || 0) + "%" :
+              ""
+        font.pointSize: 9
+        color: "#A8A3AD"
     }
 }

@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
-import "root:/config"
+import "../../../widgets"
+import "../../../config"
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.SystemTray

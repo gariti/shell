@@ -1,6 +1,6 @@
 import QtQuick
 import Quickshell
-import "root:/config"
+import "../../config"
 
 Item {
     id: root

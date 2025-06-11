@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
-import "root:/services-niri"
-import "root:/config"
+import "../../widgets"
+import "../../services-niri"
+import "../../config"
 import Quickshell
 import QtQuick
 import QtQuick.Controls

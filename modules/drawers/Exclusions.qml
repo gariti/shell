@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
-import "root:/config"
+import "../../widgets"
+import "../../config"
 import Quickshell
 import QtQuick
 
@@ -13,7 +13,7 @@ Scope {
 
     ExclusionZone {
         anchors.left: true
-        exclusiveZone: root.bar.implicitWidth
+        exclusiveZone: root.bar ? root.bar.implicitWidth : 0
     }
 
     ExclusionZone {

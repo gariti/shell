@@ -1,7 +1,7 @@
-import "root:/widgets"
-import "root:/services-niri"
-import "root:/config"
-import "root:/modules/bar/popouts" as BarPopouts
+import "../../widgets"
+import "../../services-niri"
+import "../../config"
+import "popouts" as BarPopouts
 import "components"
 import "components/workspaces"
 import Quickshell

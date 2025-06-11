@@ -1,4 +1,4 @@
-import "root:/config"
+import "../../config"
 import QtQuick
 
 Item {

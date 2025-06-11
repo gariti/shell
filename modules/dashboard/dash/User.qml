@@ -1,7 +1,7 @@
-import "root:/widgets"
-import "root:/services-niri"
-import "root:/config"
-import "root:/utils"
+import "../../../widgets"
+import "../../../services-niri"
+import "../../../config"
+import "../../../utils"
 import Quickshell
 import Quickshell.Io
 import QtQuick

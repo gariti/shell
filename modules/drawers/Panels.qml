@@ -1,5 +1,5 @@
-import "root:/services-niri"
-import "root:/config"
+import "../../services-niri"
+import "../../config"
 import "../osd" as Osd
 import "../notifications" as Notifications
 import "../session" as Session

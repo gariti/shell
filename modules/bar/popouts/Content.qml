@@ -29,18 +29,13 @@ Item {
         clip: true
 
         Popout {
-            name: "activewindow"
-            source: "ActiveWindow.qml"
+            name: "volume"
+            source: "Volume.qml"
         }
 
         Popout {
             name: "network"
             source: "Network.qml"
-        }
-
-        Popout {
-            name: "bluetooth"
-            source: "Bluetooth.qml"
         }
 
         Popout {

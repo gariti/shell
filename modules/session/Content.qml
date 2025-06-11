@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
-import "root:/services-niri"
-import "root:/config"
+import "../../widgets"
+import "../../services-niri"
+import "../../config"
 import Quickshell
 import Quickshell.Io
 import QtQuick
@@ -56,7 +56,7 @@ Column {
         playing: visible
         asynchronous: true
         speed: 0.7
-        source: "root:/assets/kurukuru.gif"
+        source: "../../assets/kurukuru.gif"
     }
 
     SessionButton {
