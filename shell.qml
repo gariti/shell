@@ -411,18 +411,30 @@ ShellRoot {
                 bar: mainBar
             }
             
-            // Border and rounded corner window
-            PanelWindow {
+            // Border using StyledWindow like original Caelestia
+            StyledWindow {
                 id: borderWindow
                 screen: modelData
-                WlrLayershell.namespace: "caelestia-border-mask"
+                name: "border"
+                WlrLayershell.namespace: "caelestia-border"
                 WlrLayershell.exclusionMode: ExclusionMode.Ignore
-                WlrLayershell.layer: WlrLayer.Overlay  // Make sure border is on top
+                WlrLayershell.layer: WlrLayer.Background
+                WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+                
+                anchors.left: true
+                anchors.right: true
+                anchors.top: true
+                anchors.bottom: true
                 
                 color: "transparent"
                 
+                Component.onCompleted: {
+                    console.log("Border window created successfully!");
+                }
+                
                 Border {
-                    anchors.fill: parent  // Make border fill the entire window
+                    width: borderWindow.width
+                    height: borderWindow.height
                     bar: mainBar
                 }
             }

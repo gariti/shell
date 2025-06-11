@@ -44,7 +44,7 @@ Singleton {
             workspaceData = data;
             activeWorkspace = activeWs;
             
-            console.log("Updated workspaces:", workspaces, "Active:", activeWorkspace);
+            // console.log("Updated workspaces:", workspaces, "Active:", activeWorkspace);
         } catch (e) {
             console.warn("Failed to parse workspace data:", e);
             // Fallback to static workspaces
@@ -79,7 +79,7 @@ Singleton {
         running: true
         stdout: SplitParser {
             onRead: data => {
-                console.log("Niri is available");
+                // console.log("Niri is available");
                 updateWorkspaces(); // Initial workspace update
             }
         }
