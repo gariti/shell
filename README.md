@@ -373,3 +373,137 @@ Opens in a new window
 
 github.com
 Configuration: Window Rules · YaLTeR/niri Wiki - GitHub
+
+I'll analyze the differences between the original caelestia-shell and the current implementation to identify any features that weren't moved over or were commented out. Now let me do a more direct comparison by looking at specific directories and files to identify missing features: Let me check for any commented out or disabled features in the main shell file: Let me examine specific components to see what functionality might be missing: Based on my comprehensive analysis of the differences between caelestia-shell-original and caelestia-shell, I can identify several key features that were either removed, disabled, or adapted for Niri compatibility:
+
+## 🔍 **ALSO FIX: Features Not Moved Over or Disabled for Niri Compatibility**
+
+### **1. Global Shortcuts System (Completely Disabled)**
+**Original:** Uses Hyprland's global shortcuts protocol
+```qml
+// caelestia-shell-original/widgets/CustomShortcut.qml
+import Quickshell.Hyprland
+GlobalShortcut {
+    appid: "caelestia"
+}
+```
+
+**Current:** Replaced with placeholder implementation
+```qml
+// caelestia-shell/widgets/CustomShortcut.qml
+// Niri-compatible custom shortcut implementation
+Item {
+    property string name: ""
+    property string description: ""
+    
+    signal pressed()
+    signal released()
+    
+    // For Niri, global shortcuts are handled via keybindings in config.kdl
+    // This is a placeholder for compatibility - actual shortcuts are configured in Niri
+}
+```
+
+### **2. Advanced Workspace Features**
+**UPDATE: NOW FIXED**
+**Missing/Disabled:**
+- **Special workspaces** - Niri doesn't support Hyprland's special workspaces
+- **Workspace previews** - Window thumbnails for workspace switching
+- **Dynamic workspace occupancy indicators** - Real-time workspace window counts
+- **Workspace window lists** - Per-workspace application icons
+
+**Evidence:**
+```qml
+// services-niri/Hyprland.qml shows this is disabled:
+} else if (request.startsWith("togglespecialworkspace")) {
+    // Niri doesn't have special workspaces, map to regular workspace switching
+    console.log("Special workspaces not supported in Niri, ignoring command:", request);
+}
+```
+
+### **3. Active Window Integration**
+**Original:** Full window management with previews
+```qml
+// caelestia-shell-original/modules/bar/popouts/ActiveWindow.qml
+ScreencopyView {
+    captureSource: ToplevelManager.toplevels.values.find(t => t.title === Hyprland.activeClient?.title) ?? null
+    live: visible
+}
+```
+
+**Current:** Simplified window information (no live previews)
+
+### **4. Real-time Window Previews**
+- **ScreencopyView** components for live window thumbnails
+- **Window capture and display** in workspace indicators
+- **Dynamic application icons** per workspace
+
+### **5. Advanced Hyprland IPC Commands**
+**Original IPC Features Lost:**
+- `hyprctl activewindow` detailed window properties
+- `hyprctl clients` full client information
+- Relative workspace switching (`workspace r+1`, `workspace r-1`)
+- Window geometry and positioning data
+- Focus history tracking
+
+### **6. Direct Hyprland Integration**
+**Removed Hyprland-specific features:**
+- `Quickshell.Hyprland` module imports
+- `HyprlandWorkspace` and `HyprlandWindow` components
+- `HyprlandMonitor` direct integration
+- Raw Hyprland event handling
+
+### **7. Advanced Window Management**
+**Features not fully ported:**
+- Window floating state detection
+- Window fullscreen state management
+- Window workspace assignment tracking
+- Client focus history
+
+### **8. Sophisticated Workspace Switching**
+**Original features:**
+```qml
+// Mouse wheel workspace switching
+onWheel: event => {
+    const activeWs = Hyprland.activeClient?.workspace?.name;
+    if (activeWs?.startsWith("special:"))
+        Hyprland.dispatch(`togglespecialworkspace ${activeWs.slice(8)}`);
+    else if (event.angleDelta.y < 0 || Hyprland.activeWsId > 1)
+        Hyprland.dispatch(`workspace r${event.angleDelta.y > 0 ? "-" : "+"}1`);
+}
+```
+
+**Current:** Basic numeric workspace switching only
+
+## ✅ **What Was Successfully Preserved**
+
+### **Core UI Components:**
+- Material Design 3 theming
+- Basic bar layout and structure
+- Time/date display
+- System status indicators
+- Session management
+- Application launcher integration
+
+### **Service Adaptations:**
+- All services ported to `services-niri/`
+- Custom Niri IPC wrapper in Hyprland.qml
+- Wayland-compatible implementations
+
+### **Configuration System:**
+- Complete config structure preserved
+- Appearance and styling maintained
+- Widget system intact
+
+## 📋 **Summary of Missing Features**
+
+1. **Global Shortcuts** (Hyprland protocol dependent)
+2. **Special Workspaces** (Niri doesn't support)
+3. **Live Window Previews** (ScreencopyView integration)
+4. **Advanced Workspace Management** (per-workspace window lists)
+5. **Real-time Window Information** (detailed client properties)
+6. **Mouse Wheel Workspace Switching** (relative workspace navigation)
+7. **Focus History Tracking** (Hyprland-specific feature)
+8. **Window Geometry Information** (position, size, floating state)
+
+These features were either **intentionally disabled** for Niri compatibility or **replaced with simplified alternatives** that work within Niri's architectural constraints. The core functionality and visual design were successfully preserved while adapting to Niri's different window management paradigm.

@@ -3,9 +3,13 @@ pragma Singleton
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import "." as Services
 
 Singleton {
     id: root
+
+    // Access to advanced window manager
+    property var advancedManager: Services.AdvancedWindowManager
 
     // Define Client component for compatibility
     component Client: QtObject {
@@ -16,9 +20,11 @@ Singleton {
         property bool floating: false
         property bool fullscreen: false
         property var monitor: null
+        property bool urgent: false
+        property int windowId: 0
     }
 
-    // Live properties populated from Niri IPC
+    // Live properties populated from Niri IPC and AdvancedWindowManager
     property list<Client> clients: []
     property list<QtObject> workspaces: []
     property list<QtObject> monitors: []
@@ -27,6 +33,26 @@ Singleton {
     property QtObject focusedMonitor: null
     property int activeWsId: 1
     property point cursorPos: Qt.point(0, 0)
+    
+    // Enhanced properties using AdvancedWindowManager
+    property var floatingWindows: advancedManager.floatingWindows
+    property var fullscreenWindows: advancedManager.fullscreenWindows
+    property var urgentWindows: advancedManager.urgentWindows
+    property var focusHistory: advancedManager.focusHistory
+    property var workspaceWindows: advancedManager.workspaceWindows
+    
+    // Workspace occupancy tracking for compatibility
+    property var occupied: ({})
+    
+    function updateOccupied() {
+        let newOccupied = {};
+        for (const client of clients) {
+            if (client.workspace) {
+                newOccupied[client.workspace] = true;
+            }
+        }
+        occupied = newOccupied;
+    }
 
     function reload() {
         // Refresh all data from Niri
@@ -35,16 +61,38 @@ Singleton {
         outputsProc.running = true;
     }
 
-    function dispatch(request: string): void {
-        // Convert Hyprland-style dispatch to Niri actions
+    function dispatch(request) {
+        // Convert Hyprland-style dispatch to Niri actions using AdvancedWindowManager
         if (request.startsWith("workspace ")) {
-            const wsId = request.split(" ")[1];
-            niriAction.command = ["niri", "msg", "action", "focus-workspace", wsId];
-            niriAction.running = true;
+            const wsParam = request.split(" ")[1];
+            if (wsParam.startsWith("r+") || wsParam.startsWith("r-")) {
+                // Relative workspace switching
+                const direction = wsParam.charAt(1) === "+" ? "down" : "up";
+                advancedManager.switchWorkspaceRelative(direction === "down" ? 1 : -1);
+            } else {
+                // Absolute workspace switching
+                advancedManager.switchToWorkspace(parseInt(wsParam));
+            }
         } else if (request.startsWith("movetoworkspace ")) {
             const wsId = request.split(" ")[1];
-            niriAction.command = ["niri", "msg", "action", "move-window-to-workspace", wsId];
-            niriAction.running = true;
+            if (activeClient && activeClient.windowId) {
+                advancedManager.moveWindowToWorkspace(activeClient.windowId, parseInt(wsId));
+            }
+        } else if (request.startsWith("togglefloating")) {
+            if (activeClient && activeClient.windowId) {
+                advancedManager.toggleWindowFloating(activeClient.windowId);
+            }
+        } else if (request.startsWith("fullscreen")) {
+            if (activeClient && activeClient.windowId) {
+                advancedManager.toggleWindowFullscreen(activeClient.windowId);
+            }
+        } else if (request.startsWith("closewindow")) {
+            if (activeClient && activeClient.windowId) {
+                advancedManager.closeWindow(activeClient.windowId);
+            }
+        } else if (request.startsWith("togglespecialworkspace")) {
+            // Niri doesn't have special workspaces, map to regular workspace switching
+            console.log("Special workspaces not supported in Niri, ignoring command:", request);
         }
         // Add more dispatch translations as needed
     }
@@ -106,7 +154,9 @@ Singleton {
                             title: win.title,
                             pid: win.pid,
                             floating: win.is_floating,
-                            fullscreen: false // Niri doesn't expose this directly
+                            fullscreen: false, // Will be updated from AdvancedWindowManager
+                            urgent: win.is_urgent || false,
+                            windowId: win.id
                         });
                         newClients.push(client);
                         
@@ -117,6 +167,10 @@ Singleton {
                     
                     root.clients = newClients;
                     root.activeClient = activeClient;
+                    root.updateOccupied(); // Update workspace occupancy
+                    
+                    // Sync with AdvancedWindowManager for enhanced features
+                    advancedManager.syncWindowData(newClients);
                 } catch (e) {
                     console.error("Failed to parse window data:", e);
                 }
@@ -171,6 +225,46 @@ Singleton {
         onTriggered: root.reload()
     }
 
+    // Enhanced functions for advanced window management
+    function focusPreviousWindow() {
+        if (advancedManager.focusHistory.length > 1) {
+            const prevWindowId = advancedManager.focusHistory[1];
+            advancedManager.focusWindow(prevWindowId);
+        }
+    }
+    
+    function getFloatingWindows() {
+        return advancedManager.floatingWindows;
+    }
+    
+    function getFullscreenWindows() {
+        return advancedManager.fullscreenWindows;
+    }
+    
+    function getUrgentWindows() {
+        return advancedManager.urgentWindows;
+    }
+    
+    function getWindowsInWorkspace(workspaceId) {
+        return advancedManager.workspaceWindows[workspaceId] || [];
+    }
+    
+    function toggleFloating(windowId) {
+        if (windowId) {
+            advancedManager.toggleWindowFloating(windowId);
+        } else if (activeClient) {
+            advancedManager.toggleWindowFloating(activeClient.windowId);
+        }
+    }
+    
+    function toggleFullscreen(windowId) {
+        if (windowId) {
+            advancedManager.toggleWindowFullscreen(windowId);
+        } else if (activeClient) {
+            advancedManager.toggleWindowFullscreen(activeClient.windowId);
+        }
+    }
+
     // Component definitions
     Component {
         id: clientComponent
@@ -204,5 +298,28 @@ Singleton {
     Component.onCompleted: {
         // Initial load
         reload();
+        
+        // Connect to AdvancedWindowManager signals for real-time updates
+        advancedManager.windowStateChanged.connect(function(windowId, state) {
+            // Update corresponding client in our clients list
+            for (let client of clients) {
+                if (client.windowId === windowId) {
+                    client.floating = state.floating;
+                    client.fullscreen = state.fullscreen;
+                    client.urgent = state.urgent;
+                    break;
+                }
+            }
+        });
+        
+        advancedManager.focusChanged.connect(function(windowId) {
+            // Update activeClient
+            for (let client of clients) {
+                if (client.windowId === windowId) {
+                    activeClient = client;
+                    break;
+                }
+            }
+        });
     }
 }

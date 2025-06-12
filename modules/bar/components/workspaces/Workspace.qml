@@ -32,8 +32,8 @@ Item {
         readonly property string activeLabel: BarConfig.workspaces.activeLabel || (root.isOccupied ? occupiedLabel : label)
 
         animate: true
-        text: 1 === root.ws ? activeLabel : root.isOccupied ? occupiedLabel : label
-        color: BarConfig.workspaces.occupiedBg || root.isOccupied || 1 === root.ws ? Colours.palette.m3onSurface : Colours.palette.m3outlineVariant
+        text: Hyprland.activeWsId === root.ws ? activeLabel : root.isOccupied ? occupiedLabel : label
+        color: BarConfig.workspaces.occupiedBg || root.isOccupied || Hyprland.activeWsId === root.ws ? Colours.palette.m3onSurface : Colours.palette.m3outlineVariant
         horizontalAlignment: StyledText.AlignHCenter
         verticalAlignment: StyledText.AlignVCenter
 
@@ -64,13 +64,13 @@ Item {
 
             Repeater {
                 model: ScriptModel {
-                    values: [] // Niri compatibility: no client data available
+                    values: Hyprland.getWindowsInWorkspace(root.ws)
                 }
 
                 MaterialIcon {
                     required property var modelData
 
-                    text: Icons.getAppCategoryIcon(modelData.wmClass, "terminal")
+                    text: Icons.getAppCategoryIcon(modelData.wmClass || modelData.app_id, "terminal")
                     color: Colours.palette.m3onSurfaceVariant
                 }
             }

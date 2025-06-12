@@ -1,3 +1,4 @@
+singleton AdvancedWindowManager AdvancedWindowManager.qml
 singleton Apps Apps.qml
 singleton Audio Audio.qml
 singleton BeatDetector BeatDetector.qml
@@ -8,6 +9,7 @@ singleton Colours Colours.qml
 singleton Hyprland Hyprland.qml
 singleton Network Network.qml
 singleton NiriService NiriService.qml
+singleton NiriToplevelManager NiriToplevelManager.qml
 singleton Notifs Notifs.qml
 singleton Players Players.qml
 singleton SystemUsage SystemUsage.qml

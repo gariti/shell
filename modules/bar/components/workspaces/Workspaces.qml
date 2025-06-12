@@ -10,8 +10,8 @@ Item {
     id: root
 
     readonly property list<Workspace> workspaces: layout.children.filter(c => c.isWorkspace).sort((w1, w2) => w1.ws - w2.ws)
-    readonly property var occupied: ({}) // Niri compatibility: empty occupied object
-    readonly property int groupOffset: 0 // Niri compatibility: always start from 0
+    readonly property var occupied: Hyprland.occupied // Use enhanced occupancy data from Hyprland service
+    readonly property int groupOffset: Math.floor((Hyprland.activeWsId - 1) / BarConfig.workspaces.shown) * BarConfig.workspaces.shown
 
     implicitWidth: layout.implicitWidth
     implicitHeight: layout.implicitHeight
@@ -65,7 +65,7 @@ Item {
 
         onPressed: event => {
             const ws = layout.childAt(event.x, event.y).index + root.groupOffset + 1;
-            if (1 !== ws)
+            if (Hyprland.activeWsId !== ws)
                 Hyprland.dispatch(`workspace ${ws}`);
         }
     }

@@ -58,7 +58,7 @@ Item {
             ScreencopyView {
                 id: preview
 
-                captureSource: ToplevelManager.toplevels.values.find(t => t.title === Hyprland.activeClient?.title) ?? null
+                captureSource: NiriToplevelManager.findToplevelByNiriWindow(NiriToplevelManager.focusedWindow) ?? null
                 live: visible
 
                 constraintSize.width: BarConfig.sizes.windowPreviewSize

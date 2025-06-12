@@ -13,7 +13,7 @@ Singleton {
     property var workspaceData: []
     property int windowCount: 0
     
-    // Additional Niri state
+    // Additional Niri state for IPC functionality
     property var windows: []
     property var focusedWindow: null
     property var outputs: []
@@ -86,9 +86,9 @@ Singleton {
             let activeWs = 1;
             
             for (let ws of data) {
-                workspaceList.push(ws.idx);
+                workspaceList.push(ws.idx + 1); // Convert to 1-based
                 if (ws.is_focused) {
-                    activeWs = ws.idx;
+                    activeWs = ws.idx + 1;
                 }
             }
             
@@ -104,17 +104,33 @@ Singleton {
         }
     }
 
-    // Component initialization
+    // Initialize on component completion
     Component.onCompleted: {
         checkAvailability();
         updateWorkspaces();
         updateTimer.start();
     }
 
+    // Timer for periodic updates
+    Timer {
+        id: updateTimer
+        interval: 2000
+        repeat: true
+        onTriggered: {
+            updateWorkspaces();
+            if (available) {
+                getAllWindows();
+                getFocusedWindow();
+            }
+        }
+    }
+
+    // Process for workspace switching
     Process {
         id: switchProc
     }
 
+    // Process for querying workspaces
     Process {
         id: workspaceQueryProc
         stdout: SplitParser {
@@ -131,32 +147,7 @@ Singleton {
             }
         }
     }
-
-    Process {
-        id: queryProc
-        command: ["niri", "msg", "version"] // Simple command to test niri availability
-        running: true
-        stdout: SplitParser {
-            onRead: data => {
-                // console.log("Niri is available");
-                updateWorkspaces(); // Initial workspace update
-            }
-        }
-        stderr: SplitParser {
-            onRead: data => {
-                console.log("Niri commands may not be available");
-            }
-        }
-    }
-
-    Timer {
-        id: updateTimer
-        running: true
-        repeat: true
-        interval: 2000 // Update every 2 seconds for more responsive workspace switching
-        onTriggered: updateWorkspaces()
-    }
-
+    
     // Additional processes for IPC functionality
     Process {
         id: moveWindowProc

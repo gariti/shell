@@ -150,7 +150,6 @@ Singleton {
     }
 
     Timer {
-        id: updateTimer
         running: true
         repeat: true
         interval: 2000 // Update every 2 seconds for more responsive workspace switching

@@ -1,11 +1,36 @@
 #!/usr/bin/env fish
 
-# Caelestia shell IPC command script
-# This mimics the caelestia script functionality for shell interactions
+# Caelestia script - Niri edition
+# Main script for caelestia functionality adapted for Niri compositor
 
 set -l shell_path "/etc/nixos/caelestia-shell"
+set -l scripts_path "$shell_path/scripts"
 
-function show_help
+function show_main_help
+    echo 'Caelestia - Niri Edition'
+    echo
+    echo 'Usage: caelestia COMPONENT COMMAND [ ...args ]'
+    echo
+    echo 'Components:'
+    echo '  shell      - Shell IPC commands'
+    echo '  wallpaper  - Wallpaper management'
+    echo '  mpris      - Media player control'
+    echo '  notifs     - Notification management'
+    echo '  drawers    - UI panel control'
+    echo '  events     - Real-time event stream monitoring'
+    echo
+    echo 'Examples:'
+    echo '  caelestia shell help'
+    echo '  caelestia wallpaper random'
+    echo '  caelestia mpris playPause'
+    echo '  caelestia notifs toggle'
+    echo '  caelestia drawers toggle dashboard'
+    echo '  caelestia events start --daemon'
+    echo
+    echo 'Use "caelestia COMPONENT --help" for component-specific help'
+end
+
+function show_shell_help
     echo 'Usage: caelestia shell COMMAND [ ...args ]'
     echo
     echo 'Available commands:'
@@ -20,36 +45,63 @@ function show_help
     echo '  caelestia shell drawers toggle dashboard'
 end
 
-if test "$argv[1]" = "shell"
-    # If no subcommand, show help
-    if test -z "$argv[2]"
-        show_help
-        exit
-    end
-    
-    if test "$argv[2]" = "help"
-        # Show available IPC commands via quickshell
-        if qs list --all | grep -q "Config path: $shell_path/shell-niri.qml"
-            qs -p $shell_path/shell-niri.qml ipc show
-        else
-            echo "Shell not running. Available commands:"
-            show_help
+# Handle main components
+set -l component $argv[1]
+
+switch $component
+    case shell
+        # Handle shell subcommands
+        if test -z "$argv[2]"
+            show_shell_help
+            exit 0
         end
-        exit
-    end
-    
-    # Check if shell is running
-    if qs list --all | grep -q "Config path: $shell_path/shell-niri.qml"
-        # Forward IPC command to quickshell
-        qs -p $shell_path/shell-niri.qml ipc call $argv[2..]
-    else
-        echo "Error: Caelestia shell is not running"
-        echo "Start it with: systemctl --user start caelestia-shell.service"
+        
+        if test "$argv[2]" = "help"
+            # Show available IPC commands via quickshell
+            if qs list --all | grep -q "Config path: $shell_path/shell.qml"
+                qs -p $shell_path/shell.qml ipc show
+            else
+                echo "Shell not running. Available commands:"
+                show_shell_help
+            end
+            exit 0
+        end
+        
+        # Check if shell is running
+        if qs list --all | grep -q "Config path: $shell_path/shell.qml"
+            # Forward IPC command to quickshell
+            qs -p $shell_path/shell.qml ipc call $argv[2..]
+        else
+            echo "Error: Caelestia shell is not running"
+            echo "Start it with: systemctl --user start caelestia-shell.service"
+            exit 1
+        end
+        
+    case wallpaper
+        # Delegate to wallpaper script
+        fish "$scripts_path/wallpaper.fish" $argv[2..]
+        
+    case mpris
+        # Delegate to MPRIS script
+        fish "$scripts_path/mpris.fish" $argv[2..]
+        
+    case notifs
+        # Delegate to notifications script
+        fish "$scripts_path/notifs.fish" $argv[2..]
+        
+    case drawers
+        # Delegate to drawers script
+        fish "$scripts_path/drawers.fish" $argv[2..]
+        
+    case events
+        # Delegate to event stream script
+        fish "$scripts_path/niri-events.fish" $argv[2..]
+        
+    case -h --help ""
+        show_main_help
+        
+    case '*'
+        echo "Error: Unknown component '$component'"
+        echo "Use 'caelestia --help' for usage information"
         exit 1
-    end
-else
-    # For now, only support shell commands
-    echo "Error: Only 'shell' commands are supported in this implementation"
-    echo "Usage: caelestia shell COMMAND"
-    exit 1
 end
