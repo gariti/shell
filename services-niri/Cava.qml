@@ -1,6 +1,6 @@
 pragma Singleton
 
-import "root:/config"
+import "../config"
 import Quickshell
 import Quickshell.Io
 

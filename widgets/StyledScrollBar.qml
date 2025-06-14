@@ -1,5 +1,6 @@
-import "root:/services-niri"
-import "root:/config"
+import "../config"
+import "../services-niri"
+
 import QtQuick
 import QtQuick.Controls
 

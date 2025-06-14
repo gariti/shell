@@ -3,7 +3,8 @@ pragma ComponentBehavior: Bound
 import "../../widgets"
 import "../../services-niri"
 import "../../config"
-import "../bar"
+import "../bar" as BarModule
+import "." // Import components from current directory
 import Quickshell
 import Quickshell.Wayland
 // import Quickshell.Hyprland  // Disabled for Niri compatibility
@@ -48,8 +49,7 @@ Variants {
 
             Variants {
                 id: regions
-
-                model: panels.children
+                model: [panels.osd, panels.notifications, panels.session, panels.launcher, panels.dashboard, panels.popouts]
 
                 Region {
                     required property Item modelData
@@ -90,11 +90,11 @@ Variants {
                 id: background
 
                 anchors.fill: parent
-                visible: false
+                visible: true
 
-                Border {
-                    bar: bar
-                }
+                // Border {
+                //     bar: bar
+                // }
 
                 Backgrounds {
                     panels: panels
@@ -102,12 +102,14 @@ Variants {
                 }
             }
 
+            // MultiEffect with conservative settings to prevent system freezing
             MultiEffect {
                 anchors.fill: source
                 source: background
                 shadowEnabled: true
-                blurMax: 15
-                shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.7)
+                blurMax: 8  // Reduced from 15 to prevent performance issues
+                shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.5)  // Reduced opacity
+                blurEnabled: Colours.transparency.enabled  // Only enable if transparency is enabled
             }
 
             PersistentProperties {
@@ -127,17 +129,17 @@ Variants {
                 visibilities: visibilities
                 panels: panels
                 bar: bar
-
-                Panels {
-                    id: panels
-
-                    screen: scope.modelData
-                    visibilities: visibilities
-                    bar: bar
-                }
             }
 
-            Bar {
+            Panels {
+                id: panels
+
+                screen: scope.modelData
+                visibilities: visibilities
+                bar: bar
+            }
+
+            BarModule.Bar {
                 id: bar
 
                 screen: scope.modelData

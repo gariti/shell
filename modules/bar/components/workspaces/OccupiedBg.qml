@@ -16,6 +16,21 @@ Item {
     property list<var> pills: []
 
     onOccupiedChanged: {
+        // Early exit if occupiedBg is disabled
+        if (BarConfig && BarConfig.workspaces && BarConfig.workspaces.occupiedBg === false) {
+            return;
+        }
+        
+        if (!BarConfig || !BarConfig.workspaces || typeof BarConfig.workspaces.shown === 'undefined') {
+            console.warn("BarConfig.workspaces.shown is not available yet - skipping OccupiedBg update");
+            return;
+        }
+        
+        // Additional safety: only proceed if occupiedBg is enabled
+        if (!BarConfig.workspaces.occupiedBg) {
+            return;
+        }
+        
         let count = 0;
         const start = groupOffset;
         const end = start + BarConfig.workspaces.shown;
@@ -95,5 +110,16 @@ Item {
         id: pillComp
 
         Pill {}
+    }
+    
+    Component.onCompleted: {
+        // Log when this component loads (it shouldn't if occupiedBg is false)
+        console.warn("OccupiedBg component loaded - occupiedBg setting:", BarConfig?.workspaces?.occupiedBg);
+        
+        // If this component loaded but shouldn't have, disable it
+        if (BarConfig && BarConfig.workspaces && BarConfig.workspaces.occupiedBg === false) {
+            root.visible = false;
+            console.warn("OccupiedBg component disabled - occupiedBg is set to false");
+        }
     }
 }

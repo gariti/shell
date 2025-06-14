@@ -189,7 +189,7 @@ Singleton {
             return "speaker";
         if (icon.includes("phone"))
             return "smartphone";
-        return "bluetooth";
+        return "bluetooth_connected";
     }
 
     function getWeatherIcon(code: string): string {

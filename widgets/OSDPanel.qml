@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell.Io
 import "../widgets"
 import "../services-niri"
+import "../config"
 
 // Simple OSD Panel for Volume and Brightness Controls
 Item {

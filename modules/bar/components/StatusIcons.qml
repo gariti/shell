@@ -17,8 +17,18 @@ Item {
     readonly property Item battery: battery
 
     clip: true
-    implicitWidth: Math.max(network.implicitWidth, bluetooth.implicitWidth, devices.implicitWidth, battery.implicitWidth)
-    implicitHeight: network.implicitHeight + bluetooth.implicitHeight + bluetooth.anchors.topMargin + (repeater.count > 0 ? devices.implicitHeight + devices.anchors.topMargin : 0) + battery.implicitHeight + battery.anchors.topMargin
+    
+    // Set minimum dimensions to prevent tiny icon rendering warnings
+    implicitWidth: Math.max(
+        Math.max(network.implicitWidth, bluetooth.implicitWidth, devices.implicitWidth, battery.implicitWidth),
+        32  // Minimum panel width
+    )
+    implicitHeight: Math.max(
+        network.implicitHeight + bluetooth.implicitHeight + bluetooth.anchors.topMargin + 
+        (repeater.count > 0 ? devices.implicitHeight + devices.anchors.topMargin : 0) + 
+        battery.implicitHeight + battery.anchors.topMargin,
+        80  // Minimum panel height
+    )
 
     MaterialIcon {
         id: network

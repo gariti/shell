@@ -1,4 +1,6 @@
-import "root:/config"
+
+
+import "../config"
 
 StyledText {
     property real fill

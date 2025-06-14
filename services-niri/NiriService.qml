@@ -96,7 +96,7 @@ Singleton {
             workspaceData = data;
             activeWorkspace = activeWs;
             
-            // console.log("Updated workspaces:", workspaces, "Active:", activeWorkspace);
+            console.log("NiriService: Updated workspaces:", workspaces, "Active:", activeWorkspace, "WindowCount:", data.length);
         } catch (e) {
             console.warn("Failed to parse workspace data:", e);
             // Fallback to static workspaces
@@ -249,7 +249,7 @@ Singleton {
                 }
             }
         }
-        onExited: {
+        onExited: (exitCode) => {
             if (exitCode !== 0) {
                 root.available = false;
             }

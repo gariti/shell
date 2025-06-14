@@ -3,7 +3,7 @@ import "../../services-niri"
 import "../../config"
 import "popouts" as BarPopouts
 import "components"
-import "components/workspaces"
+// import "components/workspaces"  // Temporarily disabled to prevent initialization issues
 import Quickshell
 import QtQuick
 
@@ -15,7 +15,7 @@ Item {
 
     function checkPopout(y: real): void {
         // Niri compatibility: add null checks to prevent errors
-        if (!activeWindow || !statusIcons || !statusIconsInner || !tray) {
+        if (!activeWindow || !statusIcons || !tray) {
             popouts.hasCurrent = false;
             return;
         }
@@ -28,14 +28,14 @@ Item {
         const th = tray.implicitHeight;
         const trayItems = tray.items;
 
-        const n = statusIconsInner ? statusIconsInner.network : null;
-        const ny = (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (n ? n.y : 0) - spacing / 2;
+        const n = statusIcons ? statusIcons.network : null;
+        const ny = (statusIcons ? statusIcons.y : 0) + (n ? n.y : 0) - spacing / 2;
 
-        const bls = (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (statusIconsInner ? statusIconsInner.bs : 0) - spacing / 2;
-        const ble = (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (statusIconsInner ? statusIconsInner.be : 0) + spacing / 2;
+        const bls = (statusIcons ? statusIcons.y : 0) + (statusIcons ? statusIcons.bs : 0) - spacing / 2;
+        const ble = (statusIcons ? statusIcons.y : 0) + (statusIcons ? statusIcons.be : 0) + spacing / 2;
 
-        const b = statusIconsInner ? statusIconsInner.battery : null;
-        const by = (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (b ? b.y : 0) - spacing / 2;
+        const b = statusIcons ? statusIcons.battery : null;
+        const by = (statusIcons ? statusIcons.y : 0) + (b ? b.y : 0) - spacing / 2;
 
         if (aw && y >= awy && y <= awy + aw.implicitHeight) {
             popouts.currentName = "activewindow";
@@ -54,15 +54,15 @@ Item {
             }
         } else if (n && y >= ny && y <= ny + n.implicitHeight + spacing) {
             popouts.currentName = "network";
-            popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (n ? n.y : 0) + (n ? n.implicitHeight : 0) / 2);
+            popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (n ? n.y : 0) + (n ? n.implicitHeight : 0) / 2);
             if (popouts) popouts.hasCurrent = true;
         } else if (y >= bls && y <= ble) {
             popouts.currentName = "bluetooth";
-            popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (statusIconsInner ? statusIconsInner.bs : 0) + ((statusIconsInner && statusIconsInner.be && statusIconsInner.bs) ? (statusIconsInner.be - statusIconsInner.bs) : 0) / 2);
+            popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (statusIcons ? statusIcons.bs : 0) + ((statusIcons && statusIcons.be && statusIcons.bs) ? (statusIcons.be - statusIcons.bs) : 0) / 2);
             if (popouts) popouts.hasCurrent = true;
         } else if (b && y >= by && y <= by + b.implicitHeight + spacing) {
             popouts.currentName = "battery";
-            popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (statusIconsInner ? statusIconsInner.y : 0) + (b ? b.y : 0) + (b ? b.implicitHeight : 0) / 2);
+            popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (b ? b.y : 0) + (b ? b.implicitHeight : 0) / 2);
             if (popouts) popouts.hasCurrent = true;
         } else {
             if (popouts) popouts.hasCurrent = false;
@@ -84,7 +84,7 @@ Item {
 
         implicitWidth: Math.max(
             osIcon.implicitWidth || 0,
-            workspaces.implicitWidth || 0,
+            workspaces.implicitWidth || 0,  // Re-enabled workspaces
             activeWindow.implicitWidth || 0,
             tray.implicitWidth || 0,
             clock.implicitWidth || 0,
@@ -127,10 +127,13 @@ Item {
                 }
             }
 
-            Workspaces {
+            // Use a proper material icon instead of empty Item
+            MaterialIcon {
                 id: workspacesInner
-
                 anchors.centerIn: parent
+                text: "view_quilt"
+                color: Colours.palette.m3onSurface
+                font.pointSize: Appearance.font.size.smaller
             }
         }
 
@@ -138,7 +141,7 @@ Item {
             id: activeWindow
 
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: workspaces.bottom
+            anchors.top: workspaces.bottom  // Changed back to workspaces.bottom
             anchors.bottom: tray.top
             anchors.margins: Appearance.spacing.large
 
@@ -161,7 +164,7 @@ Item {
             anchors.bottomMargin: Appearance.spacing.normal
         }
 
-        StyledRect {
+        StatusIcons {
             id: statusIcons
 
             anchors.left: parent.left
@@ -169,16 +172,7 @@ Item {
             anchors.bottom: power.top
             anchors.bottomMargin: Appearance.spacing.normal
 
-            radius: Appearance.rounding.full
-            color: Colours.palette.m3surfaceContainer
-
-            implicitHeight: statusIconsInner.implicitHeight + Appearance.padding.normal * 2
-
-            StatusIcons {
-                id: statusIconsInner
-
-                anchors.centerIn: parent
-            }
+            colour: Colours.palette.m3secondary
         }
 
         Power {

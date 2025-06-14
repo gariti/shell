@@ -1,8 +1,9 @@
 import "../../widgets"
 import "../../services-niri"
-import "../../config"
+// import "../../config"  // Temporarily disabled
 import Quickshell
 import Quickshell.Wayland
+import QtQuick
 
 Variants {
     model: Quickshell.screens
@@ -23,6 +24,10 @@ Variants {
         anchors.left: true
         anchors.right: true
 
-        Wallpaper {}
+        // Wallpaper {}  // Temporarily disabled
+        Rectangle {
+            anchors.fill: parent
+            color: "#141318"  // Caelestia background color
+        }
     }
 }

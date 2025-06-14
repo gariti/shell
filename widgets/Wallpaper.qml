@@ -1,4 +1,5 @@
-import "root:/services-niri"
+import "../config"
+import "../services-niri"
 import Quickshell
 import QtQuick
 

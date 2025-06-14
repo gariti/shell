@@ -23,11 +23,28 @@ Item {
 
             spacing: Appearance.spacing.normal
 
-            IconImage {
-                id: icon
-
+            Item {
+                id: iconContainer
                 implicitSize: details.implicitHeight
-                source: Icons.getAppIcon(Hyprland.activeClient?.wmClass ?? "", "image-missing")
+
+                IconImage {
+                    id: icon
+                    visible: source !== ""
+                    source: {
+                        const wmClass = Hyprland.activeClient?.wmClass ?? "";
+                        return wmClass ? Icons.getAppIcon(wmClass, "") : "";
+                    }
+                    implicitSize: parent.width
+                    anchors.centerIn: parent
+                }
+
+                MaterialIcon {
+                    visible: !icon.visible
+                    text: "apps"
+                    color: Colours.palette.m3onSurface
+                    font.pointSize: Math.max(parent.width * 0.6, 8)
+                    anchors.centerIn: parent
+                }
             }
 
             Column {

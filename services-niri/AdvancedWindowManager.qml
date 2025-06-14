@@ -12,6 +12,7 @@ Singleton {
     property var focusedWindow: null
     property var workspaces: []
     property var outputs: []
+    property var workspaceWindows: ({})  // Windows grouped by workspace ID
     
     // Advanced window state tracking
     property var windowHistory: []  // Focus history tracking
@@ -207,6 +208,11 @@ Singleton {
     }
     
     function updateWorkspaceAssignments() {
+        if (!windows || !Array.isArray(windows)) {
+            console.warn("AdvancedWindowManager: Windows array not ready");
+            return;
+        }
+        
         let assignments = {};
         for (const window of windows) {
             if (window.workspace_id) {
@@ -253,7 +259,7 @@ Singleton {
                     }
                     
                     // Update workspace windows mapping
-                    if (client.workspace) {
+                    if (client.workspace && workspaceWindows) {
                         if (!workspaceWindows[client.workspace]) {
                             workspaceWindows[client.workspace] = [];
                         }
@@ -370,9 +376,9 @@ Singleton {
     // Periodic refresh timer (fallback if event stream fails)
     Timer {
         id: refreshTimer
-        interval: 3000
+        interval: 5000  // Increased interval to reduce load
         repeat: true
-        running: !eventStreamActive
+        running: false  // Temporarily disabled to prevent conflicts
         onTriggered: {
             refreshAll();
             refreshFocusedWindow();
@@ -382,10 +388,24 @@ Singleton {
     // Initialization
     Component.onCompleted: {
         console.log("AdvancedWindowManager: Initializing");
+        
+        // Initialize properties to prevent undefined errors
+        workspaceWindows = {};
+        windowHistory = [];
+        floatingWindows = [];
+        fullscreenWindows = [];
+        workspaceAssignments = {};
+        urgentWindows = [];
+        
+        // Stagger the initialization to prevent overwhelming the system
         refreshAll();
-        refreshFocusedWindow();
-        // Start event stream for real-time updates
-        Qt.callLater(startEventStream);
+        
+        // Delay starting event stream and focused window refresh
+        Qt.callLater(() => {
+            refreshFocusedWindow();
+            // Start event stream for real-time updates (delayed further)
+            Qt.createQmlObject('import QtQuick; Timer { interval: 2000; running: true; onTriggered: root.startEventStream(); }', root);
+        });
     }
     
     Component.onDestruction: {

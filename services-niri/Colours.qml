@@ -1,7 +1,6 @@
 pragma Singleton
 
-import "root:/config"
-import "root:/utils"
+import "../utils"
 import Quickshell
 import Quickshell.Io
 import QtQuick
@@ -20,8 +19,8 @@ Singleton {
     readonly property Transparency transparency: Transparency {}
 
     function alpha(c: color, layer: bool): color {
-        if (!transparency.enabled)
-            return c;
+        if (!c || !transparency.enabled)
+            return c || "transparent";
         c = Qt.rgba(c.r, c.g, c.b, layer ? transparency.layers : transparency.base);
         if (layer)
             c.hsvValue = Math.max(0, Math.min(1, c.hslLightness + (light ? -0.2 : 0.2))); // TODO: edit based on colours (hue or smth)
@@ -63,20 +62,40 @@ Singleton {
         path: `${Paths.state}/scheme/current-mode.txt`
         watchChanges: true
         onFileChanged: reload()
-        onLoaded: root.light = text() === "light"
+        onLoaded: {
+            try {
+                root.light = text() === "light"
+            } catch (e) {
+                console.warn("Failed to load theme mode, using dark theme")
+                root.light = false
+            }
+        }
     }
 
     FileView {
         path: `${Paths.state}/scheme/current.txt`
         watchChanges: true
         onFileChanged: reload()
-        onLoaded: root.load(text(), false)
+        onLoaded: {
+            try {
+                root.load(text(), false)
+            } catch (e) {
+                console.warn("Failed to load color scheme, using defaults")
+            }
+        }
+    }
+
+    // Initialize with default theme on startup
+    Component.onCompleted: {
+        if (!light) {
+            light = false // Default to dark theme
+        }
     }
 
     component Transparency: QtObject {
         readonly property bool enabled: true
-        readonly property real base: 0.78
-        readonly property real layers: 0.58
+        readonly property real base: 0.95  // Slightly more opaque for better visibility
+        readonly property real layers: 0.85  // Slightly more opaque for better visibility
     }
 
     component Colours: QtObject {

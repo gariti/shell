@@ -27,7 +27,7 @@ end
 
 function get_shell_config_path
     # Try to find the running shell configuration
-    set -l shell_configs "/etc/nixos/caelestia-shell/shell.qml" "/etc/nixos/caelestia-shell/shell-niri.qml"
+    set -l shell_configs "/etc/nixos/caelestia-shell/shell-enhanced.qml" "/etc/nixos/caelestia-shell/shell.qml" "/etc/nixos/caelestia-shell/shell-simple.qml"
     
     for config in $shell_configs
         if qs list --all 2>/dev/null | grep -q "Config path: $config"
@@ -37,7 +37,7 @@ function get_shell_config_path
     end
     
     # Fallback to default
-    echo "/etc/nixos/caelestia-shell/shell.qml"
+    echo "/etc/nixos/caelestia-shell/shell-enhanced.qml"
 end
 
 function call_shell_ipc
@@ -65,12 +65,10 @@ function toggle_drawer
         return 1
     end
     
-    # For now, just show a message since IPC integration needs shell support
     echo "Toggling drawer: $drawer_name"
-    echo "Note: Full IPC integration requires shell-side implementation"
     
-    # Try to call shell IPC if available
-    call_shell_ipc "toggle" "visibilities.$drawer_name"
+    # Use proper IPC call to toggle drawer
+    call_shell_ipc "drawers" "toggle" "$drawer_name"
 end
 
 function list_drawers
@@ -89,10 +87,10 @@ switch $command
         toggle_drawer $argv[2]
     case show
         echo "Showing drawer: $argv[2]"
-        call_shell_ipc "set" "visibilities.$argv[2]" "true"
+        call_shell_ipc "drawers" "toggle" "$argv[2]"  # For now, use toggle since we don't have direct show/hide
     case hide
         echo "Hiding drawer: $argv[2]"
-        call_shell_ipc "set" "visibilities.$argv[2]" "false"
+        call_shell_ipc "drawers" "toggle" "$argv[2]"  # For now, use toggle since we don't have direct show/hide
     case list
         list_drawers
     case -h --help ""

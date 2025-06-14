@@ -1,4 +1,5 @@
-import "root:/config"
+
+import "../config"
 import Quickshell.Widgets
 import QtQuick
 

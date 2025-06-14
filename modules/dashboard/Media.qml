@@ -417,11 +417,12 @@ Item {
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     spacing: Appearance.spacing.small
 
-                                    IconImage {
+                                    MaterialIcon {
                                         id: playerIcon
 
-                                        source: Icons.getAppIcon(player.modelData.identity, "image-missing")
-                                        implicitSize: Math.round(identity.implicitHeight * 0.9)
+                                        text: "music_note"
+                                        color: Colours.palette.m3onSecondaryContainer
+                                        font.pointSize: Math.max(Math.round(identity.implicitHeight * 0.6), 8)
                                     }
 
                                     StyledText {
@@ -474,11 +475,12 @@ Item {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 spacing: Appearance.spacing.small
 
-                                IconImage {
+                                MaterialIcon {
                                     id: currentIcon
 
-                                    source: Icons.getAppIcon(Players.active?.identity ?? "", "multimedia-player")
-                                    implicitSize: Math.round(currentIdentity.implicitHeight * 0.9)
+                                    text: "music_note"
+                                    color: Colours.palette.m3onSecondaryContainer
+                                    font.pointSize: Math.max(Math.round(currentIdentity.implicitHeight * 0.6), 8)
                                 }
 
                                 StyledText {
@@ -545,7 +547,7 @@ Item {
 
             playing: root.shouldUpdate && (Players.active?.isPlaying ?? false)
             speed: BeatDetector.bpm / 300
-            source: "../../assets/bongocat.gif"
+            source: "root:/assets/bongocat.gif"
             asynchronous: true
             fillMode: AnimatedImage.PreserveAspectFit
         }

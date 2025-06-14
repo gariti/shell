@@ -19,6 +19,18 @@ Singleton {
         }
     }
 
+    function toggleMute(): void {
+        if (sink?.ready && sink?.audio) {
+            sink.audio.muted = !sink.audio.muted;
+        }
+    }
+
+    function setMuted(muted: bool): void {
+        if (sink?.ready && sink?.audio) {
+            sink.audio.muted = muted;
+        }
+    }
+
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink, Pipewire.defaultAudioSource]
     }

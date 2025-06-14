@@ -35,11 +35,11 @@ Singleton {
     property point cursorPos: Qt.point(0, 0)
     
     // Enhanced properties using AdvancedWindowManager
-    property var floatingWindows: advancedManager.floatingWindows
-    property var fullscreenWindows: advancedManager.fullscreenWindows
-    property var urgentWindows: advancedManager.urgentWindows
-    property var focusHistory: advancedManager.focusHistory
-    property var workspaceWindows: advancedManager.workspaceWindows
+    property var floatingWindows: advancedManager ? advancedManager.floatingWindows : []
+    property var fullscreenWindows: advancedManager ? advancedManager.fullscreenWindows : []
+    property var urgentWindows: advancedManager ? advancedManager.urgentWindows : []
+    property var focusHistory: advancedManager ? advancedManager.focusHistory : []
+    property var workspaceWindows: advancedManager ? advancedManager.workspaceWindows : {}
     
     // Workspace occupancy tracking for compatibility
     property var occupied: ({})
@@ -246,7 +246,8 @@ Singleton {
     }
     
     function getWindowsInWorkspace(workspaceId) {
-        return advancedManager.workspaceWindows[workspaceId] || [];
+        return (advancedManager && advancedManager.workspaceWindows) ? 
+               (advancedManager.workspaceWindows[workspaceId] || []) : [];
     }
     
     function toggleFloating(windowId) {
@@ -299,27 +300,31 @@ Singleton {
         // Initial load
         reload();
         
-        // Connect to AdvancedWindowManager signals for real-time updates
-        advancedManager.windowStateChanged.connect(function(windowId, state) {
-            // Update corresponding client in our clients list
-            for (let client of clients) {
-                if (client.windowId === windowId) {
-                    client.floating = state.floating;
-                    client.fullscreen = state.fullscreen;
-                    client.urgent = state.urgent;
-                    break;
+        // Connect to AdvancedWindowManager signals for real-time updates (only if available)
+        if (advancedManager && advancedManager.windowStateChanged) {
+            advancedManager.windowStateChanged.connect(function(windowId, state) {
+                // Update corresponding client in our clients list
+                for (let client of clients) {
+                    if (client.windowId === windowId) {
+                        client.floating = state.floating;
+                        client.fullscreen = state.fullscreen;
+                        client.urgent = state.urgent;
+                        break;
+                    }
                 }
-            }
-        });
+            });
+        }
         
-        advancedManager.focusChanged.connect(function(windowId) {
-            // Update activeClient
-            for (let client of clients) {
-                if (client.windowId === windowId) {
-                    activeClient = client;
-                    break;
+        if (advancedManager && advancedManager.focusChanged) {
+            advancedManager.focusChanged.connect(function(windowId) {
+                // Update activeClient
+                for (let client of clients) {
+                    if (client.windowId === windowId) {
+                        activeClient = client;
+                        break;
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }

@@ -1,0 +1,11 @@
+module popouts
+
+ActiveWindow 1.0 ActiveWindow.qml
+Background 1.0 Background.qml
+Battery 1.0 Battery.qml
+Bluetooth 1.0 Bluetooth.qml
+Content 1.0 Content.qml
+Network 1.0 Network.qml
+TrayMenu 1.0 TrayMenu.qml
+Volume 1.0 Volume.qml
+Wrapper 1.0 Wrapper.qml

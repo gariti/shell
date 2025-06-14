@@ -419,19 +419,7 @@ Item {
     // Niri doesn't have special workspaces, map to regular workspace switching
     console.log("Special workspaces not supported in Niri, ignoring command:", request);
 }
-```
 
-### **3. Active Window Integration**
-**Original:** Full window management with previews
-```qml
-// caelestia-shell-original/modules/bar/popouts/ActiveWindow.qml
-ScreencopyView {
-    captureSource: ToplevelManager.toplevels.values.find(t => t.title === Hyprland.activeClient?.title) ?? null
-    live: visible
-}
-```
-
-**Current:** Simplified window information (no live previews)
 
 ### **4. Real-time Window Previews**
 - **ScreencopyView** components for live window thumbnails
@@ -507,3 +495,9 @@ onWheel: event => {
 8. **Window Geometry Information** (position, size, floating state)
 
 These features were either **intentionally disabled** for Niri compatibility or **replaced with simplified alternatives** that work within Niri's architectural constraints. The core functionality and visual design were successfully preserved while adapting to Niri's different window management paradigm.
+
+
+
+
+## 📋 **Crash Logs**
+/home/garrett/.cache/quickshell/crashes/

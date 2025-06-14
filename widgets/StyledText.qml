@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
-import "root:/services-niri"
-import "root:/config"
+import "../config"
+import "../services-niri"
 import QtQuick
 
 Text {

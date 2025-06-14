@@ -8,6 +8,7 @@ singleton Cava Cava.qml
 singleton Colours Colours.qml
 singleton Hyprland Hyprland.qml
 singleton Network Network.qml
+singleton NiriEventManager NiriEventManager.qml
 singleton NiriService NiriService.qml
 singleton NiriToplevelManager NiriToplevelManager.qml
 singleton Notifs Notifs.qml

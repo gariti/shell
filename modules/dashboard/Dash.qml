@@ -3,6 +3,7 @@ import "../../services-niri"
 import "../../config"
 import "dash"
 import QtQuick.Layouts
+import QtQuick.Controls
 
 GridLayout {
     id: root

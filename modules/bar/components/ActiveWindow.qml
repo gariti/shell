@@ -57,7 +57,7 @@ Item {
             id: icon
 
             animate: true
-            text: Icons.getAppCategoryIcon(Hyprland.activeClient?.wmClass, "desktop_windows")
+            text: Icons.getAppCategoryIcon(Hyprland.activeClient?.wmClass, "apps")
             color: root.colour
 
             anchors.horizontalCenter: parent.horizontalCenter

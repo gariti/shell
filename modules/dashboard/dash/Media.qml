@@ -222,7 +222,7 @@ Item {
 
         playing: root.shouldUpdate && (Players.active?.isPlaying ?? false)
         speed: BeatDetector.bpm / 300
-        source: "../../assets/bongocat.gif"
+        source: "root:/assets/bongocat.gif"
         asynchronous: true
         fillMode: AnimatedImage.PreserveAspectFit
     }

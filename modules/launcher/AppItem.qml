@@ -31,21 +31,36 @@ Item {
         anchors.rightMargin: Appearance.padding.larger
         anchors.margins: Appearance.padding.smaller
 
-        IconImage {
-            id: icon
+        Item {
+            id: iconContainer
 
-            source: Quickshell.iconPath(root.modelData?.icon, "image-missing")
-            implicitSize: parent.height * 0.8
-
+            implicitWidth: parent.height * 0.8
+            implicitHeight: parent.height * 0.8
             anchors.verticalCenter: parent.verticalCenter
+
+            IconImage {
+                id: icon
+                visible: source !== ""
+                source: root.modelData?.icon ? Quickshell.iconPath(root.modelData.icon, "") : ""
+                implicitSize: parent.width
+                anchors.centerIn: parent
+            }
+
+            MaterialIcon {
+                visible: !icon.visible
+                text: "apps"
+                color: Colours.palette.m3onSurface
+                font.pointSize: Math.max(parent.width * 0.6, 8)
+                anchors.centerIn: parent
+            }
         }
 
         Item {
-            anchors.left: icon.right
+            anchors.left: iconContainer.right
             anchors.leftMargin: Appearance.spacing.normal
-            anchors.verticalCenter: icon.verticalCenter
+            anchors.verticalCenter: iconContainer.verticalCenter
 
-            implicitWidth: parent.width - icon.width
+            implicitWidth: parent.width - iconContainer.width
             implicitHeight: name.implicitHeight + comment.implicitHeight
 
             StyledText {

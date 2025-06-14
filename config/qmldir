@@ -1,0 +1,9 @@
+singleton ConfigManager ConfigManager.qml
+singleton SessionConfig SessionConfig.qml
+singleton DashboardConfig DashboardConfig.qml
+singleton LauncherConfig LauncherConfig.qml
+singleton NotifsConfig NotifsConfig.qml
+singleton OsdConfig OsdConfig.qml
+singleton Appearance Appearance.qml
+singleton BorderConfig BorderConfig.qml
+BarConfig 1.0 BarConfig.qml

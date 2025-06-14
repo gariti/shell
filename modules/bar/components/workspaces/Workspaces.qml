@@ -34,7 +34,7 @@ Item {
     }
 
     Loader {
-        active: BarConfig.workspaces.occupiedBg
+        active: BarConfig && BarConfig.workspaces && BarConfig.workspaces.occupiedBg
         asynchronous: true
 
         z: -1

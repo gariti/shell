@@ -1,8 +1,7 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
-import "root:/config"
+import "../widgets"
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Notifications
@@ -13,6 +12,7 @@ Singleton {
 
     readonly property list<Notif> list: []
     readonly property list<Notif> popups: list.filter(n => n.popup)
+    readonly property int count: list.length // Add count property for the UI
 
     NotificationServer {
         id: server
@@ -24,7 +24,17 @@ Singleton {
         bodyMarkupSupported: true
         imageSupported: true
 
+        // Only try to register if no other notification server is running
+        Component.onCompleted: {
+            if (!server.running) {
+                console.log("Notifs: No existing notification server found, starting our own")
+            } else {
+                console.log("Notifs: Another notification server is already running, using fallback mode")
+            }
+        }
+
         onNotification: notif => {
+            console.log("Notifs: Received notification:", notif.summary)
             notif.tracked = true;
 
             root.list.push(notifComp.createObject(root, {

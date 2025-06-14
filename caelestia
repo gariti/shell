@@ -17,6 +17,7 @@ function show_main_help
     echo '  mpris      - Media player control'
     echo '  notifs     - Notification management'
     echo '  drawers    - UI panel control'
+    echo '  session    - Session management ✅ NEW'
     echo '  events     - Real-time event stream monitoring'
     echo
     echo 'Examples:'
@@ -24,7 +25,8 @@ function show_main_help
     echo '  caelestia wallpaper random'
     echo '  caelestia mpris playPause'
     echo '  caelestia notifs toggle'
-    echo '  caelestia drawers toggle dashboard'
+    echo '  caelestia drawers toggle session'
+    echo '  caelestia session menu'
     echo '  caelestia events start --daemon'
     echo
     echo 'Use "caelestia COMPONENT --help" for component-specific help'
@@ -58,8 +60,8 @@ switch $component
         
         if test "$argv[2]" = "help"
             # Show available IPC commands via quickshell
-            if qs list --all | grep -q "Config path: $shell_path/shell.qml"
-                qs -p $shell_path/shell.qml ipc show
+            if qs list --all | grep -q "Config path: $shell_path/shell-enhanced.qml"
+                qs -p $shell_path/shell-enhanced.qml ipc show
             else
                 echo "Shell not running. Available commands:"
                 show_shell_help
@@ -68,9 +70,9 @@ switch $component
         end
         
         # Check if shell is running
-        if qs list --all | grep -q "Config path: $shell_path/shell.qml"
+        if qs list --all | grep -q "Config path: $shell_path/shell-enhanced.qml"
             # Forward IPC command to quickshell
-            qs -p $shell_path/shell.qml ipc call $argv[2..]
+            qs -p $shell_path/shell-enhanced.qml ipc call $argv[2..]
         else
             echo "Error: Caelestia shell is not running"
             echo "Start it with: systemctl --user start caelestia-shell.service"
@@ -92,6 +94,10 @@ switch $component
     case drawers
         # Delegate to drawers script
         fish "$scripts_path/drawers.fish" $argv[2..]
+        
+    case session
+        # Delegate to session script
+        fish "$scripts_path/session.fish" $argv[2..]
         
     case events
         # Delegate to event stream script

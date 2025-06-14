@@ -1,6 +1,7 @@
-import "root:/widgets"
-import "root:/services-niri"
-import "root:/config"
+import "."
+import "../config"
+import "../services-niri"
+
 import QtQuick
 
 StyledRect {

@@ -3,6 +3,11 @@ import "../../../services-niri"
 import "../../../config"
 import Quickshell
 
+import "../../../widgets"
+import "../../../services-niri"
+import "../../../config"
+import Quickshell
+
 MaterialIcon {
     text: "power_settings_new"
     color: Colours.palette.m3error
