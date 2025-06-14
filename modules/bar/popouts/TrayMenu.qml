@@ -125,12 +125,18 @@ StackView {
 
                             anchors.left: parent.left
 
-                            active: item.modelData.icon !== ""
+                            active: item.modelData.icon !== "" && !shouldFilterIcon(item.modelData.icon)
                             asynchronous: true
 
-                            sourceComponent: IconImage {
-                                implicitSize: label.implicitHeight
+                            function shouldFilterIcon(iconSource) {
+                                return iconSource.includes("preferences-system-network") ||
+                                       iconSource.includes("network-manager") ||
+                                       iconSource.includes("nm-") ||
+                                       iconSource === "";
+                            }
 
+                            sourceComponent: IconImage {
+                                implicitSize: Math.max(label.implicitHeight, 16) // Ensure minimum 16px size
                                 source: item.modelData.icon
                             }
                         }

@@ -39,6 +39,11 @@ Item {
         }
 
         Popout {
+            name: "bluetooth"
+            source: "Bluetooth.qml"
+        }
+
+        Popout {
             name: "battery"
             source: "Battery.qml"
         }

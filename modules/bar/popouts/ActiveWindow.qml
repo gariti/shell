@@ -1,5 +1,14 @@
 import "root:/widgets"
-import "root:/services-niri"
+import                IconImage {
+                    id: icon
+                    visible: source !== ""
+                    source: {
+                        const wmClass = Hyprland.activeClient?.wmClass ?? "";
+                        return wmClass ? Icons.getAppIcon(wmClass, "") : "";
+                    }
+                    implicitSize: iconContainer.implicitSize
+                    anchors.centerIn: parent
+                }rvices-niri"
 import "root:/utils"
 import "root:/config"
 import Quickshell.Widgets

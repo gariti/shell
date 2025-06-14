@@ -13,19 +13,18 @@ Item {
 
     readonly property Item network: network
     readonly property real bs: bluetooth.y
-    readonly property real be: repeater.count > 0 ? devices.y + devices.implicitHeight : bluetooth.y + bluetooth.implicitHeight
+    readonly property real be: bluetooth.y + bluetooth.implicitHeight
     readonly property Item battery: battery
 
     clip: true
     
     // Set minimum dimensions to prevent tiny icon rendering warnings
     implicitWidth: Math.max(
-        Math.max(network.implicitWidth, bluetooth.implicitWidth, devices.implicitWidth, battery.implicitWidth),
+        Math.max(network.implicitWidth, bluetooth.implicitWidth, battery.implicitWidth),
         32  // Minimum panel width
     )
     implicitHeight: Math.max(
         network.implicitHeight + bluetooth.implicitHeight + bluetooth.anchors.topMargin + 
-        (repeater.count > 0 ? devices.implicitHeight + devices.anchors.topMargin : 0) + 
         battery.implicitHeight + battery.anchors.topMargin,
         80  // Minimum panel height
     )
@@ -48,39 +47,27 @@ Item {
         anchors.topMargin: Appearance.spacing.small
 
         animate: true
-        text: Bluetooth.powered ? "bluetooth" : "bluetooth_disabled"
+        text: {
+            if (!Bluetooth.powered) return "bluetooth_disabled";
+            const connectedDevices = Bluetooth.devices.filter(d => d.connected);
+            if (connectedDevices.length === 0) return "bluetooth";
+            if (connectedDevices.length === 1) return Icons.getBluetoothIcon(connectedDevices[0].icon);
+            return "bluetooth_connected"; // Multiple devices connected
+        }
         color: root.colour
     }
 
-    Column {
+    // Remove the separate devices column to prevent duplicate icons
+    Item {
         id: devices
-
-        anchors.horizontalCenter: bluetooth.horizontalCenter
-        anchors.top: bluetooth.bottom
-        anchors.topMargin: Appearance.spacing.small
-
-        Repeater {
-            id: repeater
-
-            model: ScriptModel {
-                values: Bluetooth.devices.filter(d => d.connected)
-            }
-
-            MaterialIcon {
-                required property Bluetooth.Device modelData
-
-                animate: true
-                text: Icons.getBluetoothIcon(modelData.icon)
-                color: root.colour
-            }
-        }
+        // Empty item to maintain layout references but not show duplicate icons
     }
 
     MaterialIcon {
         id: battery
 
-        anchors.horizontalCenter: devices.horizontalCenter
-        anchors.top: repeater.count > 0 ? devices.bottom : bluetooth.bottom
+        anchors.horizontalCenter: bluetooth.horizontalCenter
+        anchors.top: bluetooth.bottom
         anchors.topMargin: Appearance.spacing.small
 
         animate: true
