@@ -30,6 +30,12 @@ Item {
 
         Popout {
             name: "activewindow"
+            source: "PortalActiveWindow.qml"  // Use portal-based implementation
+        }
+        
+        // Keep the old implementation available as fallback
+        Popout {
+            name: "activewindow-legacy"
             source: "ActiveWindow.qml"
         }
 

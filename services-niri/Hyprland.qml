@@ -170,8 +170,10 @@ Singleton {
                     
                     // If we found a focused window from the list, use it
                     if (foundActiveClient) {
+                        console.log("Hyprland: Found active client from list:", foundActiveClient.title);
                         root.activeClient = foundActiveClient;
                     } else {
+                        console.log("Hyprland: No focused window in list, querying separately");
                         // Otherwise query the focused window separately
                         focusedWindowProc.running = true;
                     }
@@ -201,8 +203,10 @@ Singleton {
                         // Find the client with this window ID
                         const client = root.clients.find(c => c.windowId === focusedWin.id);
                         if (client) {
+                            console.log("Hyprland: Found focused window client:", client.title);
                             root.activeClient = client;
                         } else {
+                            console.log("Hyprland: Creating temporary client for focused window:", focusedWin.title);
                             // Create a temporary client if not found in the list
                             const tempClient = clientComponent.createObject(root, {
                                 workspace: focusedWin.workspace_id,

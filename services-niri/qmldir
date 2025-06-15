@@ -13,6 +13,7 @@ singleton NiriService NiriService.qml
 singleton NiriToplevelManager NiriToplevelManager.qml
 singleton Notifs Notifs.qml
 singleton Players Players.qml
+singleton PortalScreenCapture PortalScreenCapture.qml
 singleton SystemUsage SystemUsage.qml
 singleton Thumbnailer Thumbnailer.qml
 singleton Time Time.qml
