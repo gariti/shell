@@ -9,8 +9,6 @@ Item {
     property string source: ""
     property real implicitSize: 16
     property alias asynchronous: iconImage.asynchronous
-    property int fillMode: Image.PreserveAspectFit
-    property bool cache: true
 
     readonly property bool hasIcon: iconImage.status === Image.Ready
 
@@ -22,6 +20,8 @@ Item {
             "preferences-system-network",
             "network-manager",
             "nm-",
+            "bluetooth",
+            "blueman", 
             "image-missing",
             ""
         ];
@@ -46,12 +46,10 @@ Item {
         }
         
         asynchronous: true
-        cache: root.cache
-        fillMode: root.fillMode
         
         // Ensure minimum size to prevent tiny icon warnings
-        implicitWidth: Math.max(root.implicitSize, 16)
-        implicitHeight: Math.max(root.implicitSize, 16)
+        implicitWidth: Math.max(root.implicitSize, 32)
+        implicitHeight: Math.max(root.implicitSize, 32)
         
         onStatusChanged: {
             if (status === Image.Error) {
@@ -71,6 +69,7 @@ Item {
         
         function shouldShowFallback() {
             return String(root.source).includes("network") || 
+                   String(root.source).includes("bluetooth") ||
                    String(root.source).includes("preferences-system");
         }
         
@@ -78,6 +77,9 @@ Item {
             const src = String(root.source);
             if (src.includes("network") || src.includes("preferences-system-network")) {
                 return "wifi";
+            }
+            if (src.includes("bluetooth") || src.includes("blueman")) {
+                return "bluetooth";
             }
             return "settings";
         }

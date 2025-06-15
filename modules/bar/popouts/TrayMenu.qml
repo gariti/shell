@@ -132,11 +132,17 @@ StackView {
                                 return iconSource.includes("preferences-system-network") ||
                                        iconSource.includes("network-manager") ||
                                        iconSource.includes("nm-") ||
+                                       iconSource.includes("bluetooth") ||
+                                       iconSource.includes("blueman") ||
+                                       iconSource.includes("bluetoothctl") ||
+                                       iconSource.includes("bluetooth-symbolic") ||
+                                       iconSource.includes("bluetooth-active") ||
+                                       iconSource.includes("bluetooth-disabled") ||
                                        iconSource === "";
                             }
 
                             sourceComponent: IconImage {
-                                implicitSize: Math.max(label.implicitHeight, 16) // Ensure minimum 16px size
+                                implicitSize: Math.max(label.implicitHeight, 32) // Ensure minimum 32px size to prevent warnings
                                 source: item.modelData.icon
                             }
                         }

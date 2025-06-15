@@ -31,9 +31,63 @@ MouseArea {
     }
 
     function inTopPanel(panel: Item, x: real, y: real): bool {
+        // Prevent activation when mouse is at the very top edge (y < 10)
+        if (y < 10) return false;
+        
         const panelX = bar.implicitWidth + panel.x;
-        return y < BorderConfig.thickness + panel.y + panel.height && x >= panelX - BorderConfig.rounding && x <= panelX + panel.width + BorderConfig.rounding;
+        const panelY = BorderConfig.thickness + panel.y;
+        
+        // Only trigger if we're actually over the dashboard panel area
+        // AND the panel is already visible (has some height)
+        if (panel.height <= 0) return false;
+        
+        const inYRange = y >= panelY && y <= panelY + panel.height + 50; // Add buffer zone
+        const inXRange = x >= panelX - BorderConfig.rounding && x <= panelX + panel.width + BorderConfig.rounding;
+        
+        // Also require that we're not at the very edges of the screen
+        const screenMargin = 100; // Don't trigger within 100px of screen edges
+        if (x < screenMargin || x > (root.width - screenMargin)) return false;
+        
+        return inYRange && inXRange;
     }
+
+    // Debounce timer to prevent stuttering
+    Timer {
+        id: dashboardDebounceTimer
+        interval: 150  // Increased from 50ms to 150ms for more stability
+        onTriggered: {
+            const shouldShow = inTopPanel(panels.dashboard, mouseX, mouseY);
+            
+            // Apply hysteresis: once shown, require more movement to hide
+            const hysteresisThreshold = visibilities.dashboard ? 80 : 40;
+            const distanceFromTop = mouseY;
+            
+            let finalShow = shouldShow;
+            if (visibilities.dashboard && distanceFromTop > hysteresisThreshold) {
+                finalShow = false;
+            } else if (!visibilities.dashboard && distanceFromTop < hysteresisThreshold && shouldShow) {
+                finalShow = true;
+            }
+            
+            if (visibilities.dashboard !== finalShow) {
+                console.log("Dashboard visibility change:", finalShow, "at", mouseX, mouseY, "distance from top:", distanceFromTop);
+                visibilities.dashboard = finalShow;
+            }
+        }
+    }
+
+    // Timer for delayed dashboard hiding
+    Timer {
+        id: dashboardHideTimer
+        interval: 200
+        onTriggered: visibilities.dashboard = false
+    }
+
+    // Add hysteresis to prevent rapid on/off switching
+    property bool dashboardHysteresis: false
+
+    property real mouseX: 0
+    property real mouseY: 0
 
     anchors.fill: parent
     hoverEnabled: true
@@ -43,12 +97,19 @@ MouseArea {
         if (!containsMouse) {
             visibilities.osd = false;
             osdHovered = false;
-            visibilities.dashboard = false;
+            dashboardDebounceTimer.stop();
+            
+            // Use a delayed hide for dashboard to prevent stuttering
+            dashboardHideTimer.start();
+            
             popouts.hasCurrent = false;
         }
     }
 
     onPositionChanged: ({x, y}) => {
+        mouseX = x;
+        mouseY = y;
+        
         // Show osd on hover
         const showOsd = inRightPanel(panels.osd, x, y);
         visibilities.osd = showOsd;
@@ -63,8 +124,8 @@ MouseArea {
                 visibilities.session = false;
         }
 
-        // Show dashboard on hover
-        visibilities.dashboard = inTopPanel(panels.dashboard, x, y);
+        // Show dashboard on hover with debouncing to prevent stuttering
+        dashboardDebounceTimer.restart();
 
         // Show popouts on hover
         const popout = panels.popouts;
@@ -72,9 +133,11 @@ MouseArea {
             if (x < bar.implicitWidth) {
                 // Handle like part of bar
                 bar.checkPopout(y);
-            } else
-                // Keep on hover
-                popouts.hasCurrent = withinPanelHeight(popout, x, y);
+            } else {
+                // Keep on hover - but only if we're actually within the popout bounds
+                const withinPopout = withinPanelHeight(popout, x, y);
+                popouts.hasCurrent = withinPopout;
+            }
         } else {
             popouts.hasCurrent = false;
         }

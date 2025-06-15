@@ -152,7 +152,7 @@ StyledRect {
                     width: Math.round(parent.width * 0.6)
                     height: Math.round(parent.width * 0.6)
 
-                    sourceComponent: IconImage {
+                    sourceComponent: SafeIconImage {
                         implicitSize: Math.round(parent.width * 0.6)
                         source: Quickshell.iconPath(root.modelData.appIcon)
                         asynchronous: true

@@ -154,6 +154,11 @@ Item {
                                 width: 45
                                 onClicked: executeNiriAction("set-window-width", ["75%"])
                             }
+
+                            ActionButton {
+                                text: "100%"
+                                onClicked: executeNiriAction("maximize-column")
+                            }
                             
                             IconActionButton {
                                 iconText: "add"
@@ -193,29 +198,13 @@ Item {
                             }
                         }
                         
-                        // Position controls
-                        Row {
-                            spacing: 8
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            
-                            ActionButton {
-                                text: "Center Window"
-                                onClicked: executeNiriAction("center-window")
-                            }
-                            
-                            ActionButton {
-                                text: "Center Column"
-                                onClicked: executeNiriAction("center-column")
-                            }
-                        }
-                        
                         // Movement controls
                         Row {
                             spacing: 8
                             anchors.horizontalCenter: parent.horizontalCenter
                             
                             Text {
-                                text: "Move:"
+                                text: "Shift:"
                                 color: "#aaaaaa"
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: 50
@@ -257,25 +246,8 @@ Item {
                             spacing: 8
                             anchors.horizontalCenter: parent.horizontalCenter
                             
-                            ActionButton {
-                                text: "Maximize Column"
-                                onClicked: executeNiriAction("maximize-column")
-                            }
-                            
-                            ActionButton {
-                                text: "Close Window"
-                                buttonColor: "#3a1a1a"  // Dark red background
-                                onClicked: executeNiriAction("close-window")
-                                
-                                // Override the text color for danger button
-                                StyledText {
-                                    anchors.centerIn: parent
-                                    text: parent.text
-                                    color: Colours.palette.m3error  // Red text color
-                                    font.pointSize: Appearance.font.size.small
-                                    font.weight: 500
-                                }
-                            }
+
+                        
                         }
                     }
                 }
