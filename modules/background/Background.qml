@@ -1,6 +1,6 @@
 import "../../widgets"
 import "../../services-niri"
-// import "../../config"  // Temporarily disabled
+import "../../config"
 import Quickshell
 import Quickshell.Wayland
 import QtQuick
@@ -24,10 +24,11 @@ Variants {
         anchors.left: true
         anchors.right: true
 
-        // Wallpaper {}  // Temporarily disabled
+        Wallpaper {}
         Rectangle {
             anchors.fill: parent
-            color: "#141318"  // Caelestia background color
+            color: "#000000"  // OLED black background color
+            opacity: 0.0  // Keep as fallback but transparent when wallpaper loads
         }
     }
 }

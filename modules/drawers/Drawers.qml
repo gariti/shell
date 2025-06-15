@@ -92,9 +92,9 @@ Variants {
                 anchors.fill: parent
                 visible: true
 
-                // Border {
-                //     bar: bar
-                // }
+                Border {
+                    bar: bar
+                }
 
                 Backgrounds {
                     panels: panels

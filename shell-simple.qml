@@ -11,7 +11,7 @@ ShellRoot {
         }
         
         height: 48
-        color: "#141318"
+        color: "#2A282F"
         
         Text {
             anchors.centerIn: parent

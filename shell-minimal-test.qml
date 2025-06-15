@@ -29,7 +29,7 @@ ShellRoot {
             
             Rectangle {
                 anchors.fill: parent
-                color: "#141318"
+                color: "#2A282F"
                 radius: 15
                 
                 Column {

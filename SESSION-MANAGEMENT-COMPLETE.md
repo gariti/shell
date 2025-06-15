@@ -43,7 +43,7 @@ The session management system has been successfully added to caelestia-shell for
    - Full help system
 
 3. **`/etc/nixos/caelestia-shell/scripts/drawers.fish`**
-   - Fixed shell detection to use `shell-enhanced.qml`
+   - Fixed shell detection to use `shell.qml`
    - Added proper IPC connection logic
    - Enhanced drawer list to include session
 
@@ -68,8 +68,8 @@ caelestia session shutdown          # Shutdown (with fallback)
 ```
 
 ### **✅ IPC Integration:**
-- **Drawer IPC working** - `qs -p shell-enhanced.qml ipc call drawers toggle session`
-- **Shell detection** - Properly detects running `shell-enhanced.qml` configuration
+- **Drawer IPC working** - `qs -p shell.qml ipc call drawers toggle session`
+- **Shell detection** - Properly detects running `shell.qml` configuration
 - **Fallback execution** - Session actions work even when shell is not running
 
 ## 🛠️ **Architecture**
@@ -101,7 +101,7 @@ User Command → caelestia script → session.fish → Check Shell Status
 
 ### **Shell Detection Fixed**
 - **Issue:** Drawer script looking for wrong config file
-- **Fix:** Updated to detect `shell-enhanced.qml` instead of `shell.qml`
+- **Fix:** Updated to detect `shell.qml` instead of historical files
 - **Result:** Proper IPC connection and drawer control
 
 ## 🎉 **Session Management Status: COMPLETE**

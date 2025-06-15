@@ -93,9 +93,9 @@ Singleton {
     }
 
     component Transparency: QtObject {
-        readonly property bool enabled: true
-        readonly property real base: 0.95  // Slightly more opaque for better visibility
-        readonly property real layers: 0.85  // Slightly more opaque for better visibility
+        readonly property bool enabled: true  // Enable transparency
+        readonly property real base: 0.7  // 70% opacity - 30% transparent
+        readonly property real layers: 0.7  // 70% opacity for layers - 30% transparent
     }
 
     component Colours: QtObject {
@@ -104,15 +104,15 @@ Singleton {
         property color m3tertiary_paletteKeyColor: "#976A7D"
         property color m3neutral_paletteKeyColor: "#79767D"
         property color m3neutral_variant_paletteKeyColor: "#797680"
-        property color m3background: "#141318"
+        property color m3background: "#000000"
         property color m3onBackground: "#E5E1E9"
-        property color m3surface: "#141318"
-        property color m3surfaceDim: "#141318"
+        property color m3surface: "#000000"
+        property color m3surfaceDim: "#000000"
         property color m3surfaceBright: "#3A383E"
         property color m3surfaceContainerLowest: "#0E0D13"
-        property color m3surfaceContainerLow: "#1C1B20"
-        property color m3surfaceContainer: "#201F25"
-        property color m3surfaceContainerHigh: "#2B292F"
+        property color m3surfaceContainerLow: "#000000"
+        property color m3surfaceContainer: "#000000"
+        property color m3surfaceContainerHigh: "#000000"
         property color m3surfaceContainerHighest: "#35343A"
         property color m3onSurface: "#E5E1E9"
         property color m3surfaceVariant: "#48454E"

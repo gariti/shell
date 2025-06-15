@@ -46,7 +46,7 @@ Item {
     
     Rectangle {
         anchors.fill: parent
-        color: "#141318" // Force explicit dark background
+        color: "#2A282F" // Force explicit dark background
         radius: 20
         border.color: "#48454E"
         border.width: 1

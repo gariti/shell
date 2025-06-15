@@ -27,7 +27,7 @@ end
 
 function get_shell_config_path
     # Try to find the running shell configuration
-    set -l shell_configs "/etc/nixos/caelestia-shell/shell-enhanced.qml" "/etc/nixos/caelestia-shell/shell.qml" "/etc/nixos/caelestia-shell/shell-simple.qml"
+    set -l shell_configs "/etc/nixos/caelestia-shell/shell.qml" "/etc/nixos/caelestia-shell/shell-simple.qml"
     
     for config in $shell_configs
         if qs list --all 2>/dev/null | grep -q "Config path: $config"
@@ -37,7 +37,7 @@ function get_shell_config_path
     end
     
     # Fallback to default
-    echo "/etc/nixos/caelestia-shell/shell-enhanced.qml"
+    echo "/etc/nixos/caelestia-shell/shell.qml"
 end
 
 function call_shell_ipc

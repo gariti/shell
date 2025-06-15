@@ -13,6 +13,14 @@ Item {
     required property ShellScreen screen
     required property BarPopouts.Wrapper popouts
 
+    // Add background rectangle for the bar
+    Rectangle {
+        anchors.fill: parent
+        color: "#000000"  // OLED black background
+        opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
+        z: -1  // Ensure it's behind other elements
+    }
+
     function checkPopout(y: real): void {
         // Niri compatibility: add null checks to prevent errors
         if (!activeWindow || !statusIcons || !tray) {

@@ -17,6 +17,10 @@ MouseArea {
     property bool osdHovered
     property point dragStart
 
+    Component.onCompleted: {
+        console.log("🚀 INTERACTIONS.QML LOADED - this should appear in logs");
+    }
+
     function withinPanelHeight(panel: Item, x: real, y: real): bool {
         const panelY = BorderConfig.thickness + panel.y;
         return y >= panelY - BorderConfig.rounding && y <= panelY + panel.height + BorderConfig.rounding;
@@ -65,14 +69,15 @@ MouseArea {
         // Show popouts on hover
         const popout = panels.popouts;
         if (x < bar.implicitWidth + popout.width) {
-            if (x < bar.implicitWidth)
+            if (x < bar.implicitWidth) {
                 // Handle like part of bar
                 bar.checkPopout(y);
-            else
+            } else
                 // Keep on hover
                 popouts.hasCurrent = withinPanelHeight(popout, x, y);
-        } else
+        } else {
             popouts.hasCurrent = false;
+        }
     }
 
     Osd.Interactions {

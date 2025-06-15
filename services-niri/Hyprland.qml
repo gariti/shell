@@ -59,6 +59,7 @@ Singleton {
         workspacesProc.running = true;
         windowsProc.running = true;
         outputsProc.running = true;
+        focusedWindowProc.running = true; // Also query focused window
     }
 
     function dispatch(request) {
@@ -145,7 +146,7 @@ Singleton {
                 try {
                     const winData = JSON.parse(data);
                     const newClients = [];
-                    let activeClient = null;
+                    let foundActiveClient = null;
                     
                     for (const win of winData) {
                         const client = clientComponent.createObject(root, {
@@ -161,18 +162,66 @@ Singleton {
                         newClients.push(client);
                         
                         if (win.is_focused) {
-                            activeClient = client;
+                            foundActiveClient = client;
                         }
                     }
                     
                     root.clients = newClients;
-                    root.activeClient = activeClient;
+                    
+                    // If we found a focused window from the list, use it
+                    if (foundActiveClient) {
+                        root.activeClient = foundActiveClient;
+                    } else {
+                        // Otherwise query the focused window separately
+                        focusedWindowProc.running = true;
+                    }
+                    
                     root.updateOccupied(); // Update workspace occupancy
                     
                     // Sync with AdvancedWindowManager for enhanced features
-                    advancedManager.syncWindowData(newClients);
+                    if (advancedManager && advancedManager.syncWindowData) {
+                        advancedManager.syncWindowData(newClients);
+                    }
                 } catch (e) {
                     console.error("Failed to parse window data:", e);
+                }
+            }
+        }
+    }
+
+    // Process to get the currently focused window
+    Process {
+        id: focusedWindowProc
+        command: ["niri", "msg", "-j", "focused-window"]
+        stdout: SplitParser {
+            onRead: data => {
+                try {
+                    const focusedWin = JSON.parse(data);
+                    if (focusedWin && focusedWin.id) {
+                        // Find the client with this window ID
+                        const client = root.clients.find(c => c.windowId === focusedWin.id);
+                        if (client) {
+                            root.activeClient = client;
+                        } else {
+                            // Create a temporary client if not found in the list
+                            const tempClient = clientComponent.createObject(root, {
+                                workspace: focusedWin.workspace_id,
+                                wmClass: focusedWin.app_id,
+                                title: focusedWin.title,
+                                pid: focusedWin.pid,
+                                floating: focusedWin.is_floating,
+                                fullscreen: false,
+                                urgent: focusedWin.is_urgent || false,
+                                windowId: focusedWin.id
+                            });
+                            root.activeClient = tempClient;
+                        }
+                    } else {
+                        root.activeClient = null;
+                    }
+                } catch (e) {
+                    console.error("Failed to parse focused window data:", e);
+                    root.activeClient = null;
                 }
             }
         }

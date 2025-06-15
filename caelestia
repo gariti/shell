@@ -60,8 +60,8 @@ switch $component
         
         if test "$argv[2]" = "help"
             # Show available IPC commands via quickshell
-            if qs list --all | grep -q "Config path: $shell_path/shell-enhanced.qml"
-                qs -p $shell_path/shell-enhanced.qml ipc show
+            if qs list --all | grep -q "Config path: $shell_path/shell.qml"
+                qs -p $shell_path/shell.qml ipc show
             else
                 echo "Shell not running. Available commands:"
                 show_shell_help
@@ -70,9 +70,9 @@ switch $component
         end
         
         # Check if shell is running
-        if qs list --all | grep -q "Config path: $shell_path/shell-enhanced.qml"
+        if qs list --all | grep -q "Config path: $shell_path/shell.qml"
             # Forward IPC command to quickshell
-            qs -p $shell_path/shell-enhanced.qml ipc call $argv[2..]
+            qs -p $shell_path/shell.qml ipc call $argv[2..]
         else
             echo "Error: Caelestia shell is not running"
             echo "Start it with: systemctl --user start caelestia-shell.service"

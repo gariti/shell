@@ -29,6 +29,11 @@ Item {
         clip: true
 
         Popout {
+            name: "activewindow"
+            source: "ActiveWindow.qml"
+        }
+
+        Popout {
             name: "volume"
             source: "Volume.qml"
         }

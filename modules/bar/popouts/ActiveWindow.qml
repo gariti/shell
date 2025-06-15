@@ -1,16 +1,7 @@
-import "root:/widgets"
-import                IconImage {
-                    id: icon
-                    visible: source !== ""
-                    source: {
-                        const wmClass = Hyprland.activeClient?.wmClass ?? "";
-                        return wmClass ? Icons.getAppIcon(wmClass, "") : "";
-                    }
-                    implicitSize: iconContainer.implicitSize
-                    anchors.centerIn: parent
-                }rvices-niri"
-import "root:/utils"
-import "root:/config"
+import "../../../widgets"
+import "../../../services-niri"
+import "../../../utils"
+import "../../../config"
 import Quickshell.Widgets
 import Quickshell.Wayland
 import QtQuick
@@ -32,28 +23,11 @@ Item {
 
             spacing: Appearance.spacing.normal
 
-            Item {
-                id: iconContainer
+            IconImage {
+                id: icon
+
                 implicitSize: details.implicitHeight
-
-                IconImage {
-                    id: icon
-                    visible: source !== ""
-                    source: {
-                        const wmClass = Hyprland.activeClient?.wmClass ?? "";
-                        return wmClass ? Icons.getAppIcon(wmClass, "") : "";
-                    }
-                    implicitSize: parent.width
-                    anchors.centerIn: parent
-                }
-
-                MaterialIcon {
-                    visible: !icon.visible
-                    text: "apps"
-                    color: Colours.palette.m3onSurface
-                    font.pointSize: Math.max(parent.width * 0.6, 8)
-                    anchors.centerIn: parent
-                }
+                source: Icons.getAppIcon(Hyprland.activeClient?.wmClass ?? "", "image-missing")
             }
 
             Column {
@@ -64,7 +38,7 @@ Item {
                     font.pointSize: Appearance.font.size.normal
 
                     elide: Text.ElideRight
-                    width: preview.implicitWidth - icon.implicitWidth - detailsRow.spacing
+                    width: 300  // Fixed width instead of dynamic calculation
                 }
 
                 StyledText {
@@ -72,30 +46,69 @@ Item {
                     color: Colours.palette.m3onSurfaceVariant
 
                     elide: Text.ElideRight
-                    width: preview.implicitWidth - icon.implicitWidth - detailsRow.spacing
+                    width: 300  // Fixed width instead of dynamic calculation
                 }
             }
         }
 
-        ClippingWrapperRectangle {
+        StyledClippingRect {
             color: "transparent"
             radius: Appearance.rounding.small
 
             ScreencopyView {
                 id: preview
 
-                captureSource: NiriToplevelManager.findToplevelByNiriWindow(NiriToplevelManager.focusedWindow) ?? null
+                captureSource: NiriToplevelManager.findToplevelByNiriWindow(Hyprland.activeClient) ?? null
                 live: visible
 
                 constraintSize.width: BarConfig.sizes.windowPreviewSize
                 constraintSize.height: BarConfig.sizes.windowPreviewSize
+
+                // Fallback content when screencopy fails or no window is active
+                Rectangle {
+                    anchors.fill: parent
+                    color: Colours.palette.m3surfaceContainer
+                    radius: Appearance.rounding.small
+                    visible: !preview.hasValidCapture || !Hyprland.activeClient
+
+                    Column {
+                        anchors.centerIn: parent
+                        spacing: Appearance.spacing.normal
+                        
+                        MaterialIcon {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: Icons.getAppCategoryIcon(Hyprland.activeClient?.wmClass ?? "unknown", "apps")
+                            color: Colours.palette.m3primary
+                            size: 48
+                        }
+                        
+                        StyledText {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Window Preview"
+                            color: Colours.palette.m3onSurfaceContainer
+                            font.pointSize: Appearance.font.size.normal
+                            font.bold: true
+                        }
+                        
+                        StyledText {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: Hyprland.activeClient?.title ?? "No active window"
+                            color: Colours.palette.m3onSurfaceContainer
+                            font.pointSize: Appearance.font.size.small
+                            elide: Text.ElideRight
+                            width: BarConfig.sizes.windowPreviewSize - 20
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+                        
+                        StyledText {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: Hyprland.activeClient?.wmClass ?? "unknown"
+                            color: Colours.palette.m3outline
+                            font.pointSize: Appearance.font.size.smaller
+                        }
+                    }
+                }
             }
         }
-    }
-
-    component Anim: NumberAnimation {
-        duration: Appearance.anim.durations.normal
-        easing.type: Easing.BezierSpline
-        easing.bezierCurve: Appearance.anim.curves.emphasized
     }
 }

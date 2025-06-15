@@ -43,7 +43,7 @@ Variants {
             // Simple background without complex effects
             Rectangle {
                 anchors.fill: parent
-                color: "#141318"
+                color: "#2A282F"
                 opacity: 0.8
                 visible: false  // Start hidden
             }

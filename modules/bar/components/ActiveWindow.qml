@@ -48,10 +48,13 @@ Item {
     Item {
         id: child
 
+        property Item current: text1
+
         anchors.centerIn: parent
 
-        implicitWidth: Math.max(icon.implicitWidth, activeText.implicitHeight)
-        implicitHeight: icon.implicitHeight + activeText.implicitWidth + activeText.anchors.topMargin
+        clip: true
+        implicitWidth: Math.max(icon.implicitWidth, current.implicitHeight)
+        implicitHeight: icon.implicitHeight + current.implicitWidth + current.anchors.topMargin
 
         MaterialIcon {
             id: icon
@@ -63,27 +66,29 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        StyledText {
-            id: activeText
+        Title {
+            id: text1
+        }
 
-            anchors.horizontalCenter: icon.horizontalCenter
-            anchors.top: icon.bottom
-            anchors.topMargin: Appearance.spacing.small
+        Title {
+            id: text2
+        }
+
+        TextMetrics {
+            id: metrics
 
             text: Hyprland.activeClient?.title ?? qsTr("Desktop")
             font.pointSize: Appearance.font.size.smaller
             font.family: Appearance.font.family.mono
-            color: root.colour
-            elide: Text.ElideRight
-            
-            transform: Rotation {
-                angle: 90
-                origin.x: activeText.implicitHeight / 2
-                origin.y: activeText.implicitHeight / 2
-            }
+            elide: Qt.ElideRight
+            elideWidth: root.height - icon.height
 
-            width: implicitHeight
-            height: implicitWidth
+            onTextChanged: {
+                const next = child.current === text1 ? text2 : text1;
+                next.text = elidedText;
+                child.current = next;
+            }
+            onElideWidthChanged: child.current.text = elidedText
         }
 
         Behavior on implicitWidth {
