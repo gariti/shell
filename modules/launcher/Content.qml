@@ -12,6 +12,9 @@ Item {
     required property PersistentProperties visibilities
     readonly property int padding: Appearance.padding.large
     readonly property int rounding: Appearance.rounding.large
+    
+    // Expose the search field for external access
+    property alias search: search
 
     implicitWidth: listWrapper.width + padding * 2
     implicitHeight: searchWrapper.height + listWrapper.height + padding * 2
@@ -101,14 +104,25 @@ Item {
                 target: root.visibilities
 
                 function onLauncherChanged(): void {
-                    if (root.visibilities.launcher)
-                        search.forceActiveFocus();
-                    else {
+                    if (root.visibilities.launcher) {
+                        // Use a timer to ensure the window is fully visible before focusing
+                        focusTimer.restart();
+                    } else {
                         search.text = "";
                         const current = list.currentList;
                         if (current)
                             current.currentIndex = 0;
                     }
+                }
+            }
+            
+            Timer {
+                id: focusTimer
+                interval: 100
+                onTriggered: {
+                    search.forceActiveFocus();
+                    // Try multiple approaches to ensure focus
+                    Qt.callLater(() => search.forceActiveFocus());
                 }
             }
         }

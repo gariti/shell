@@ -1,4 +1,5 @@
 import "../../config"
+import "../../utils"
 import Quickshell
 import QtQuick
 
@@ -6,8 +7,12 @@ Item {
     id: root
 
     required property PersistentProperties visibilities
+    required property ShellScreen screen
 
-    visible: height > 0
+    // Only show launcher on preferred display
+    readonly property bool shouldShowLauncher: DisplayManager.getPreferredLauncherScreen() === screen
+
+    visible: height > 0 && shouldShowLauncher
     implicitHeight: 0
     implicitWidth: content.implicitWidth
 
@@ -51,5 +56,24 @@ Item {
         id: content
 
         visibilities: root.visibilities
+    }
+    
+    // Monitor launcher visibility and ensure focus
+    Connections {
+        target: root.visibilities
+        
+        function onLauncherChanged(): void {
+            if (root.visibilities.launcher && root.shouldShowLauncher) {
+                // Try to activate the window
+                Qt.callLater(() => {
+                    const window = root.parent;
+                    if (window && window.requestActivate) {
+                        window.requestActivate();
+                    }
+                    // Also ensure content focus
+                    content.search.forceActiveFocus();
+                });
+            }
+        }
     }
 }

@@ -61,6 +61,7 @@ Item {
         id: launcher
 
         visibilities: root.visibilities
+        screen: root.screen
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom

@@ -1,9 +1,9 @@
 pragma Singleton
 
-import "../utils"
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import "root:/utils"
 
 Singleton {
     id: root

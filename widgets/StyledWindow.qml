@@ -1,4 +1,3 @@
-import "../utils"
 import Quickshell
 import Quickshell.Wayland
 

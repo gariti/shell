@@ -32,6 +32,7 @@ Singleton {
 
         property DesktopEntry entry
 
-        command: ["app2unit", "--", `${entry?.id}.desktop`]
+        // Use the detached launcher script to ensure proper process isolation
+        command: ["/etc/nixos/caelestia-shell/scripts/launch-detached.sh", `${entry?.id}`]
     }
 }

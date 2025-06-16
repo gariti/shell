@@ -1,7 +1,7 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 
-import "root:/utils"
+import "../utils"
 import Quickshell
 import Quickshell.Io
 import QtQuick

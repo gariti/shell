@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
-import "root:/widgets"
-import "root:/services-niri"
-import "root:/config"
+import "../../../widgets"
+import "../../../services-niri"
+import "../../../config"
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
@@ -80,7 +80,7 @@ StackView {
 
                 required property QsMenuEntry modelData
 
-                implicitWidth: BarConfig.sizes.trayMenuWidth
+                implicitWidth: BarConfig?.sizes?.trayMenuWidth ?? 300
                 implicitHeight: modelData.isSeparator ? 1 : children.implicitHeight
 
                 radius: Appearance.rounding.full
@@ -165,7 +165,7 @@ StackView {
                             font.family: label.font.family
 
                             elide: Text.ElideRight
-                            elideWidth: BarConfig.sizes.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + Appearance.spacing.normal : 0)
+                            elideWidth: (BarConfig?.sizes?.trayMenuWidth ?? 300) - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + Appearance.spacing.normal : 0)
                         }
 
                         Loader {

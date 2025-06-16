@@ -31,60 +31,25 @@ MouseArea {
     }
 
     function inTopPanel(panel: Item, x: real, y: real): bool {
-        // Prevent activation when mouse is at the very top edge (y < 10)
-        if (y < 10) return false;
-        
         const panelX = bar.implicitWidth + panel.x;
-        const panelY = BorderConfig.thickness + panel.y;
+        const margin = BorderConfig.rounding * 2; // Reduced from 4x to 2x for more precise control
         
-        // Only trigger if we're actually over the dashboard panel area
-        // AND the panel is already visible (has some height)
-        if (panel.height <= 0) return false;
+        // Primary trigger zone at the very top of the screen
+        const topTriggerHeight = BorderConfig.thickness + BorderConfig.rounding;
+        const inTopTrigger = y <= topTriggerHeight && 
+                            x >= panelX - margin && 
+                            x <= panelX + panel.width + margin;
         
-        const inYRange = y >= panelY && y <= panelY + panel.height + 50; // Add buffer zone
-        const inXRange = x >= panelX - BorderConfig.rounding && x <= panelX + panel.width + BorderConfig.rounding;
+        // Extended hover zone when dashboard is already visible
+        // Use a fixed large area instead of dynamic panel dimensions to avoid feedback loops
+        const extendedHeight = 300; // Fixed height that covers typical dashboard content
+        const inExtendedZone = visibilities.dashboard && 
+                              y <= BorderConfig.thickness + extendedHeight && 
+                              x >= panelX - margin && 
+                              x <= panelX + panel.width + margin;
         
-        // Also require that we're not at the very edges of the screen
-        const screenMargin = 100; // Don't trigger within 100px of screen edges
-        if (x < screenMargin || x > (root.width - screenMargin)) return false;
-        
-        return inYRange && inXRange;
+        return inTopTrigger || inExtendedZone;
     }
-
-    // Debounce timer to prevent stuttering
-    Timer {
-        id: dashboardDebounceTimer
-        interval: 150  // Increased from 50ms to 150ms for more stability
-        onTriggered: {
-            const shouldShow = inTopPanel(panels.dashboard, mouseX, mouseY);
-            
-            // Apply hysteresis: once shown, require more movement to hide
-            const hysteresisThreshold = visibilities.dashboard ? 80 : 40;
-            const distanceFromTop = mouseY;
-            
-            let finalShow = shouldShow;
-            if (visibilities.dashboard && distanceFromTop > hysteresisThreshold) {
-                finalShow = false;
-            } else if (!visibilities.dashboard && distanceFromTop < hysteresisThreshold && shouldShow) {
-                finalShow = true;
-            }
-            
-            if (visibilities.dashboard !== finalShow) {
-                console.log("Dashboard visibility change:", finalShow, "at", mouseX, mouseY, "distance from top:", distanceFromTop);
-                visibilities.dashboard = finalShow;
-            }
-        }
-    }
-
-    // Timer for delayed dashboard hiding
-    Timer {
-        id: dashboardHideTimer
-        interval: 200
-        onTriggered: visibilities.dashboard = false
-    }
-
-    // Add hysteresis to prevent rapid on/off switching
-    property bool dashboardHysteresis: false
 
     property real mouseX: 0
     property real mouseY: 0
@@ -97,11 +62,7 @@ MouseArea {
         if (!containsMouse) {
             visibilities.osd = false;
             osdHovered = false;
-            dashboardDebounceTimer.stop();
-            
-            // Use a delayed hide for dashboard to prevent stuttering
-            dashboardHideTimer.start();
-            
+            visibilities.dashboard = false;
             popouts.hasCurrent = false;
         }
     }
@@ -124,8 +85,8 @@ MouseArea {
                 visibilities.session = false;
         }
 
-        // Show dashboard on hover with debouncing to prevent stuttering
-        dashboardDebounceTimer.restart();
+        // Show dashboard on hover with comprehensive bounds checking
+        visibilities.dashboard = inTopPanel(panels.dashboard, x, y);
 
         // Show popouts on hover
         const popout = panels.popouts;

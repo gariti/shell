@@ -1,4 +1,4 @@
-#!/usr/bin/env fish
+#!/run/current-system/sw/bin/fish
 
 # Caelestia script - Niri edition
 # Main script for caelestia functionality adapted for Niri compositor

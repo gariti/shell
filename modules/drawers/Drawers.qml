@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import "../../widgets"
 import "../../services-niri"
 import "../../config"
+import "../../utils"
 import "../bar" as BarModule
 import "." // Import components from current directory
 import Quickshell
@@ -30,7 +31,7 @@ Variants {
             screen: scope.modelData
             name: "drawers"
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
-            WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+            WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
             mask: Region {
                 x: bar.implicitWidth
