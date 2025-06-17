@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Proper application launcher that completely detaches from parent process
 # This ensures applications don't get killed when the shell restarts
 
