@@ -106,6 +106,17 @@ Item {
         }
         color: !UPower.onBattery || UPower.displayDevice.percentage > 0.2 ? root.colour : Colours.palette.m3error
         fill: 1
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: batteryManager.startDetached()
+        }
+    }
+
+    Process {
+        id: batteryManager
+        // Try common battery management applications in order of preference
+        command: ["sh", "-c", "which gnome-power-manager >/dev/null 2>&1 && gnome-power-manager || which xfce4-power-manager-settings >/dev/null 2>&1 && xfce4-power-manager-settings || which powerkit >/dev/null 2>&1 && powerkit || which gnome-control-center >/dev/null 2>&1 && gnome-control-center power || which systemsettings5 >/dev/null 2>&1 && systemsettings5 kcm_powerdevilprofilesconfig || which powertop >/dev/null 2>&1 && alacritty -e sudo powertop || which tlp-stat >/dev/null 2>&1 && alacritty -e tlp-stat || notify-send 'Battery Manager' 'No battery management application found. Available: gnome-power-manager, xfce4-power-manager, powerkit, powertop, tlp'"]
     }
 
     Behavior on implicitWidth {
