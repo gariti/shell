@@ -137,6 +137,8 @@ Item {
             }
 
             // Niri workspace indicator - shows name or position in vertical stack
+            // Removed workspace name/index display since icon provides better visual indication
+            /*
             StyledText {
                 id: workspacesInner
                 anchors.centerIn: parent
@@ -177,6 +179,7 @@ Item {
                     }
                 }
             }
+            */
         }
 
         ActiveWindow {
