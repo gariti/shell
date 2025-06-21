@@ -105,7 +105,7 @@ Item {
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.topMargin: Appearance.padding.large
+            anchors.topMargin: Appearance.padding.small  // Changed from 'large' to 'small' for less margin
         }
 
         StyledRect {
