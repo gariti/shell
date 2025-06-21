@@ -34,6 +34,10 @@ StyledText {
                 case "finance":
                     console.log("  Returning finance icon");
                     return "\uf155"; // Dollar sign icon
+                case "social":
+                case "social media":
+                    console.log("  Returning social media icon");
+                    return "\uf27a"; // Social media icon
                 case "home":
                     console.log("  Returning home icon");
                     return "\uf015"; // Home icon
@@ -59,6 +63,9 @@ StyledText {
                 case 4:
                     console.log("  Returning home icon for index 4");
                     return "\uf015"; // Home workspace (index 4)
+                case 5:
+                    console.log("  Returning social media icon for index 5");
+                    return "\uf27a"; // Social media workspace (index 5)
                 default:
                     console.log("  Returning default OS icon for index", workspaceIndex);
                     return Icons.osIcon; // Fallback to system OS icon for other workspaces
