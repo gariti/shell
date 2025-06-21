@@ -64,10 +64,10 @@ Item {
             popouts.currentName = "network";
             popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (n ? n.y : 0) + (n ? n.implicitHeight : 0) / 2);
             if (popouts) popouts.hasCurrent = true;
-        } else if (y >= bls && y <= ble) {
-            popouts.currentName = "bluetooth";
-            popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (statusIcons ? statusIcons.bs : 0) + ((statusIcons && statusIcons.be && statusIcons.bs) ? (statusIcons.be - statusIcons.bs) : 0) / 2);
-            if (popouts) popouts.hasCurrent = true;
+        // } else if (y >= bls && y <= ble) {
+        //     popouts.currentName = "bluetooth";
+        //     popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (statusIcons ? statusIcons.bs : 0) + ((statusIcons && statusIcons.be && statusIcons.bs) ? (statusIcons.be - statusIcons.bs) : 0) / 2);
+        //     if (popouts) popouts.hasCurrent = true;
         } else if (b && y >= by && y <= by + b.implicitHeight + spacing) {
             popouts.currentName = "battery";
             popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (b ? b.y : 0) + (b ? b.implicitHeight : 0) / 2);

@@ -1,6 +1,7 @@
 import "root:/widgets"
 import "root:/services-niri"
 import "root:/config"
+import Quickshell.Services.UPower
 import QtQuick
 
 Column {
@@ -16,12 +17,12 @@ Column {
     }
 
     Text {
-        text: SystemUsage ? 
-              Math.round(SystemUsage.batteryLevel) + "%" +
-              (SystemUsage.isCharging ? " (Charging)" : "") :
+        text: UPower.displayDevice ? 
+              Math.round(UPower.displayDevice.percentage * 100) + "%" +
+              (UPower.displayDevice.charging ? " (Charging)" : "") :
               "No battery info"
         font.pointSize: 10
-        color: SystemUsage && SystemUsage.batteryLevel <= 20 ? "#F2B8B5" : "#C9C5D0"
+        color: UPower.displayDevice && UPower.displayDevice.percentage <= 0.2 ? "#F2B8B5" : "#C9C5D0"
     }
 
     Rectangle {
@@ -31,10 +32,10 @@ Column {
         color: "#48454E"
         
         Rectangle {
-            width: SystemUsage ? parent.width * (SystemUsage.batteryLevel / 100) : 0
+            width: UPower.displayDevice ? parent.width * UPower.displayDevice.percentage : 0
             height: parent.height
             radius: parent.radius
-            color: SystemUsage && SystemUsage.batteryLevel <= 20 ? "#F2B8B5" : "#C8BFFF"
+            color: UPower.displayDevice && UPower.displayDevice.percentage <= 0.2 ? "#F2B8B5" : "#C8BFFF"
             
             Behavior on width {
                 NumberAnimation { duration: 200 }
@@ -43,7 +44,7 @@ Column {
     }
 
     Text {
-        visible: SystemUsage && SystemUsage.isCharging
+        visible: UPower.displayDevice && UPower.displayDevice.charging
         text: "⚡ Charging"
         font.pointSize: 8
         color: "#C8BFFF"
