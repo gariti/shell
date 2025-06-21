@@ -106,28 +106,27 @@ StyledText {
             case "browsing":
             case "index2":
                 // Launch browsing apps
-                spawnOnCurrentWorkspace("firefox");
+                spawnOnCurrentWorkspace("brave");
                 break;
                 
             case "finance":
             case "index3":
                 // Launch finance apps
-                spawnOnCurrentWorkspace("firefox https://mint.com");
+                spawnOnCurrentWorkspace("brave --profile-directory=finance");
                 break;
                 
             case "home":
             case "index4":
                 // Launch home/productivity apps
-                spawnOnCurrentWorkspace("nautilus");
+                spawnOnCurrentWorkspace("brave --profile-directory=home");
                 break;
                 
             case "social":
             case "social media":
             case "index5":
                 // Launch social media apps
-                spawnOnCurrentWorkspace("firefox https://twitter.com");
+                spawnOnCurrentWorkspace("brave --profile-directory=social");
                 break;
-                
             default:
                 console.log("No specific apps configured for workspace:", workspaceName);
                 break;
@@ -143,7 +142,7 @@ StyledText {
         launchProcess.command = fullCommand;
         launchProcess.startDetached();
     }
-    
+
     // Update icon when workspace changes
     Connections {
         target: NiriService
