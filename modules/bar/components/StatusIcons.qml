@@ -115,8 +115,43 @@ Item {
 
     Process {
         id: batteryManager
-        // Try common battery management applications in order of preference
-        command: ["sh", "-c", "which gnome-power-manager >/dev/null 2>&1 && gnome-power-manager || which xfce4-power-manager-settings >/dev/null 2>&1 && xfce4-power-manager-settings || which powerkit >/dev/null 2>&1 && powerkit || which gnome-control-center >/dev/null 2>&1 && gnome-control-center power || which systemsettings5 >/dev/null 2>&1 && systemsettings5 kcm_powerdevilprofilesconfig || which powertop >/dev/null 2>&1 && alacritty -e sudo powertop || which tlp-stat >/dev/null 2>&1 && alacritty -e tlp-stat || notify-send 'Battery Manager' 'No battery management application found. Available: gnome-power-manager, xfce4-power-manager, powerkit, powertop, tlp'"]
+        command: ["sh", "-c", `
+            if which gnome-power-manager >/dev/null 2>&1; then
+                gnome-power-manager
+            elif which gnome-control-center >/dev/null 2>&1; then
+                gnome-control-center power
+            elif which xfce4-power-manager-settings >/dev/null 2>&1; then
+                xfce4-power-manager-settings
+            elif which powertop >/dev/null 2>&1; then
+                alacritty -e sudo powertop
+            else
+                # Show battery information in terminal as fallback
+                alacritty -e sh -c '
+                    echo "=== Battery Information ==="
+                    echo
+                    if command -v upower >/dev/null 2>&1; then
+                        upower -i \$(upower -e | grep "BAT")
+                    elif [ -f /sys/class/power_supply/BAT0/capacity ]; then
+                        echo "Battery Level: \$(cat /sys/class/power_supply/BAT0/capacity)%"
+                        echo "Status: \$(cat /sys/class/power_supply/BAT0/status)"
+                        echo "Health: \$(cat /sys/class/power_supply/BAT0/health 2>/dev/null || echo Unknown)"
+                    else
+                        echo "No battery information available"
+                    fi
+                    echo
+                    echo "=== Power Profile ==="
+                    if [ -f /sys/firmware/acpi/platform_profile ]; then
+                        echo "Current: \$(cat /sys/firmware/acpi/platform_profile)"
+                        echo "Available: \$(cat /sys/firmware/acpi/platform_profile_choices)"
+                    else
+                        echo "No power profile controls available"
+                    fi
+                    echo
+                    echo "Press Enter to close..."
+                    read
+                '
+            fi
+        `]
     }
 
     Behavior on implicitWidth {
