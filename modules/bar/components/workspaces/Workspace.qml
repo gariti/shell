@@ -24,6 +24,13 @@ Item {
     Layout.preferredWidth: childrenRect.width
     Layout.preferredHeight: size
 
+    Component.onCompleted: {
+        console.log("Workspace", ws, "completed - index:", index, "groupOffset:", groupOffset);
+        console.log("Workspace", ws, "isOccupied:", isOccupied, "occupied[" + ws + "]:", occupied ? occupied[ws] : "undefined");
+        console.log("Workspace", ws, "size:", size, "preferredWidth:", Layout.preferredWidth, "preferredHeight:", Layout.preferredHeight);
+        console.log("Workspace", ws, "dimensions:", childrenRect.width, "x", childrenRect.height);
+    }
+
     StyledText {
         id: indicator
 

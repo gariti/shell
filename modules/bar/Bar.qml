@@ -3,7 +3,7 @@ import "../../services-niri"
 import "../../config"
 import "popouts" as BarPopouts
 import "components"
-// import "components/workspaces"  // Temporarily disabled to prevent initialization issues
+import "components/workspaces"
 import Quickshell
 import QtQuick
 
@@ -127,21 +127,55 @@ Item {
                 anchors.rightMargin: -BorderConfig.thickness
 
                 onWheel: event => {
-                    const activeWs = Hyprland.activeClient?.workspace?.name;
-                    if (activeWs?.startsWith("special:"))
-                        Hyprland.dispatch(`togglespecialworkspace ${activeWs.slice(8)}`);
-                    else if (event.angleDelta.y < 0 || Hyprland.activeWsId > 1)
-                        Hyprland.dispatch(`workspace r${event.angleDelta.y > 0 ? "-" : "+"}1`);
+                    // Niri workspace navigation using niri msg
+                    if (event.angleDelta.y > 0) {
+                        NiriService.dispatch("focus-workspace-up");
+                    } else {
+                        NiriService.dispatch("focus-workspace-down"); 
+                    }
                 }
             }
 
-            // Use a proper material icon instead of empty Item
-            MaterialIcon {
+            // Niri workspace indicator - shows name or position in vertical stack
+            StyledText {
                 id: workspacesInner
                 anchors.centerIn: parent
-                text: "view_quilt"
+                text: getWorkspaceDisplayText()
                 color: Colours.palette.m3onSurface
                 font.pointSize: Appearance.font.size.smaller
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                
+                function getWorkspaceDisplayText() {
+                    if (NiriService.currentWorkspaceIsNamed && NiriService.currentWorkspaceName !== "") {
+                        return NiriService.currentWorkspaceName;
+                    } else {
+                        return `${NiriService.currentMonitorWorkspaceIndex}/${NiriService.currentMonitorWorkspaceCount}`;
+                    }
+                }
+                
+                // Add a connection to ensure updates
+                Connections {
+                    target: NiriService
+                    function onCurrentMonitorWorkspaceIndexChanged() {
+                        workspacesInner.text = workspacesInner.getWorkspaceDisplayText();
+                    }
+                    function onCurrentMonitorWorkspaceCountChanged() {
+                        workspacesInner.text = workspacesInner.getWorkspaceDisplayText();
+                    }
+                    function onCurrentWorkspaceNameChanged() {
+                        workspacesInner.text = workspacesInner.getWorkspaceDisplayText();
+                    }
+                    function onCurrentWorkspaceIsNamedChanged() {
+                        workspacesInner.text = workspacesInner.getWorkspaceDisplayText();
+                    }
+                    function onWorkspaceChanged() {
+                        workspacesInner.text = workspacesInner.getWorkspaceDisplayText();
+                    }
+                    function onActiveWorkspaceChanged() {
+                        workspacesInner.text = workspacesInner.getWorkspaceDisplayText();
+                    }
+                }
             }
         }
 
