@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell.Io
 import "../../../widgets"
 import "../../../services-niri"
 import "../../../utils"
@@ -9,6 +10,18 @@ StyledText {
     font.pointSize: Appearance.font.size.larger
     font.family: Appearance.font.family.mono
     color: Colours.palette.m3tertiary
+    
+    // Make the icon clickable
+    MouseArea {
+        anchors.fill: parent
+        onClicked: launchWorkspaceApps()
+        cursorShape: Qt.PointingHandCursor
+    }
+    
+    // Simple process launcher
+    Process {
+        id: launchProcess
+    }
     
     // Function to get the appropriate icon based on workspace name or index
     function getWorkspaceIcon() {
@@ -71,6 +84,64 @@ StyledText {
                     return Icons.osIcon; // Fallback to system OS icon for other workspaces
             }
         }
+    }
+    
+    // Function to launch workspace-specific applications using Niri spawn
+    function launchWorkspaceApps() {
+        const workspaceName = NiriService.currentWorkspaceIsNamed ? 
+            NiriService.currentWorkspaceName.toLowerCase() : 
+            `index${NiriService.currentMonitorWorkspaceIndex}`;
+            
+        console.log("Launching apps for workspace:", workspaceName);
+        
+        // Use Niri's spawn action to launch apps on current workspace
+        switch (workspaceName) {
+            case "code":
+            case "index1":
+                // Launch development apps on current workspace
+                spawnOnCurrentWorkspace("code");
+                spawnOnCurrentWorkspace("brave --profile-directory=code");
+                break;
+                
+            case "browsing":
+            case "index2":
+                // Launch browsing apps
+                spawnOnCurrentWorkspace("firefox");
+                break;
+                
+            case "finance":
+            case "index3":
+                // Launch finance apps
+                spawnOnCurrentWorkspace("firefox https://mint.com");
+                break;
+                
+            case "home":
+            case "index4":
+                // Launch home/productivity apps
+                spawnOnCurrentWorkspace("nautilus");
+                break;
+                
+            case "social":
+            case "social media":
+            case "index5":
+                // Launch social media apps
+                spawnOnCurrentWorkspace("firefox https://twitter.com");
+                break;
+                
+            default:
+                console.log("No specific apps configured for workspace:", workspaceName);
+                break;
+        }
+    }
+    
+    // Helper function to spawn apps on current workspace using Niri
+    function spawnOnCurrentWorkspace(command) {
+        console.log("Spawning on current workspace:", command);
+        // Split command into parts for proper execution
+        const parts = command.split(" ");
+        const fullCommand = ["niri", "msg", "action", "spawn", "--"].concat(parts);
+        launchProcess.command = fullCommand;
+        launchProcess.startDetached();
     }
     
     // Update icon when workspace changes
