@@ -11,36 +11,36 @@ Item {
 
     property color colour: Colours.palette.m3secondary
 
-    readonly property Item network: network
-    readonly property real bs: bluetooth.y
-    readonly property real be: bluetooth.y + bluetooth.implicitHeight
+    // readonly property Item network: network
+    readonly property real bs: battery.y
+    readonly property real be: battery.y + battery.implicitHeight
     readonly property Item battery: battery
 
     clip: true
-    implicitWidth: Math.max(network.implicitWidth, bluetooth.implicitWidth, battery.implicitWidth)
-    implicitHeight: network.implicitHeight + bluetooth.implicitHeight + bluetooth.anchors.topMargin + battery.implicitHeight + battery.anchors.topMargin
+    implicitWidth: battery.implicitWidth
+    implicitHeight: battery.implicitHeight
 
-    MaterialIcon {
-        id: network
+    // MaterialIcon {
+    //     id: network
 
-        animate: true
-        text: Network.active ? Icons.getNetworkIcon(Network.active.strength ?? 0) : "wifi_off"
-        color: root.colour
+    //     animate: true
+    //     text: Network.active ? Icons.getNetworkIcon(Network.active.strength ?? 0) : "wifi_off"
+    //     color: root.colour
 
-        anchors.horizontalCenter: parent.horizontalCenter
-    }
+    //     anchors.horizontalCenter: parent.horizontalCenter
+    // }
 
-    MaterialIcon {
-        id: bluetooth
+    // MaterialIcon {
+    //     id: bluetooth
 
-        anchors.horizontalCenter: network.horizontalCenter
-        anchors.top: network.bottom
-        anchors.topMargin: Appearance.spacing.small
+    //     anchors.horizontalCenter: network.horizontalCenter
+    //     anchors.top: network.bottom
+    //     anchors.topMargin: Appearance.spacing.small
 
-        animate: true
-        text: Bluetooth.powered ? "bluetooth" : "bluetooth_disabled"
-        color: root.colour
-    }
+    //     animate: true
+    //     text: Bluetooth.powered ? "bluetooth" : "bluetooth_disabled"
+    //     color: root.colour
+    // }
 
     // Column {
     //     id: devices
@@ -69,8 +69,8 @@ Item {
     MaterialIcon {
         id: battery
 
-        anchors.horizontalCenter: bluetooth.horizontalCenter
-        anchors.top: bluetooth.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
         anchors.topMargin: Appearance.spacing.small
 
         animate: true
