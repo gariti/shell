@@ -11,24 +11,24 @@ Item {
 
     property color colour: Colours.palette.m3secondary
 
-    // readonly property Item network: network
-    readonly property real bs: battery.y
+    readonly property Item network: network
+    readonly property real bs: network.y
     readonly property real be: battery.y + battery.implicitHeight
     readonly property Item battery: battery
 
     clip: true
-    implicitWidth: battery.implicitWidth
-    implicitHeight: battery.implicitHeight
+    implicitWidth: Math.max(network.implicitWidth, battery.implicitWidth)
+    implicitHeight: network.implicitHeight + battery.implicitHeight + battery.anchors.topMargin
 
-    // MaterialIcon {
-    //     id: network
+    MaterialIcon {
+        id: network
 
-    //     animate: true
-    //     text: Network.active ? Icons.getNetworkIcon(Network.active.strength ?? 0) : "wifi_off"
-    //     color: root.colour
+        animate: true
+        text: Network.active ? Icons.getNetworkIcon(Network.active.strength ?? 0) : "wifi_off"
+        color: root.colour
 
-    //     anchors.horizontalCenter: parent.horizontalCenter
-    // }
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
 
     // MaterialIcon {
     //     id: bluetooth
@@ -69,8 +69,8 @@ Item {
     MaterialIcon {
         id: battery
 
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
+        anchors.horizontalCenter: network.horizontalCenter
+        anchors.top: network.bottom
         anchors.topMargin: Appearance.spacing.small
 
         animate: true
