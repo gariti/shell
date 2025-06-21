@@ -4,6 +4,7 @@ import "root:/utils"
 import "root:/config"
 import Quickshell
 import Quickshell.Services.UPower
+import Quickshell.Io
 import QtQuick
 
 Item {
@@ -28,6 +29,17 @@ Item {
         color: root.colour
 
         anchors.horizontalCenter: parent.horizontalCenter
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: wifiManager.startDetached()
+        }
+    }
+
+    Process {
+        id: wifiManager
+        // Try common WiFi management applications in order of preference
+        command: ["sh", "-c", "which nm-connection-editor >/dev/null 2>&1 && nm-connection-editor || which nmtui >/dev/null 2>&1 && alacritty -e nmtui || which iwgtk >/dev/null 2>&1 && iwgtk || which gnome-control-center >/dev/null 2>&1 && gnome-control-center wifi || which systemsettings5 >/dev/null 2>&1 && systemsettings5 kcm_networkmanagement || notify-send 'WiFi Manager' 'No WiFi management application found'"]
     }
 
     // MaterialIcon {
