@@ -29,7 +29,7 @@ Singleton {
 
     // Signals for immediate UI updates
     signal workspaceChanged()
-    signal activeWorkspaceChanged()
+    // Note: activeWorkspaceChanged signal is automatically created by the activeWorkspace property
 
     // Function to switch workspaces via niri msg
     function switchToWorkspace(id: int): void {

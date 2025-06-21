@@ -40,15 +40,10 @@ MouseArea {
             id: icon
             visible: {
                 const iconStr = String(root.modelData.icon);
-                // Filter out duplicate network and bluetooth icons that are already shown in StatusIcons
+                // Filter out duplicate network icons that are already shown in StatusIcons
+                // Allow bluetooth applets to show since custom bluetooth icon is now hidden
                 return iconStr !== "" && 
                        !iconStr.includes("preferences-system-network") && 
-                       !iconStr.includes("bluetooth") &&
-                       !iconStr.includes("blueman") &&
-                       !iconStr.includes("bluetoothctl") &&
-                       !iconStr.includes("bluetooth-symbolic") &&
-                       !iconStr.includes("bluetooth-active") &&
-                       !iconStr.includes("bluetooth-disabled") &&
                        !iconStr.includes("network-manager") &&
                        !iconStr.includes("nm-") &&
                        !iconStr.includes("wifi") &&

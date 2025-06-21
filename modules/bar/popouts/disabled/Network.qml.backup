@@ -1,0 +1,187 @@
+import "../../../services-niri"
+import QtQuick
+import Quickshell.Io
+
+Column {
+    id: root
+    width: 280
+    spacing: 8
+
+    // Header
+    Text {
+        text: "Network"
+        font.pointSize: 12
+        font.bold: true
+        color: "#E5E1E9"
+    }
+
+    Component.onCompleted: {
+        console.log("Enhanced Network popout loaded!");
+        console.log("Network service available:", typeof Network !== "undefined");
+        if (typeof Network !== "undefined") {
+            console.log("Network.networks:", Network.networks ? Network.networks.length : "null");
+            console.log("Network.active:", Network.active ? Network.active.ssid : "none");
+        }
+    }
+
+    // Current connection status
+    Rectangle {
+        width: parent.width
+        height: currentConnectionColumn.height + 16
+        color: "#2A2439"
+        radius: 8
+        border.color: "#3F3649"
+        border.width: 1
+
+        Column {
+            id: currentConnectionColumn
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: 8
+            spacing: 4
+
+            Text {
+                text: Network && Network.active ? 
+                      "Connected to: " + (Network.active.ssid || "Unknown") :
+                      "Not connected"
+                font.pointSize: 10
+                color: "#E5E1E9"
+                font.bold: Network && Network.active
+            }
+
+            Text {
+                visible: Network && Network.active
+                text: Network && Network.active ? 
+                      "Signal strength: " + (Network.active.strength || 0) + "%" :
+                      ""
+                font.pointSize: 9
+                color: "#C9C5D0"
+            }
+
+            Text {
+                visible: Network && Network.active
+                text: Network && Network.active ? 
+                      "Frequency: " + (Network.active.frequency || 0) + " MHz" :
+                      ""
+                font.pointSize: 9
+                color: "#A8A3AD"
+            }
+        }
+    }
+
+    // Available networks header
+    Text {
+        text: "Available Networks"
+        font.pointSize: 10
+        font.bold: true
+        color: "#C9C5D0"
+        topPadding: 8
+    }
+
+    // Networks list
+    Column {
+        width: parent.width
+        spacing: 4
+
+        Repeater {
+            model: Network ? Network.networks : []
+            
+            Rectangle {
+                width: parent.width
+                height: networkItem.height + 12
+                color: networkArea.containsMouse ? "#3F3649" : "#2A2439"
+                radius: 6
+                border.color: modelData.active ? "#6C5CE7" : "#3F3649"
+                border.width: modelData.active ? 2 : 1
+
+                MouseArea {
+                    id: networkArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    
+                    onClicked: {
+                        if (!modelData.active) {
+                            console.log("Attempting to connect to:", modelData.ssid);
+                            connectToNetwork.command = ["nmcli", "device", "wifi", "connect", modelData.ssid];
+                            connectToNetwork.running = true;
+                        }
+                    }
+                }
+
+                Row {
+                    id: networkItem
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: 8
+                    spacing: 12
+
+                    // WiFi signal strength icon (using Unicode)
+                    Text {
+                        text: getSignalIcon(modelData.strength)
+                        font.pointSize: 12
+                        color: getSignalColor(modelData.strength)
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    // Network info
+                    Column {
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 2
+
+                        Text {
+                            text: modelData.ssid
+                            font.pointSize: 10
+                            font.bold: modelData.active
+                            color: modelData.active ? "#E5E1E9" : "#C9C5D0"
+                        }
+
+                        Row {
+                            spacing: 8
+                            Text {
+                                text: modelData.strength + "%"
+                                font.pointSize: 8
+                                color: "#A8A3AD"
+                            }
+                            Text {
+                                text: (modelData.frequency / 1000).toFixed(1) + " GHz"
+                                font.pointSize: 8
+                                color: "#A8A3AD"
+                            }
+                        }
+                    }
+
+                    // Connection status
+                    Text {
+                        text: modelData.active ? "Connected" : "Click to connect"
+                        font.pointSize: 8
+                        color: modelData.active ? "#00B894" : "#A8A3AD"
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                    }
+                }
+            }
+        }
+    }
+
+    // Connection process
+    Process {
+        id: connectToNetwork
+    }
+
+    // Helper functions
+    function getSignalIcon(strength) {
+        if (strength >= 75) return "📶";
+        if (strength >= 50) return "📶";
+        if (strength >= 25) return "📶";
+        return "📶";
+    }
+
+    function getSignalColor(strength) {
+        if (strength >= 75) return "#00B894";
+        if (strength >= 50) return "#FDCB6E";
+        if (strength >= 25) return "#E17055";
+        return "#74B9FF";
+    }
+}
