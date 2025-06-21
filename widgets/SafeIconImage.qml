@@ -17,12 +17,6 @@ Item {
 
     function shouldFilterIcon(iconSource) {
         const problematicIcons = [
-            "preferences-system-network",
-            "network-manager",
-            "nm-",
-            "bluetooth",
-            "blueman", 
-            "image-missing",
             ""
         ];
         
@@ -42,6 +36,17 @@ Item {
                 console.log("SafeIconImage: Filtering problematic icon:", root.source);
                 return "";
             }
+            
+            // Handle specific bluetooth and network icons with direct paths
+            const iconStr = String(root.source);
+            if (iconStr.includes("bluetooth") || iconStr.includes("blueman")) {
+                // Try direct path to bluetooth icon from devices directory
+                return "file:///run/current-system/sw/share/icons/Papirus/48x48/devices/bluetooth.svg";
+            }
+            if (iconStr.includes("preferences-system-network")) {
+                return "file:///run/current-system/sw/share/icons/Papirus/64x64/apps/preferences-system-network.svg";
+            }
+            
             return root.source;
         }
         

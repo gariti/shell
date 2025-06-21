@@ -41,7 +41,45 @@ Item {
             IconImage {
                 id: icon
                 visible: source !== ""
-                source: root.modelData?.icon ? Quickshell.iconPath(root.modelData.icon, "") : ""
+                source: {
+                    if (!root.modelData?.icon) return "";
+                    
+                    const iconName = root.modelData.icon;
+                    
+                    // Direct path fallback for specific problematic icons
+                    if (iconName === "preferences-system-network") {
+                        // Try different icon sizes and formats
+                        const iconPaths = [
+                            "file:///run/current-system/sw/share/icons/Papirus/64x64/apps/preferences-system-network.svg",
+                            "file:///run/current-system/sw/share/icons/Papirus/48x48/apps/preferences-system-network.svg",
+                            "file:///run/current-system/sw/share/icons/Papirus/32x32/apps/preferences-system-network.svg",
+                            "/run/current-system/sw/share/icons/hicolor/48x48/apps/preferences-system-network.png"
+                        ];
+                        
+                        // Return the first available path
+                        for (const path of iconPaths) {
+                            // For now, just try the first file:// URL
+                            return iconPaths[0];
+                        }
+                    }
+                    
+                    const iconPath = Quickshell.iconPath(root.modelData.icon, "");
+                    if (iconPath !== "") {
+                        return iconPath;
+                    }
+                    
+                    // Fallback: try common alternative icon names for specific cases
+                    if (iconName === "preferences-system-network") {
+                        // Try alternative names for network settings
+                        const alternatives = ["network-manager", "network-wired", "network", "preferences-network", "system-network"];
+                        for (const alt of alternatives) {
+                            const altPath = Quickshell.iconPath(alt, "");
+                            if (altPath !== "") return altPath;
+                        }
+                    }
+                    
+                    return "";
+                }
                 implicitSize: parent.width
                 anchors.centerIn: parent
             }
