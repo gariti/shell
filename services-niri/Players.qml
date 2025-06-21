@@ -1,6 +1,6 @@
 pragma Singleton
 
-import "root:/widgets"
+import "../widgets"
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Mpris

@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import Quickshell.Io
 import "../../../widgets"
 import "../../../services-niri"
@@ -6,16 +7,77 @@ import "../../../utils"
 import "../../../config"
 
 StyledText {
+    id: osIcon
     text: getWorkspaceIcon()
     font.pointSize: Appearance.font.size.larger
     font.family: Appearance.font.family.mono
     color: Colours.palette.m3tertiary
     
-    // Make the icon clickable
+    // Smooth transitions for hover effects
+    Behavior on scale {
+        NumberAnimation {
+            duration: 200
+            easing.type: Easing.OutCubic
+        }
+    }
+    
+    Behavior on color {
+        ColorAnimation {
+            duration: 200
+            easing.type: Easing.OutCubic
+        }
+    }
+    
+    // Enhanced visual effect using layer with MultiEffect
+    layer.enabled: true
+    layer.effect: MultiEffect {
+        shadowEnabled: mouseArea.containsMouse
+        shadowColor: Colours.palette.m3primary
+        shadowOpacity: mouseArea.containsMouse ? 0.6 : 0
+        shadowBlur: mouseArea.containsMouse ? 0.8 : 0
+        shadowHorizontalOffset: 0
+        shadowVerticalOffset: 0
+        
+        Behavior on shadowOpacity {
+            NumberAnimation {
+                duration: 200
+                easing.type: Easing.OutCubic
+            }
+        }
+        
+        Behavior on shadowBlur {
+            NumberAnimation {
+                duration: 200
+                easing.type: Easing.OutCubic
+            }
+        }
+    }
+    
+    // Make the icon clickable with hover effects
     MouseArea {
+        id: mouseArea
         anchors.fill: parent
+        hoverEnabled: true
         onClicked: launchWorkspaceApps()
         cursorShape: Qt.PointingHandCursor
+        
+        onEntered: {
+            osIcon.scale = 1.15
+            osIcon.color = Colours.palette.m3primary
+        }
+        
+        onExited: {
+            osIcon.scale = 1.0
+            osIcon.color = Colours.palette.m3tertiary
+        }
+        
+        onPressed: {
+            osIcon.scale = 1.05
+        }
+        
+        onReleased: {
+            osIcon.scale = mouseArea.containsMouse ? 1.15 : 1.0
+        }
     }
     
     // Simple process launcher
@@ -41,9 +103,6 @@ StyledText {
                 case "code":
                     console.log("  Returning code icon");
                     return "\uf121"; // Code/terminal icon
-                case "browsing":
-                    console.log("  Returning browsing icon");
-                    return "\ue76b"; // Firefox/Browser icon
                 case "finance":
                     console.log("  Returning finance icon");
                     return "\uf155"; // Dollar sign icon
@@ -68,8 +127,8 @@ StyledText {
                     console.log("  Returning code icon for index 1");
                     return "\uf121"; // Code workspace (index 1)
                 case 2:
-                    console.log("  Returning browsing icon for index 2");
-                    return "\ue76b"; // Browsing workspace (index 2)
+                    console.log("  Returning generic workspace icon for unnamed index 2");
+                    return "\uf108"; // Generic desktop/workspace icon for unnamed workspace
                 case 3:
                     console.log("  Returning finance icon for index 3");
                     return "\uf155"; // Finance workspace (index 3)
@@ -103,10 +162,9 @@ StyledText {
                 spawnOnCurrentWorkspace("brave --profile-directory=code");
                 break;
                 
-            case "browsing":
             case "index2":
-                // Launch browsing apps
-                spawnOnCurrentWorkspace("brave");
+                // Generic unnamed workspace - no specific apps
+                console.log("No specific apps configured for unnamed workspace at index 2");
                 break;
                 
             case "finance":

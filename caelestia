@@ -12,20 +12,24 @@ function show_main_help
     echo 'Usage: caelestia COMPONENT COMMAND [ ...args ]'
     echo
     echo 'Components:'
-    echo '  shell      - Shell IPC commands'
-    echo '  wallpaper  - Wallpaper management'
-    echo '  mpris      - Media player control'
-    echo '  notifs     - Notification management'
-    echo '  drawers    - UI panel control'
-    echo '  session    - Session management ✅ NEW'
-    echo '  events     - Real-time event stream monitoring'
+    echo '  shell        - Shell IPC commands'
+    echo '  wallpaper    - Wallpaper management'
+    echo '  scheme       - Color scheme management ✅ NEW'
+    echo '  mpris        - Media player control'
+    echo '  notifs       - Notification management'
+    echo '  drawers      - UI panel control'
+    echo '  transparency - Shell transparency control ✅ NEW'
+    echo '  session      - Session management'
+    echo '  events       - Real-time event stream monitoring'
     echo
     echo 'Examples:'
     echo '  caelestia shell help'
     echo '  caelestia wallpaper random'
+    echo '  caelestia scheme set blue'
     echo '  caelestia mpris playPause'
     echo '  caelestia notifs toggle'
     echo '  caelestia drawers toggle session'
+    echo '  caelestia transparency set 0.8'
     echo '  caelestia session menu'
     echo '  caelestia events start --daemon'
     echo
@@ -36,11 +40,14 @@ function show_shell_help
     echo 'Usage: caelestia shell COMMAND [ ...args ]'
     echo
     echo 'Available commands:'
-    echo '  help      - Show this help'
-    echo '  mpris     - MPRIS media control'
-    echo '  drawers   - Toggle drawers'
-    echo '  wallpaper - Wallpaper control' 
-    echo '  notifs    - Notification control'
+    echo '  help         - Show this help'
+    echo '  mpris        - MPRIS media control'
+    echo '  drawers      - Toggle drawers'
+    echo '  wallpaper    - Wallpaper control' 
+    echo '  notifs       - Notification control'
+    echo '  scheme       - Color scheme control ✅ NEW'
+    echo '  variant      - Scheme variant control ✅ NEW'
+    echo '  transparency - Shell transparency control ✅ NEW'
     echo
     echo 'Example:'
     echo '  caelestia shell mpris playPause'
@@ -82,6 +89,24 @@ switch $component
     case wallpaper
         # Delegate to wallpaper script
         fish "$scripts_path/wallpaper.fish" $argv[2..]
+        
+    case scheme
+        # Delegate to scheme script
+        fish "$scripts_path/scheme.fish" $argv[2..]
+        
+    case transparency
+        # Handle transparency commands via shell IPC
+        if test -z "$argv[2]"
+            echo "Usage: caelestia transparency [get|set|increase|decrease] [value]"
+            exit 1
+        end
+        
+        if qs list --all | grep -q "Config path: $shell_path/shell.qml"
+            qs -p $shell_path/shell.qml ipc call transparency $argv[2..]
+        else
+            echo "Error: Caelestia shell is not running"
+            exit 1
+        end
         
     case mpris
         # Delegate to MPRIS script

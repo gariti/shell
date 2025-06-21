@@ -62,6 +62,22 @@ function set_random_wallpaper
     set_wallpaper "$selected_wallpaper"
 end
 
+function list_wallpapers
+    set -l wallpaper_dir "$HOME/Pictures/Wallpapers"
+    
+    if not test -d "$wallpaper_dir"
+        echo "Error: Wallpapers directory not found: $wallpaper_dir"
+        return 1
+    end
+    
+    find "$wallpaper_dir" -type f \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.webp" \) 2>/dev/null
+end
+
+function get_current_wallpaper
+    echo "Current wallpaper functionality not yet implemented"
+    return 1
+end
+
 # Main command handling
 set -l command $argv[1]
 
@@ -70,6 +86,10 @@ switch $command
         set_wallpaper $argv[2]
     case random
         set_random_wallpaper
+    case list
+        list_wallpapers
+    case current
+        get_current_wallpaper
     case -h --help ""
         show_help
     case '*'

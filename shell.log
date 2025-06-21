@@ -1,0 +1,165 @@
+[32m  INFO[0m: Launching config: "/etc/nixos/caelestia-shell/shell.qml"
+[32m  INFO[0m: Shell ID: "92267809cb6ff3d4bd9442a4c7665479" Path ID "92267809cb6ff3d4bd9442a4c7665479"
+[32m  INFO[0m: Saving logs to "/run/user/1000/quickshell/by-id/x6o2b798ys/log.qslog"
+[34m DEBUG[97m qml[0m: AdvancedWindowManager: Initializing
+[34m DEBUG[97m qml[0m: OsIcon Debug:
+[34m DEBUG[97m qml[0m:   currentWorkspaceIsNamed: false
+[34m DEBUG[97m qml[0m:   currentWorkspaceName: 
+[34m DEBUG[97m qml[0m:   currentMonitorWorkspaceIndex: 1
+[34m DEBUG[97m qml[0m:   Using workspace index: 1
+[34m DEBUG[97m qml[0m:   Returning code icon for index 1
+[34m DEBUG[97m qml[0m: Custom shortcut registered: mediaStop - Stop media playback
+[34m DEBUG[97m qml[0m: Custom shortcut registered: mediaNext - Next track
+[34m DEBUG[97m qml[0m: Custom shortcut registered: mediaPrev - Previous track
+[34m DEBUG[97m qml[0m: Custom shortcut registered: mediaToggle - Toggle media playback
+[34m DEBUG[97m qml[0m: DisplayManager: Available displays:
+[34m DEBUG[97m qml[0m:   0: eDP-1 (external: false, internal: true) - unknownxunknown
+[34m DEBUG[97m qml[0m:   1: DP-3 (external: true, internal: false) - unknownxunknown
+[34m DEBUG[97m qml[0m: DisplayManager: Found external display for launcher: DP-3
+[34m DEBUG[97m qml[0m: DisplayManager: Preferred launcher screen: DP-3
+[34m DEBUG[97m qml[0m: DisplayManager: Found external display for launcher: DP-3
+[34m DEBUG[97m qml[0m: Custom shortcut registered: clearNotifs - Clear all notifications
+[34m DEBUG[97m qml[0m: Notifs: No existing notification server found, starting our own
+[34m DEBUG[97m qml[0m: OsIcon component loaded, setting initial icon
+[34m DEBUG[97m qml[0m: OsIcon Debug:
+[34m DEBUG[97m qml[0m:   currentWorkspaceIsNamed: false
+[34m DEBUG[97m qml[0m:   currentWorkspaceName: 
+[34m DEBUG[97m qml[0m:   currentMonitorWorkspaceIndex: 1
+[34m DEBUG[97m qml[0m:   Using workspace index: 1
+[34m DEBUG[97m qml[0m:   Returning code icon for index 1
+[34m DEBUG[97m qml[0m: 🚀 INTERACTIONS.QML LOADED - this should appear in logs
+[34m DEBUG[97m qml[0m: OsIcon Debug:
+[34m DEBUG[97m qml[0m:   currentWorkspaceIsNamed: false
+[34m DEBUG[97m qml[0m:   currentWorkspaceName: 
+[34m DEBUG[97m qml[0m:   currentMonitorWorkspaceIndex: 1
+[34m DEBUG[97m qml[0m:   Using workspace index: 1
+[34m DEBUG[97m qml[0m:   Returning code icon for index 1
+[34m DEBUG[97m qml[0m: DisplayManager: Found external display for launcher: DP-3
+[34m DEBUG[97m qml[0m: OsIcon component loaded, setting initial icon
+[34m DEBUG[97m qml[0m: OsIcon Debug:
+[34m DEBUG[97m qml[0m:   currentWorkspaceIsNamed: false
+[34m DEBUG[97m qml[0m:   currentWorkspaceName: 
+[34m DEBUG[97m qml[0m:   currentMonitorWorkspaceIndex: 1
+[34m DEBUG[97m qml[0m:   Using workspace index: 1
+[34m DEBUG[97m qml[0m:   Returning code icon for index 1
+[34m DEBUG[97m qml[0m: 🚀 INTERACTIONS.QML LOADED - this should appear in logs
+[34m DEBUG[97m qml[0m: Transparency current: 1
+[34m DEBUG[97m qml[0m: Variants current: undefined
+[34m DEBUG[97m qml[0m: EventStream active: false
+[34m DEBUG[97m qml[0m: NiriWorkspaces count: 5
+[34m DEBUG[97m qml[0m: Custom shortcut registered: launcherInterrupt - Interrupt launcher keybind
+[34m DEBUG[97m qml[0m: Custom shortcut registered: launcher - Toggle launcher
+[34m DEBUG[97m qml[0m: Custom shortcut registered: session - Toggle session menu
+[32m  INFO[97m quickshell.service.notifications[0m: Starting notification server
+[32m  INFO[97m quickshell.service.notifications[0m: Registered notification server with dbus.
+[32m  INFO[0m: Configuration Loaded
+[33m  WARN[0m: Process failed to start, likely because the binary could not be found. Command: QList("undefined/assets/realtime-beat-detector.py")
+[33m  WARN[97m scene[0m: QML StyledRect at **/modules/bar/Bar.qml[111:9]: Item is visible and has visible children, but has zero width and height
+[33m  WARN[97m scene[0m: QML StyledRect at **/modules/bar/Bar.qml[111:9]: Item is visible and has visible children, but has zero width and height
+[34m DEBUG[97m qml[0m: Hyprland: Found active client from list: CAELESTIA-SHELL-LAUNCHER-ACTIONS-ISSUE.md - nixos - Visual Studio Code
+[34m DEBUG[97m qml[0m: Hyprland: Found focused window client: CAELESTIA-SHELL-LAUNCHER-ACTIONS-ISSUE.md - nixos - Visual Studio Code
+[34m DEBUG[97m qml[0m: Niri IPC: Connected to compositor
+[34m DEBUG[97m qml[0m: Workspace name changed, updating icon
+[34m DEBUG[97m qml[0m: OsIcon Debug:
+[34m DEBUG[97m qml[0m:   currentWorkspaceIsNamed: false
+[34m DEBUG[97m qml[0m:   currentWorkspaceName: Code
+[34m DEBUG[97m qml[0m:   currentMonitorWorkspaceIndex: 1
+[34m DEBUG[97m qml[0m:   Using workspace index: 1
+[34m DEBUG[97m qml[0m:   Returning code icon for index 1
+[34m DEBUG[97m qml[0m: Workspace name changed, updating icon
+[34m DEBUG[97m qml[0m: OsIcon Debug:
+[34m DEBUG[97m qml[0m:   currentWorkspaceIsNamed: false
+[34m DEBUG[97m qml[0m:   currentWorkspaceName: Code
+[34m DEBUG[97m qml[0m:   currentMonitorWorkspaceIndex: 1
+[34m DEBUG[97m qml[0m:   Using workspace index: 1
+[34m DEBUG[97m qml[0m:   Returning code icon for index 1
+[34m DEBUG[97m qml[0m: Workspace named status changed, updating icon
+[34m DEBUG[97m qml[0m: OsIcon Debug:
+[34m DEBUG[97m qml[0m:   currentWorkspaceIsNamed: true
+[34m DEBUG[97m qml[0m:   currentWorkspaceName: Code
+[34m DEBUG[97m qml[0m:   currentMonitorWorkspaceIndex: 1
+[34m DEBUG[97m qml[0m:   Using named workspace: code
+[34m DEBUG[97m qml[0m:   Returning code icon
+[34m DEBUG[97m qml[0m: Workspace named status changed, updating icon
+[34m DEBUG[97m qml[0m: OsIcon Debug:
+[34m DEBUG[97m qml[0m:   currentWorkspaceIsNamed: true
+[34m DEBUG[97m qml[0m:   currentWorkspaceName: Code
+[34m DEBUG[97m qml[0m:   currentMonitorWorkspaceIndex: 1
+[34m DEBUG[97m qml[0m:   Using named workspace: code
+[34m DEBUG[97m qml[0m:   Returning code icon
+[34m DEBUG[97m qml[0m: NiriService: Monitor DP-3 - Workspace "Code" - ID: 1 - Named: true
+[33m  WARN[97m qt.qml.context[0m: qsintercept:///etc/nixos/caelestia-shell/services-niri/EventStream.qml:199:9 Parameter "exitCode" is not declared. Injection of parameters into signal handlers is deprecated. Use JavaScript functions with formal parameters instead.
+[34m DEBUG[97m qml[0m: Niri is available, starting event stream...
+[34m DEBUG[97m qml[0m: Starting Niri event stream...
+[34m DEBUG[97m qml[0m: Niri event stream started successfully
+[33m  WARN[97m qml[0m: Failed to parse event JSON: SyntaxError: JSON.parse: Parse error Started reading events.
+[33m  WARN[97m qml[0m: Failed to parse event JSON: SyntaxError: JSON.parse: Parse error Workspaces changed: [Workspace { id: 4, idx: 4, name: Some("Home"), output: Some("DP-3"), is_urgent: false, is_active: false, is_focused: false, active_window_id: Some(15) }, Workspace { id: 6, idx: 5, name: None, output: Some("DP-3"), is_urgent: false, is_active: false, is_focused: false, active_window_id: Some(45) }, Workspace { id: 5, idx: 1, name: None, output: Some("eDP-1"), is_urgent: false, is_active: true, is_focused: false, active_window_id: None }, Workspace { id: 7, idx: 6, name: None, output: Some("DP-3"), is_urgent: false, is_active: false, is_focused: false, active_window_id: None }, Workspace { id: 1, idx: 1, name: Some("Code"), output: Some("DP-3"), is_urgent: false, is_active: true, is_focused: true, active_window_id: Some(13) }, Workspace { id: 2, idx: 2, name: Some("Browsing"), output: Some("DP-3"), is_urgent: false, is_active: false, is_focused: false, active_window_id: None }, Workspace { id: 3, idx: 3, name: Some("Finance"), output: Some("DP-3"), is_urgent: false, is_active: false, is_focused: false, active_window_id: None }]
+[33m  WARN[97m qml[0m: Failed to parse event JSON: SyntaxError: JSON.parse: Parse error Windows changed: [Window { id: 15, title: Some("ZimaOS - Brave"), app_id: Some("brave-browser"), pid: Some(42506), workspace_id: Some(4), is_focused: false, is_floating: false, is_urgent: false }, Window { id: 36, title: Some("Google Gemini - Brave"), app_id: Some("brave-browser"), pid: Some(42506), workspace_id: Some(1), is_focused: false, is_floating: false, is_urgent: false }, Window { id: 45, title: Some("WhatsApp - Brave"), app_id: Some("brave-browser"), pid: Some(42506), workspace_id: Some(6), is_focused: false, is_floating: false, is_urgent: false }, Window { id: 12, title: Some("garrett@nixos:~"), app_id: Some("Alacritty"), pid: Some(32908), workspace_id: Some(1), is_focused: false, is_floating: false, is_urgent: false }, Window { id: 13, title: Some("CAELESTIA-SHELL-LAUNCHER-ACTIONS-ISSUE.md - nixos - Visual Studio Code"), app_id: Some("code"), pid: Some(33019), workspace_id: Some(1), is_focused: true, is_floating: false, is_urgent: false }]
+[33m  WARN[97m qml[0m: Failed to parse event JSON: SyntaxError: JSON.parse: Parse error Keyboard layouts changed: KeyboardLayouts { names: ["English (US)"], current_idx: 0 }
+[33m  WARN[97m qml[0m: Failed to parse event JSON: SyntaxError: JSON.parse: Parse error Overview toggled: false
+[33m  WARN[97m qt.svg[0m: /run/current-system/sw/share/icons/hicolor/scalable/apps/Alacritty.svg:444:273: Could not resolve property: #linearGradient10962
+[33m  WARN[97m qt.svg[0m: /run/current-system/sw/share/icons/hicolor/scalable/apps/Alacritty.svg:444:273: Could not resolve property: #linearGradient10962
+[33m  WARN[97m qt.svg[0m: /run/current-system/sw/share/icons/hicolor/scalable/apps/Alacritty.svg:444:273: Could not resolve property: #linearGradient10962
+[33m  WARN[97m qt.svg[0m: /run/current-system/sw/share/icons/hicolor/scalable/apps/Alacritty.svg:444:273: Could not resolve property: #linearGradient10962
+[33m  WARN[97m scene[0m: **/modules/bar/Bar.qml[122:-1]: ReferenceError: workspacesInner is not defined
+[33m  WARN[97m scene[0m: **/modules/bar/Bar.qml[121:-1]: ReferenceError: workspacesInner is not defined
+[33m  WARN[97m scene[0m: **/modules/bar/Bar.qml[122:-1]: ReferenceError: workspacesInner is not defined
+[33m  WARN[97m scene[0m: **/modules/bar/Bar.qml[121:-1]: ReferenceError: workspacesInner is not defined
+[33m  WARN[0m: Could not load icon "bluetooth" at size QSize(2, 2) from request
+[33m  WARN[0m: Could not load icon "bluetooth" at size QSize(2, 2) from request
+[33m  WARN[0m: Could not load icon "bluetooth" at size QSize(43, 43) from request
+[33m  WARN[0m: Could not load icon "bluetooth" at size QSize(2, 2) from request
+[33m  WARN[0m: Could not load icon "bluetooth" at size QSize(34, 34) from request
+[34m DEBUG[97m qml[0m: Icon source: image://icon/blueman-active
+[34m DEBUG[97m qml[0m: Filtering out problematic icon: image://icon/blueman-active
+[34m DEBUG[97m qml[0m: Icon source: image://icon/blueman-active
+[34m DEBUG[97m qml[0m: Filtering out problematic icon: image://icon/blueman-active
+[34m DEBUG[97m qml[0m: NiriService: Monitor DP-3 - Workspace "Code" - ID: 1 - Named: true
+[34m DEBUG[97m qml[0m: NiriService: Monitor DP-3 - Workspace "Code" - ID: 1 - Named: true
+[34m DEBUG[97m qml[0m: NiriService: Monitor DP-3 - Workspace "Code" - ID: 1 - Named: true
+[34m DEBUG[97m qml[0m: AdvancedWindowManager: Starting event stream
+[34m DEBUG[97m qml[0m: Hyprland: Found focused window client: CAELESTIA-SHELL-LAUNCHER-ACTIONS-ISSUE.md - nixos - Visual Studio Code
+[34m DEBUG[97m qml[0m: Hyprland: Found active client from list: CAELESTIA-SHELL-LAUNCHER-ACTIONS-ISSUE.md - nixos - Visual Studio Code
+[34m DEBUG[97m qml[0m: NiriService: Monitor DP-3 - Workspace "Code" - ID: 1 - Named: true
+[34m DEBUG[97m qml[0m: NiriService: Monitor DP-3 - Workspace "Code" - ID: 1 - Named: true
+[34m DEBUG[97m qml[0m: NiriService: Monitor DP-3 - Workspace "Code" - ID: 1 - Named: true
+[34m DEBUG[97m qml[0m: NiriService: Monitor DP-3 - Workspace "Code" - ID: 1 - Named: true
+[34m DEBUG[97m qml[0m: DisplayManager: Found external display for launcher: DP-3
+[34m DEBUG[97m qml[0m: Visibilities: Using preferred screen for launcher: DP-3
+[34m DEBUG[97m qml[0m: DisplayManager: Found external display for launcher: DP-3
+[34m DEBUG[97m qml[0m: Visibilities: Using ** Message: 15:30:56.451: Connecting to org.freedesktop.Tracker3.Miner.Files
+nautilus-application-Message: 15:30:56.453: Failed to initialize display server connection: GDBus.Error:org.freedesktop.DBus.Error.InvalidArgs: Invalid service client type
+
+(org.gnome.Nautilus:125464): Gtk-WARNING **: 15:30:56.459: Theme parser error: gtk.css:5:1-133: Failed to import: Error opening file /nix/store/rk8d6nf1gc5l717sivr3c8kqs56w80vs-gnome-themes-extra-3.28/share/themes/Adwaita-dark/gtk-4.0/gtk.css: No such file or directory
+
+(org.gnome.Nautilus:125464): Adwaita-WARNING **: 15:30:57.201: Using GtkSettings:gtk-application-prefer-dark-theme with libadwaita is unsupported. Please use AdwStyleManager:color-scheme instead.
+** Message: 15:30:57.263: Connecting to org.freedesktop.Tracker3.Miner.Files
+** Message: 15:30:57.868: Connecting to org.freedesktop.Tracker3.Miner.Files
+
+** (org.gnome.Nautilus:125464): WARNING **: 15:30:57.980: Error loading .desktop file at /home/garrett/.local/share/applications/steam.desktop: No such file or directory
+
+** (org.gnome.Nautilus:125464): WARNING **: 15:30:57.981: Error loading Implements key from /home/garrett/.local/share/applications/pinokio-appimage.desktop: Key file does not have group “Desktop Entry”
+
+** (org.gnome.Nautilus:125464): WARNING **: 15:30:57.985: Could not mount 'network:///': volume doesn’t implement mount
+
+** (org.gnome.Nautilus:125464): WARNING **: 15:30:57.985: Could not mount 'network:///': volume doesn’t implement mount
+
+** (org.gnome.Nautilus:125464): WARNING **: 15:30:57.985: Unable to create connection for session-wide Tracker indexer: The name org.freedesktop.Tracker3.Miner.Files was not provided by any .service files
+
+** (org.gnome.Nautilus:125464): WARNING **: 15:30:57.985: Could not mount 'network:///': volume doesn’t implement mount
+
+(org.gnome.Nautilus:125464): Gdk-WARNING **: 15:30:58.123: vkAcquireNextImageKHR(): A swapchain no longer matches the surface properties exactly, but can still be used to present to the surface successfully. (VK_SUBOPTIMAL_KHR) (1000001003)
+
+(org.gnome.Nautilus:125464): Gdk-WARNING **: 15:30:58.130: vkAcquireNextImageKHR(): A swapchain no longer matches the surface properties exactly, but can still be used to present to the surface successfully. (VK_SUBOPTIMAL_KHR) (1000001003)
+
+(org.gnome.Nautilus:125464): Gdk-WARNING **: 15:30:58.154: vkAcquireNextImageKHR(): A swapchain no longer matches the surface properties exactly, but can still be used to present to the surface successfully. (VK_SUBOPTIMAL_KHR) (1000001003)
+preferred screen for launcher: DP-3
+[33m  WARN[97m qml[0m: Failed to parse event JSON: SyntaxError: JSON.parse: Parse error Window focus changed: None
+[34m DEBUG[97m qml[0m: Hyprland: No focused window in list, querying separately
+[34m DEBUG[97m qml[0m: NiriService: Monitor DP-3 - Workspace "Code" - ID: 1 - Named: true
+[34m DEBUG[97m qml[0m: NiriService: Monitor DP-3 - Workspace "Code" - ID: 1 - Named: true
+[31m ERROR[0m: Quickshell has crashed under pid 125081 (Coredumps will be available under that pid.)
+[31m ERROR[0m: Further crash information is stored under "/home/garrett/.cache/quickshell/crashes/x6o2b798ys"
+[31m ERROR[0m: Quickshell crashed within 10 seconds of launching. Not restarting to avoid a crash loop.
+[33m  WARN[0m: QThreadStorage: entry 2 destroyed before end of thread 0x7f97e721e820
+[33m  WARN[0m: QThreadStorage: entry 1 destroyed before end of thread 0x7f97e721e820

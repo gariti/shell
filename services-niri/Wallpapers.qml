@@ -1,7 +1,7 @@
 pragma Singleton
 
-import "root:/utils/scripts/fuzzysort.js" as Fuzzy
-import "root:/utils"
+import "../utils/scripts/fuzzysort.js" as Fuzzy
+import "../utils"
 import Quickshell
 import Quickshell.Io
 import QtQuick
@@ -97,7 +97,7 @@ Singleton {
 
     Process {
         running: true
-        command: ["fd", ".", root.path, "-t", "f", "-e", "jpg", "-e", "jpeg", "-e", "png", "-e", "svg"]
+        command: ["find", root.path, "-type", "f", "(", "-name", "*.jpg", "-o", "-name", "*.jpeg", "-o", "-name", "*.png", "-o", "-name", "*.svg", ")"]
         stdout: SplitParser {
             splitMarker: ""
             onRead: data => wallpapers.model = data.trim().split("\n")
