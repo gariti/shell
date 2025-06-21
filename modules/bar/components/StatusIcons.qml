@@ -13,12 +13,12 @@ Item {
 
     readonly property Item network: network
     readonly property real bs: bluetooth.y
-    readonly property real be: repeater.count > 0 ? devices.y + devices.implicitHeight : bluetooth.y + bluetooth.implicitHeight
+    readonly property real be: bluetooth.y + bluetooth.implicitHeight
     readonly property Item battery: battery
 
     clip: true
-    implicitWidth: Math.max(network.implicitWidth, bluetooth.implicitWidth, devices.implicitWidth, battery.implicitWidth)
-    implicitHeight: network.implicitHeight + bluetooth.implicitHeight + bluetooth.anchors.topMargin + (repeater.count > 0 ? devices.implicitHeight + devices.anchors.topMargin : 0) + battery.implicitHeight + battery.anchors.topMargin
+    implicitWidth: Math.max(network.implicitWidth, bluetooth.implicitWidth, battery.implicitWidth)
+    implicitHeight: network.implicitHeight + bluetooth.implicitHeight + bluetooth.anchors.topMargin + battery.implicitHeight + battery.anchors.topMargin
 
     MaterialIcon {
         id: network
@@ -42,35 +42,35 @@ Item {
         color: root.colour
     }
 
-    Column {
-        id: devices
+    // Column {
+    //     id: devices
 
-        anchors.horizontalCenter: bluetooth.horizontalCenter
-        anchors.top: bluetooth.bottom
-        anchors.topMargin: Appearance.spacing.small
+    //     anchors.horizontalCenter: bluetooth.horizontalCenter
+    //     anchors.top: bluetooth.bottom
+    //     anchors.topMargin: Appearance.spacing.small
 
-        Repeater {
-            id: repeater
+    //     Repeater {
+    //         id: repeater
 
-            model: ScriptModel {
-                values: Bluetooth.devices.filter(d => d.connected)
-            }
+    //         model: ScriptModel {
+    //             values: Bluetooth.devices.filter(d => d.connected)
+    //         }
 
-            MaterialIcon {
-                required property Bluetooth.Device modelData
+    //         MaterialIcon {
+    //             required property Bluetooth.Device modelData
 
-                animate: true
-                text: Icons.getBluetoothIcon(modelData.icon)
-                color: root.colour
-            }
-        }
-    }
+    //             animate: true
+    //             text: Icons.getBluetoothIcon(modelData.icon)
+    //             color: root.colour
+    //         }
+    //     }
+    // }
 
     MaterialIcon {
         id: battery
 
-        anchors.horizontalCenter: devices.horizontalCenter
-        anchors.top: repeater.count > 0 ? devices.bottom : bluetooth.bottom
+        anchors.horizontalCenter: bluetooth.horizontalCenter
+        anchors.top: bluetooth.bottom
         anchors.topMargin: Appearance.spacing.small
 
         animate: true
