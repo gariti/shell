@@ -16,7 +16,8 @@ Item {
         id: rect
 
         anchors.fill: parent
-        color: Colours.alpha(BorderConfig.colour, false)
+        color: BorderConfig.colour
+        opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
         visible: false
     }
 
