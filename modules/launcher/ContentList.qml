@@ -164,8 +164,6 @@ Item {
         }
     }
 
-    // Temporarily disable new loaders to test
-    /*
     Loader {
         id: schemeList
 
@@ -213,7 +211,6 @@ Item {
             visibilities: root.visibilities
         }
     }
-    */
 
     Item {
         id: empty
