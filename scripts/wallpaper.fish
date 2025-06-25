@@ -37,6 +37,11 @@ function set_wallpaper
     # Start new swaybg instance
     swaybg -i "$wallpaper_path" -m fill &
     
+    # Persist wallpaper path for session restore (write to quickshell directory)
+    set -l state_dir "$HOME/.local/state/quickshell/wallpaper"
+    mkdir -p $state_dir
+    echo "$wallpaper_path" > $state_dir/last.txt
+    
     echo "Wallpaper set: $wallpaper_path"
 end
 
