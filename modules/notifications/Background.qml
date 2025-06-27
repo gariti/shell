@@ -14,7 +14,7 @@ ShapePath {
     property real fullHeightRounding: wrapper.height >= QsWindow.window?.height - BorderConfig.thickness * 2 ? -rounding : rounding
 
     strokeWidth: -1
-    fillColor: BorderConfig.colour
+    fillColor: Colours.alpha(BorderConfig.colour, false)  // Use transparent color like other elements
 
     PathLine {
         relativeX: -(root.wrapper.width + root.rounding)

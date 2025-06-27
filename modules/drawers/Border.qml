@@ -16,8 +16,8 @@ Item {
         id: rect
 
         anchors.fill: parent
-        color: BorderConfig.colour
-        opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
+        color: "#000000"
+        opacity: 1.0  // Keep source opaque
         visible: false
     }
 
@@ -33,15 +33,15 @@ Item {
             anchors.fill: parent
             anchors.margins: BorderConfig.thickness
             anchors.leftMargin: root.bar.implicitWidth
-            radius: BorderConfig.rounding
+            radius: BorderConfig.rounding  // Use full rounding to match other elements
         }
 
-        // Square section behind the panel to remove rounding there
+        // Square section behind the panel to remove ALL border around panel
         Rectangle {
-            x: BorderConfig.thickness
-            y: BorderConfig.thickness
-            width: root.bar.implicitWidth - BorderConfig.thickness
-            height: parent.height - BorderConfig.thickness * 2
+            x: 0
+            y: 0
+            width: root.bar.implicitWidth
+            height: parent.height
             color: "white"
         }
     }
@@ -52,7 +52,19 @@ Item {
         maskInverted: true
         maskSource: mask
         source: rect
-        maskThresholdMin: 0.5
-        maskSpreadAtMin: 1
+        maskThresholdMin: 0.6  // Slightly higher threshold to reduce edge artifacts
+        maskSpreadAtMin: 0.8   // Tighter spread
+        
+        // Apply exact same transparency calculation as panel
+        opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
+        
+        // Ensure no color processing that might affect transparency
+        brightness: 0.0
+        contrast: 0.0
+        saturation: 0.0
+        colorization: 0.0
+        
+        // Add slight antialiasing to smooth edges
+        autoPaddingEnabled: true
     }
 }

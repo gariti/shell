@@ -19,7 +19,7 @@ Shape {
     anchors.margins: BorderConfig.thickness
     anchors.leftMargin: bar.implicitWidth
     preferredRendererType: Shape.CurveRenderer
-    opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
+    opacity: Colours.transparency.enabled ? Colours.transparency.base : 1  // Restore transparency for drawer panels
 
     Osd.Background {
         wrapper: panels.osd

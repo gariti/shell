@@ -14,7 +14,7 @@ ShapePath {
     property real ibr: invertBottomRounding ? -1 : 1
 
     strokeWidth: -1
-    fillColor: BorderConfig.colour
+    fillColor: Colours.alpha(BorderConfig.colour, false)  // Use transparent color like other elements
 
     PathArc {
         relativeX: root.roundingX

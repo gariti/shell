@@ -17,7 +17,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: "#000000"  // OLED black background
-        opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
+        opacity: Colours.transparency.enabled ? Colours.transparency.base : 1  // Apply transparency directly since Bar is not inside Backgrounds
         z: -1  // Ensure it's behind other elements
     }
 

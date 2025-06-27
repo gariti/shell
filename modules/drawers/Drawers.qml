@@ -103,16 +103,6 @@ Variants {
                 }
             }
 
-            // MultiEffect with conservative settings to prevent system freezing
-            MultiEffect {
-                anchors.fill: source
-                source: background
-                shadowEnabled: true
-                blurMax: 8  // Reduced from 15 to prevent performance issues
-                shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.5)  // Reduced opacity
-                blurEnabled: Colours.transparency.enabled  // Only enable if transparency is enabled
-            }
-
             PersistentProperties {
                 id: visibilities
 

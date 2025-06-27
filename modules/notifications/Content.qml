@@ -13,6 +13,9 @@ Item {
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.right: parent.right
+    anchors.topMargin: BorderConfig.thickness
+    anchors.bottomMargin: BorderConfig.thickness
+    anchors.rightMargin: BorderConfig.thickness
 
     implicitWidth: NotifsConfig.sizes.width + padding * 2
     implicitHeight: {

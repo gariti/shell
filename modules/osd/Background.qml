@@ -12,7 +12,7 @@ ShapePath {
     readonly property real roundingX: flatten ? wrapper.width / 2 : rounding
 
     strokeWidth: -1
-    fillColor: BorderConfig.colour
+    fillColor: Colours.alpha(BorderConfig.colour, false)  // Use transparent color like other elements
 
     PathArc {
         relativeX: -root.roundingX

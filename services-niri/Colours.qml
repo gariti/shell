@@ -94,8 +94,8 @@ Singleton {
 
     component Transparency: QtObject {
         readonly property bool enabled: true  // Enable transparency
-        readonly property real base: 0.7  // 70% opacity - 30% transparent
-        readonly property real layers: 0.7  // 70% opacity for layers - 30% transparent
+        readonly property real base: 0.6  // 60% opacity - 40% transparent
+        readonly property real layers: 0.1  // 10% opacity for layers - 90% transparent
     }
 
     component Colours: QtObject {
