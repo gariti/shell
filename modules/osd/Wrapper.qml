@@ -8,6 +8,7 @@ Item {
 
     required property ShellScreen screen
     required property bool visibility
+    property alias mouseInContent: content.mouseInContent
 
     visible: width > 0
     implicitWidth: 0

@@ -30,6 +30,31 @@ MouseArea {
         }
     }
 
+    // Timer to delay OSD closing
+    Timer {
+        id: osdCloseTimer
+        interval: 1000 // 1 second delay
+        onTriggered: {
+            // Only close if not hovering over OSD content
+            if (!panels.osd.mouseInContent) {
+                visibilities.osd = false;
+                osdHovered = false;
+            }
+        }
+    }
+
+    // Timer to delay Dashboard closing  
+    Timer {
+        id: dashboardCloseTimer
+        interval: 1000 // 1 second delay
+        onTriggered: {
+            // Only close if not hovering over Dashboard content
+            if (!panels.dashboard.mouseInContent) {
+                visibilities.dashboard = false;
+            }
+        }
+    }
+
     Component.onCompleted: {
         console.log("🚀 INTERACTIONS.QML LOADED - this should appear in logs");
     }
@@ -41,6 +66,28 @@ MouseArea {
             if (popouts.mouseInContent) {
                 console.log("Mouse in content - stopping close timer");
                 popoutCloseTimer.stop();
+            }
+        }
+    }
+
+    // Watch for changes in OSD mouseInContent
+    Connections {
+        target: panels.osd
+        function onMouseInContentChanged() {
+            if (panels.osd.mouseInContent) {
+                console.log("Mouse in OSD content - stopping close timer");
+                osdCloseTimer.stop();
+            }
+        }
+    }
+
+    // Watch for changes in Dashboard mouseInContent
+    Connections {
+        target: panels.dashboard
+        function onMouseInContentChanged() {
+            if (panels.dashboard.mouseInContent) {
+                console.log("Mouse in Dashboard content - stopping close timer");
+                dashboardCloseTimer.stop();
             }
         }
     }
@@ -84,9 +131,13 @@ MouseArea {
     onPressed: event => dragStart = Qt.point(event.x, event.y)
     onContainsMouseChanged: {
         if (!containsMouse) {
-            visibilities.osd = false;
-            osdHovered = false;
-            visibilities.dashboard = false;
+            // Start timers for OSD and Dashboard instead of immediately closing
+            if (visibilities.osd && !panels.osd.mouseInContent) {
+                osdCloseTimer.start();
+            }
+            if (visibilities.dashboard && !panels.dashboard.mouseInContent) {
+                dashboardCloseTimer.start();
+            }
             // Only start the timer if there's a popout AND we're not in the generous hover area AND not over content
             if (popouts.hasCurrent) {
                 // Check if we're in the generous popout area before starting timer
@@ -103,8 +154,10 @@ MouseArea {
                 }
             }
         } else {
-            // Mouse is back in the main interaction area, cancel the close timer
+            // Mouse is back in the main interaction area, cancel all close timers
             popoutCloseTimer.stop();
+            osdCloseTimer.stop();
+            dashboardCloseTimer.stop();
         }
     }
 
@@ -116,6 +169,11 @@ MouseArea {
         const showOsd = inRightPanel(panels.osd, x, y);
         visibilities.osd = showOsd;
         osdHovered = showOsd;
+        
+        // Stop OSD close timer if hovering over OSD area
+        if (showOsd) {
+            osdCloseTimer.stop();
+        }
 
         // Show/hide session on drag
         if (pressed && withinPanelHeight(panels.session, x, y)) {
@@ -127,7 +185,13 @@ MouseArea {
         }
 
         // Show dashboard on hover with comprehensive bounds checking
-        visibilities.dashboard = inTopPanel(panels.dashboard, x, y);
+        const showDashboard = inTopPanel(panels.dashboard, x, y);
+        visibilities.dashboard = showDashboard;
+        
+        // Stop Dashboard close timer if hovering over Dashboard area
+        if (showDashboard) {
+            dashboardCloseTimer.stop();
+        }
 
         // Show popouts on hover - very generous bounds to prevent closing
         const popout = panels.popouts;

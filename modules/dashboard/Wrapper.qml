@@ -6,6 +6,7 @@ Item {
     id: root
 
     required property PersistentProperties visibilities
+    property alias mouseInContent: content.mouseInContent
 
     visible: height > 0
     implicitHeight: 0

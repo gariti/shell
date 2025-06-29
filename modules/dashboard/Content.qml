@@ -10,12 +10,27 @@ Item {
 
     required property PersistentProperties visibilities
     readonly property real nonAnimWidth: view.implicitWidth + viewWrapper.anchors.margins * 2
+    property bool mouseInContent: false  // Track if mouse is in the Dashboard content
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom
 
     implicitWidth: nonAnimWidth
     implicitHeight: tabs.implicitHeight + tabs.anchors.topMargin + view.implicitHeight + viewWrapper.anchors.margins * 2
+
+    // MouseArea to keep Dashboard open when hovering over child elements
+    MouseArea {
+        anchors.fill: parent
+        anchors.margins: -20 // Extend beyond the content area
+        hoverEnabled: true
+        acceptedButtons: Qt.NoButton // Don't handle any clicks
+        
+        // Keep the Dashboard open while hovering anywhere in this area
+        onContainsMouseChanged: {
+            root.mouseInContent = containsMouse;
+            console.log("Dashboard content mouse changed:", containsMouse);
+        }
+    }
 
     Tabs {
         id: tabs
