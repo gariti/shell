@@ -55,8 +55,52 @@ MouseArea {
         }
     }
 
+    // Timer to detect when user has moved away from shell entirely
+    Timer {
+        id: focusLossTimer
+        interval: 2000 // 2 second delay for focus loss detection
+        onTriggered: {
+            if (!containsMouse && !popouts.mouseInContent && !panels.osd.mouseInContent && !panels.dashboard.mouseInContent) {
+                console.log("User appears to have moved away from shell - closing all popouts and drawers");
+                popouts.hasCurrent = false;
+                visibilities.osd = false;
+                osdHovered = false;
+                visibilities.dashboard = false;
+            }
+        }
+    }
+
     Component.onCompleted: {
         console.log("🚀 INTERACTIONS.QML LOADED - this should appear in logs");
+    }
+
+    // Watch for window focus changes and close all popouts/drawers
+    Connections {
+        target: EventStream
+        function onWindowChanged(eventData) {
+            // Check if this is a window focus change
+            if (eventData && Object.keys(eventData)[0] === "WindowsChanged") {
+                // Parse the windows to see if focus changed
+                const windowsData = eventData["WindowsChanged"];
+                if (Array.isArray(windowsData)) {
+                    // Look for focused window changes
+                    const hasFocusedWindow = windowsData.some(window => window.is_focused === true);
+                    if (hasFocusedWindow) {
+                        console.log("Window focus changed to another application - closing all popouts and drawers");
+                        // Close all popouts and drawers when focus moves to another window
+                        popouts.hasCurrent = false;
+                        visibilities.osd = false;
+                        osdHovered = false;
+                        visibilities.dashboard = false;
+                        
+                        // Stop all timers to prevent them from interfering
+                        popoutCloseTimer.stop();
+                        osdCloseTimer.stop();
+                        dashboardCloseTimer.stop();
+                    }
+                }
+            }
+        }
     }
 
     // Watch for changes in mouseInContent and stop timer if mouse is over content
@@ -66,6 +110,7 @@ MouseArea {
             if (popouts.mouseInContent) {
                 console.log("Mouse in content - stopping close timer");
                 popoutCloseTimer.stop();
+                focusLossTimer.stop();
             }
         }
     }
@@ -77,6 +122,7 @@ MouseArea {
             if (panels.osd.mouseInContent) {
                 console.log("Mouse in OSD content - stopping close timer");
                 osdCloseTimer.stop();
+                focusLossTimer.stop();
             }
         }
     }
@@ -88,6 +134,7 @@ MouseArea {
             if (panels.dashboard.mouseInContent) {
                 console.log("Mouse in Dashboard content - stopping close timer");
                 dashboardCloseTimer.stop();
+                focusLossTimer.stop();
             }
         }
     }
@@ -127,10 +174,29 @@ MouseArea {
 
     anchors.fill: parent
     hoverEnabled: true
+    
+    // Close all popouts when the window loses focus
+    onActiveFocusChanged: {
+        if (!activeFocus) {
+            console.log("Shell lost focus - closing all popouts and drawers");
+            popouts.hasCurrent = false;
+            visibilities.osd = false;
+            osdHovered = false;
+            visibilities.dashboard = false;
+            
+            // Stop all timers
+            popoutCloseTimer.stop();
+            osdCloseTimer.stop();
+            dashboardCloseTimer.stop();
+        }
+    }
 
     onPressed: event => dragStart = Qt.point(event.x, event.y)
     onContainsMouseChanged: {
         if (!containsMouse) {
+            // Start the focus loss timer to detect if user has moved away
+            focusLossTimer.start();
+            
             // Start timers for OSD and Dashboard instead of immediately closing
             if (visibilities.osd && !panels.osd.mouseInContent) {
                 osdCloseTimer.start();
@@ -155,6 +221,7 @@ MouseArea {
             }
         } else {
             // Mouse is back in the main interaction area, cancel all close timers
+            focusLossTimer.stop();
             popoutCloseTimer.stop();
             osdCloseTimer.stop();
             dashboardCloseTimer.stop();
