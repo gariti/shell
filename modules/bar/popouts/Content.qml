@@ -14,11 +14,26 @@ Item {
     property string currentName
     property real currentCenter
     property bool hasCurrent
+    property bool mouseInContent: false  // Track if mouse is in the popout content
 
     anchors.centerIn: parent
 
     implicitWidth: hasCurrent ? (content.children.find(c => c.shouldBeActive)?.implicitWidth ?? 0) + Appearance.padding.large * 2 : 0
     implicitHeight: (content.children.find(c => c.shouldBeActive)?.implicitHeight ?? 0) + Appearance.padding.large * 2
+
+    // MouseArea to keep popout open when hovering over child elements
+    MouseArea {
+        anchors.fill: parent
+        anchors.margins: -20 // Extend beyond the content area
+        hoverEnabled: true
+        acceptedButtons: Qt.NoButton // Don't handle any clicks
+        
+        // Keep the popout open while hovering anywhere in this area
+        onContainsMouseChanged: {
+            root.mouseInContent = containsMouse;
+            console.log("Content mouse changed:", containsMouse);
+        }
+    }
 
     Item {
         id: content

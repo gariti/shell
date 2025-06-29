@@ -13,13 +13,14 @@ Item {
     property color colour: Colours.palette.m3secondary
 
     readonly property Item network: network
-    readonly property real bs: network.y
-    readonly property real be: battery.y + battery.implicitHeight
+    readonly property Item bluetooth: bluetooth
+    readonly property real bs: bluetooth.y
+    readonly property real be: bluetooth.y + bluetooth.implicitHeight
     readonly property Item battery: battery
 
     clip: true
-    implicitWidth: Math.max(network.implicitWidth, battery.implicitWidth)
-    implicitHeight: network.implicitHeight + battery.implicitHeight + battery.anchors.topMargin
+    implicitWidth: Math.max(network.implicitWidth, bluetooth.implicitWidth, battery.implicitWidth)
+    implicitHeight: network.implicitHeight + bluetooth.implicitHeight + battery.implicitHeight + bluetooth.anchors.topMargin + battery.anchors.topMargin
 
     MaterialIcon {
         id: network
@@ -42,27 +43,17 @@ Item {
         command: ["sh", "-c", "which nm-connection-editor >/dev/null 2>&1 && nm-connection-editor || which nmtui >/dev/null 2>&1 && alacritty -e nmtui || which iwgtk >/dev/null 2>&1 && iwgtk || which gnome-control-center >/dev/null 2>&1 && gnome-control-center wifi || which systemsettings5 >/dev/null 2>&1 && systemsettings5 kcm_networkmanagement || notify-send 'WiFi Manager' 'No WiFi management application found'"]
     }
 
-    // MaterialIcon {
-    //     id: bluetooth
+    MaterialIcon {
+        id: bluetooth
 
-    //     anchors.horizontalCenter: network.horizontalCenter
-    //     anchors.top: network.bottom
-    //     anchors.topMargin: Appearance.spacing.small
+        anchors.horizontalCenter: network.horizontalCenter
+        anchors.top: network.bottom
+        anchors.topMargin: Appearance.spacing.small
 
-    //     animate: true
-    //     text: Bluetooth.powered ? "bluetooth" : "bluetooth_disabled"
-    //     color: root.colour
-
-    //     MouseArea {
-    //         anchors.fill: parent
-    //         onClicked: bluetoothManager.startDetached()
-    //     }
-    // }
-
-    // Process {
-    //     id: bluetoothManager
-    //     command: ["sh", "-c", "which blueman-manager >/dev/null 2>&1 && blueman-manager || which gnome-control-center >/dev/null 2>&1 && gnome-control-center bluetooth || which systemsettings5 >/dev/null 2>&1 && systemsettings5 kcm_bluetooth || notify-send 'Bluetooth Manager' 'No Bluetooth management application found'"]
-    // }
+        animate: true
+        text: Bluetooth.powered ? "bluetooth" : "bluetooth_disabled"
+        color: root.colour
+    }
 
     // Column {
     //     id: devices
@@ -91,8 +82,8 @@ Item {
     MaterialIcon {
         id: battery
 
-        anchors.horizontalCenter: network.horizontalCenter
-        anchors.top: network.bottom
+        anchors.horizontalCenter: bluetooth.horizontalCenter
+        anchors.top: bluetooth.bottom
         anchors.topMargin: Appearance.spacing.small
 
         animate: true

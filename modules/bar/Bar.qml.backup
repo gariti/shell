@@ -39,6 +39,10 @@ Item {
         const n = statusIcons ? statusIcons.network : null;
         const ny = (statusIcons ? statusIcons.y : 0) + (n ? n.y : 0) - spacing / 2;
 
+        const bl = statusIcons ? statusIcons.bluetooth : null;
+        const bls = (statusIcons ? statusIcons.y : 0) + (statusIcons ? statusIcons.bs : 0) - spacing / 2;
+        const ble = (statusIcons ? statusIcons.y : 0) + (statusIcons ? statusIcons.be : 0) + spacing / 2;
+
         const b = statusIcons ? statusIcons.battery : null;
         const by = (statusIcons ? statusIcons.y : 0) + (b ? b.y : 0) - spacing / 2;
 
@@ -60,6 +64,10 @@ Item {
         } else if (n && y >= ny && y <= ny + n.implicitHeight + spacing) {
             popouts.currentName = "network";
             popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (n ? n.y : 0) + (n ? n.implicitHeight : 0) / 2);
+            if (popouts) popouts.hasCurrent = true;
+        } else if (bl && y >= bls && y <= ble) {
+            popouts.currentName = "bluetooth";
+            popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (statusIcons ? statusIcons.bs : 0) + ((statusIcons && statusIcons.be && statusIcons.bs) ? (statusIcons.be - statusIcons.bs) : 0) / 2);
             if (popouts) popouts.hasCurrent = true;
         } else if (b && y >= by && y <= by + b.implicitHeight + spacing) {
             popouts.currentName = "battery";

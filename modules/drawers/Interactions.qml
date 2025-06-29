@@ -16,9 +16,33 @@ MouseArea {
 
     property bool osdHovered
     property point dragStart
+    property bool inPopoutArea: false
+    
+    // Timer to delay popout closing 
+    Timer {
+        id: popoutCloseTimer
+        interval: 1000 // 1 second delay - very generous
+        onTriggered: {
+            // Only close if we're still not in the popout area AND not hovering over content
+            if (!inPopoutArea && !popouts.mouseInContent) {
+                popouts.hasCurrent = false;
+            }
+        }
+    }
 
     Component.onCompleted: {
         console.log("🚀 INTERACTIONS.QML LOADED - this should appear in logs");
+    }
+
+    // Watch for changes in mouseInContent and stop timer if mouse is over content
+    Connections {
+        target: popouts
+        function onMouseInContentChanged() {
+            if (popouts.mouseInContent) {
+                console.log("Mouse in content - stopping close timer");
+                popoutCloseTimer.stop();
+            }
+        }
     }
 
     function withinPanelHeight(panel: Item, x: real, y: real): bool {
@@ -63,7 +87,24 @@ MouseArea {
             visibilities.osd = false;
             osdHovered = false;
             visibilities.dashboard = false;
-            popouts.hasCurrent = false;
+            // Only start the timer if there's a popout AND we're not in the generous hover area AND not over content
+            if (popouts.hasCurrent) {
+                // Check if we're in the generous popout area before starting timer
+                const popoutLeft = bar.implicitWidth;
+                const popoutRight = bar.implicitWidth + 500;
+                const popoutTop = -50;
+                const popoutBottom = height + 50;
+                
+                const inGenerousArea = mouseX >= popoutLeft && mouseX <= popoutRight && 
+                                     mouseY >= popoutTop && mouseY <= popoutBottom;
+                
+                if (!inGenerousArea && !popouts.mouseInContent) {
+                    popoutCloseTimer.start();
+                }
+            }
+        } else {
+            // Mouse is back in the main interaction area, cancel the close timer
+            popoutCloseTimer.stop();
         }
     }
 
@@ -88,19 +129,32 @@ MouseArea {
         // Show dashboard on hover with comprehensive bounds checking
         visibilities.dashboard = inTopPanel(panels.dashboard, x, y);
 
-        // Show popouts on hover
+        // Show popouts on hover - very generous bounds to prevent closing
         const popout = panels.popouts;
-        if (x < bar.implicitWidth + popout.width) {
-            if (x < bar.implicitWidth) {
-                // Handle like part of bar
-                bar.checkPopout(y);
+        
+        if (x < bar.implicitWidth) {
+            // Handle like part of bar
+            bar.checkPopout(y);
+            popoutCloseTimer.stop();
+        } else if (popouts.hasCurrent) {
+            // If a popout is active, be extremely generous about the hover area
+            const popoutLeft = bar.implicitWidth;
+            const popoutRight = bar.implicitWidth + 500; // Very wide area
+            const popoutTop = -50; // Extend above
+            const popoutBottom = parent.height + 50; // Extend below
+            
+            const inGenerousArea = x >= popoutLeft && x <= popoutRight && 
+                                 y >= popoutTop && y <= popoutBottom;
+            
+            if (inGenerousArea || popouts.mouseInContent) {
+                // Mouse is in the generous area OR over the content, keep popout open
+                popoutCloseTimer.stop();
             } else {
-                // Keep on hover - but only if we're actually within the popout bounds
-                const withinPopout = withinPanelHeight(popout, x, y);
-                popouts.hasCurrent = withinPopout;
+                // Mouse is outside the generous area AND not over content, start close timer if not already running
+                if (!popoutCloseTimer.running) {
+                    popoutCloseTimer.start();
+                }
             }
-        } else {
-            popouts.hasCurrent = false;
         }
     }
 
