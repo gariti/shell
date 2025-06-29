@@ -9,6 +9,10 @@ Item {
     required property Brightness.Monitor monitor
     property bool mouseInContent: false  // Track if mouse is in the OSD content
 
+    // Set the size based on the column content
+    implicitWidth: column.implicitWidth
+    implicitHeight: column.implicitHeight
+
     // MouseArea to keep OSD open when hovering over child elements
     MouseArea {
         anchors.fill: parent
@@ -58,8 +62,4 @@ Item {
             implicitHeight: OsdConfig.sizes.sliderHeight
         }
     }
-
-    // Set the size based on the column content
-    implicitWidth: column.implicitWidth
-    implicitHeight: column.implicitHeight
 }
