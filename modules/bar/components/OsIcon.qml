@@ -3,15 +3,29 @@ import QtQuick.Effects
 import Quickshell.Io
 import "../../../widgets"
 import "../../../services-niri"
-import "../../../utils"
+import "../../utils"
 import "../../../config"
 
 StyledText {
     id: osIcon
     text: getWorkspaceIcon()
-    font.pointSize: Appearance.font.size.larger
+    
+    // Fixed size and font settings for consistent appearance
+    width: 24
+    height: 24
+    font.pointSize: getIconFontSize()  // Dynamic font size based on workspace
     font.family: Appearance.font.family.mono
     color: Colours.palette.m3tertiary
+    
+    // Center the text within the fixed dimensions
+    horizontalAlignment: Text.AlignHCenter
+    verticalAlignment: Text.AlignVCenter
+    
+    // Remove any default padding/margins
+    topPadding: 0
+    bottomPadding: 0
+    leftPadding: 0
+    rightPadding: 0
     
     // Smooth transitions for hover effects
     Behavior on scale {
@@ -25,31 +39,6 @@ StyledText {
         ColorAnimation {
             duration: 200
             easing.type: Easing.OutCubic
-        }
-    }
-    
-    // Enhanced visual effect using layer with MultiEffect
-    layer.enabled: true
-    layer.effect: MultiEffect {
-        shadowEnabled: mouseArea.containsMouse
-        shadowColor: Colours.palette.m3primary
-        shadowOpacity: mouseArea.containsMouse ? 0.6 : 0
-        shadowBlur: mouseArea.containsMouse ? 0.8 : 0
-        shadowHorizontalOffset: 0
-        shadowVerticalOffset: 0
-        
-        Behavior on shadowOpacity {
-            NumberAnimation {
-                duration: 200
-                easing.type: Easing.OutCubic
-            }
-        }
-        
-        Behavior on shadowBlur {
-            NumberAnimation {
-                duration: 200
-                easing.type: Easing.OutCubic
-            }
         }
     }
     
@@ -85,6 +74,19 @@ StyledText {
         id: launchProcess
     }
     
+    // Function to get the appropriate font size based on workspace
+    function getIconFontSize() {
+        // Check if this is the first workspace (code workspace or index 1)
+        const isFirstWorkspace = (NiriService.currentWorkspaceIsNamed && 
+                                  NiriService.currentWorkspaceName && 
+                                  NiriService.currentWorkspaceName.toLowerCase() === "code") ||
+                                 (!NiriService.currentWorkspaceIsNamed && 
+                                  NiriService.currentMonitorWorkspaceIndex === 1);
+        
+        // Make the first workspace icon 25% bigger
+        return isFirstWorkspace ? 20 : 16;  // 20 is 16 * 1.25
+    }
+    
     // Function to get the appropriate icon based on workspace name or index
     function getWorkspaceIcon() {
         // Debug logging
@@ -102,10 +104,13 @@ StyledText {
             switch (workspaceName) {
                 case "code":
                     console.log("  Returning code icon");
-                    return "\uf121"; // Code/terminal icon
+                    return ""; // Code/terminal icon
+                case "browsing":
+                    console.log("  Returning browsing icon");
+                    return ""; // Browser icon
                 case "finance":
                     console.log("  Returning finance icon");
-                    return "\uf155"; // Dollar sign icon
+                    return ""; // Dollar sign icon
                 case "social":
                 case "social media":
                     console.log("  Returning social media icon");
@@ -115,7 +120,7 @@ StyledText {
                     return "\uf015"; // Home icon
                 default:
                     console.log("  Returning default OS icon for named workspace");
-                    return Icons.osIcon; // Fallback to system OS icon
+                    return "\uf301"; // Fallback to system OS icon
             }
         } else {
             // Use workspace index for unnamed workspaces
@@ -123,24 +128,10 @@ StyledText {
             console.log("  Using workspace index:", workspaceIndex);
             
             switch (workspaceIndex) {
-                case 1:
-                    console.log("  Returning code icon for index 1");
-                    return "\uf121"; // Code workspace (index 1)
-                case 2:
-                    console.log("  Returning generic workspace icon for unnamed index 2");
-                    return "\uf108"; // Generic desktop/workspace icon for unnamed workspace
-                case 3:
-                    console.log("  Returning finance icon for index 3");
-                    return "\uf155"; // Finance workspace (index 3)
-                case 4:
-                    console.log("  Returning home icon for index 4");
-                    return "\uf015"; // Home workspace (index 4)
-                case 5:
-                    console.log("  Returning social media icon for index 5");
-                    return "\uf27a"; // Social media workspace (index 5)
+
                 default:
                     console.log("  Returning default OS icon for index", workspaceIndex);
-                    return Icons.osIcon; // Fallback to system OS icon for other workspaces
+                    return ""; // Fallback to system OS icon for other workspaces
             }
         }
     }
