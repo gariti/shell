@@ -44,13 +44,15 @@ Item {
             }
         }
 
-        return Math.min((screen?.height ?? 0) - BorderConfig.thickness * 2, height + padding * 2);
+        // Add a substantial padding to ensure the last notification is fully visible
+        // Use a much more generous bottom margin calculation
+        return Math.min((screen?.height ?? 0) - BorderConfig.thickness * 4, height + padding * 2 + BorderConfig.thickness * 2);
     }
 
     ClippingWrapperRectangle {
         anchors.fill: parent
         anchors.margins: root.padding
-
+        
         color: "transparent"
         radius: Appearance.rounding.normal
 
@@ -62,6 +64,7 @@ Item {
             }
 
             anchors.fill: parent
+            anchors.bottomMargin: 10 // Increased margin to prevent cutoff
 
             orientation: Qt.Vertical
             spacing: 0
@@ -81,10 +84,12 @@ Item {
                 }
 
                 implicitWidth: notif.implicitWidth
-                implicitHeight: notif.implicitHeight + (idx === 0 ? 0 : Appearance.spacing.smaller)
+                implicitHeight: notif.implicitHeight + (idx === 0 ? 0 : Appearance.spacing.smaller) +
+                                (index === list.count-1 ? 8 : 0) // Add moderate padding to the last item
 
                 ListView.onRemove: removeAnim.start()
 
+                // Modified to handle different removal cases
                 SequentialAnimation {
                     id: removeAnim
 
@@ -103,18 +108,25 @@ Item {
                         property: "implicitHeight"
                         value: 0
                     }
-                    PropertyAction {
-                        target: wrapper
-                        property: "z"
-                        value: 1
+                    
+                    // We can detect dismissal via click by checking if wrapper.modelData.popup is false
+                    ScriptAction {
+                        script: {
+                            // Skip animation when explicitly dismissed via click
+                            if (!wrapper.modelData.popup) {
+                                wrapper.ListView.delayRemove = false;
+                            }
+                        }
                     }
+                    
+                    // This animation will only run for automatic timeouts, not clicks
                     Anim {
                         target: notif
-                        property: "x"
-                        to: (notif.x >= 0 ? NotifsConfig.sizes.width : -NotifsConfig.sizes.width) * 2
-                        duration: Appearance.anim.durations.normal
-                        easing.bezierCurve: Appearance.anim.curves.emphasized
+                        property: "opacity"
+                        to: 0
+                        duration: 50 // Very short duration
                     }
+                    
                     PropertyAction {
                         target: wrapper
                         property: "ListView.delayRemove"
@@ -139,6 +151,7 @@ Item {
                 }
             }
 
+            // Allow animations for moves when notifications slide in
             move: Transition {
                 Anim {
                     property: "y"
@@ -153,6 +166,7 @@ Item {
         }
     }
 
+    // Restore animation behavior for height changes during slide-in
     Behavior on implicitHeight {
         Anim {}
     }

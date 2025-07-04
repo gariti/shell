@@ -19,7 +19,17 @@ Item {
     anchors.centerIn: parent
 
     implicitWidth: hasCurrent ? (content.children.find(c => c.shouldBeActive)?.implicitWidth ?? 0) + Appearance.padding.large * 2 : 0
-    implicitHeight: (content.children.find(c => c.shouldBeActive)?.implicitHeight ?? 0) + Appearance.padding.large * 2
+    implicitHeight: {
+        const activeComponent = content.children.find(c => c.shouldBeActive);
+        const baseHeight = (activeComponent?.implicitHeight ?? 0) + Appearance.padding.large * 2;
+        
+        // Add additional padding for notifications to prevent bottom cutoff
+        if (currentName && currentName.includes("notification")) {
+            return baseHeight + Appearance.padding.large;
+        }
+        
+        return baseHeight;
+    }
 
     // MouseArea to keep popout open when hovering over child elements
     MouseArea {

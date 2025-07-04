@@ -65,16 +65,26 @@ StyledRect {
             }
         }
         onClicked: event => {
-            if (!NotifsConfig.actionOnClick || event.button !== Qt.LeftButton)
+            if (event.button !== Qt.LeftButton)
                 return;
-
-            const actions = root.modelData.actions;
-            if (actions?.length === 1)
-                actions[0].invoke();
+                
+            // Close the notification when clicked (dismiss it)
+            // Set popup to false directly for instant disappearance
+            root.modelData.popup = false;
+            root.modelData.notification.dismiss();
+            
+            // Only perform default action if actionOnClick is enabled
+            if (NotifsConfig.actionOnClick) {
+                const actions = root.modelData.actions;
+                if (actions?.length === 1)
+                    actions[0].invoke();
+            }
         }
     }
 
+    // Only animate sliding in, not sliding out
     Behavior on x {
+        enabled: x < NotifsConfig.sizes.width // Only animate when sliding in (x is decreasing)
         NumberAnimation {
             duration: Appearance.anim.durations.normal
             easing.type: Easing.BezierSpline
