@@ -17,6 +17,9 @@ MouseArea {
     property bool osdHovered
     property point dragStart
     property bool inPopoutArea: false
+    property bool inDashboardArea: false // Track when mouse is in dashboard area
+    property bool isTabChangeInProgress: false // Track if a tab change is in progress
+    property int tabStabilityTimeout: 200 // Reduced from 500ms to 200ms - Time in ms to ignore mouse events during tab changes
     
     // Timer to delay popout closing 
     Timer {
@@ -46,11 +49,15 @@ MouseArea {
     // Timer to delay Dashboard closing  
     Timer {
         id: dashboardCloseTimer
-        interval: 1000 // 1 second delay
+        interval: 300 // Reduced from 1000ms to 300ms for more responsive closing
         onTriggered: {
-            // Only close if not hovering over Dashboard content
-            if (!panels.dashboard.mouseInContent) {
+            // Only close if not hovering over Dashboard content, not in dashboard area, and not during tab change
+            if (!panels.dashboard.mouseInContent && !inDashboardArea && !isTabChangeInProgress) {
+                console.log("Dashboard close timer triggered - closing dashboard");
                 visibilities.dashboard = false;
+            } else {
+                console.log("Dashboard close timer blocked - mouseInContent:", panels.dashboard.mouseInContent, 
+                           "inDashboardArea:", inDashboardArea, "tabChange:", isTabChangeInProgress);
             }
         }
     }
@@ -67,6 +74,30 @@ MouseArea {
                 osdHovered = false;
                 visibilities.dashboard = false;
             }
+        }
+    }
+
+    // New timer to monitor dashboard exit events more aggressively
+    Timer {
+        id: dashboardExitVerifier
+        interval: 200 // Short interval to verify mouse has really left
+        onTriggered: {
+            // If mouse is still outside dashboard area and content, close it
+            // Don't close if tab change is in progress
+            if (!inDashboardArea && !panels.dashboard.mouseInContent && !isTabChangeInProgress) {
+                console.log("Dashboard exit verified - closing dashboard");
+                visibilities.dashboard = false;
+            }
+        }
+    }
+    
+    // Timer to handle tab changes
+    Timer {
+        id: tabChangeStabilizer
+        interval: tabStabilityTimeout
+        onTriggered: {
+            console.log("Tab change stabilized - resuming normal behavior");
+            isTabChangeInProgress = false;
         }
     }
 
@@ -134,7 +165,31 @@ MouseArea {
             if (panels.dashboard.mouseInContent) {
                 console.log("Mouse in Dashboard content - stopping close timer");
                 dashboardCloseTimer.stop();
+                dashboardExitVerifier.stop();
                 focusLossTimer.stop();
+            } else if (visibilities.dashboard && !isTabChangeInProgress) {
+                // Mouse has left dashboard content - start exit verification
+                // Only if the dashboard is still visible AND not in the middle of a tab change
+                console.log("Mouse left Dashboard content - starting exit verification");
+                dashboardExitVerifier.restart();
+            }
+        }
+    }
+    
+    // Watch for tab changes in the Dashboard
+    Connections {
+        target: panels.dashboard.content ? panels.dashboard.content.tabs.bar : null
+        function onCurrentIndexChanged() {
+            if (panels.dashboard.content && panels.dashboard.content.tabs) {
+                console.log("Tab bar index changed - stabilizing dashboard");
+                isTabChangeInProgress = true;
+                
+                // Reset all timers
+                dashboardCloseTimer.stop();
+                dashboardExitVerifier.stop();
+                
+                // Start the tab change stabilizer timer
+                tabChangeStabilizer.restart();
             }
         }
     }
@@ -194,14 +249,22 @@ MouseArea {
     onPressed: event => dragStart = Qt.point(event.x, event.y)
     onContainsMouseChanged: {
         if (!containsMouse) {
+            // Mouse has left the main interaction area
+            console.log("Mouse left main interaction area");
+            
+            // Reset dashboard area tracking since mouse is outside the main area
+            inDashboardArea = false;
+            
             // Start the focus loss timer to detect if user has moved away
             focusLossTimer.start();
             
             // Start timers for OSD and Dashboard instead of immediately closing
             if (visibilities.osd && !panels.osd.mouseInContent) {
+                console.log("Starting OSD close timer");
                 osdCloseTimer.start();
             }
-            if (visibilities.dashboard && !panels.dashboard.mouseInContent) {
+            if (visibilities.dashboard && !panels.dashboard.mouseInContent && !isTabChangeInProgress) {
+                console.log("Starting Dashboard close timer");
                 dashboardCloseTimer.start();
             }
             // Only start the timer if there's a popout AND we're not in the generous hover area AND not over content
@@ -253,11 +316,25 @@ MouseArea {
 
         // Show dashboard on hover with comprehensive bounds checking
         const showDashboard = inTopPanel(panels.dashboard, x, y);
-        visibilities.dashboard = showDashboard;
+        
+        // Update dashboard area tracking immediately
+        inDashboardArea = showDashboard;
+        
+        // Only update visibility if we're not in the middle of a tab change
+        // OR if we're showing the dashboard (never prevent showing)
+        if (showDashboard || !isTabChangeInProgress) {
+            visibilities.dashboard = showDashboard;
+        }
         
         // Stop Dashboard close timer if hovering over Dashboard area
         if (showDashboard) {
+            console.log("Mouse in dashboard area - stopping close timer");
             dashboardCloseTimer.stop();
+            dashboardExitVerifier.stop();
+        } else if (visibilities.dashboard && !isTabChangeInProgress) {
+            // Mouse has left dashboard area and dashboard is visible
+            console.log("Mouse left dashboard area - dashboard still visible");
+            // Don't immediately start timer here, let other logic handle it
         }
 
         // Show popouts on hover - very generous bounds to prevent closing

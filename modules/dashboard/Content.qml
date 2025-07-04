@@ -20,15 +20,47 @@ Item {
 
     // MouseArea to keep Dashboard open when hovering over child elements
     MouseArea {
+        id: contentMouseArea
         anchors.fill: parent
         anchors.margins: -20 // Extend beyond the content area
         hoverEnabled: true
         acceptedButtons: Qt.NoButton // Don't handle any clicks
         
+        // Timer to prevent flickering when changing tabs
+        Timer {
+            id: mouseContentStabilizer
+            interval: 300 // Short delay
+            onTriggered: {
+                // Only update mouseInContent if the mouse is truly not in the content area
+                if (!contentMouseArea.containsMouse) {
+                    root.mouseInContent = false;
+                    console.log("Dashboard content mouse exited (confirmed):", false);
+                }
+            }
+        }
+        
         // Keep the Dashboard open while hovering anywhere in this area
         onContainsMouseChanged: {
-            root.mouseInContent = containsMouse;
-            console.log("Dashboard content mouse changed:", containsMouse);
+            if (containsMouse) {
+                // Immediately update when mouse enters
+                mouseContentStabilizer.stop();
+                root.mouseInContent = true;
+                console.log("Dashboard content mouse entered:", true);
+            } else {
+                // Delay update when mouse leaves to handle tab changes
+                mouseContentStabilizer.restart();
+            }
+        }
+    }
+
+    // Handle tab changes properly
+    Connections {
+        target: tabs.bar
+        function onCurrentIndexChanged() {
+            console.log("Tab changed in dashboard - ensuring content stays open");
+            // Reset mouseInContent to true during tab changes to prevent unwanted closing
+            mouseContentStabilizer.stop(); // Stop any pending timers
+            root.mouseInContent = true;
         }
     }
 
