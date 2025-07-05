@@ -22,10 +22,10 @@ Column {
     SessionButton {
         id: logout
 
-        icon: "🚪"
+        icon: "logout"
         command: ["sh", "-c", "(uwsm stop | grep -q 'Compositor is not running' && loginctl terminate-user $USER) || uwsm stop"]
 
-        KeyNavigation.down: lock
+        KeyNavigation.down: shutdown
 
         Connections {
             target: root.visibilities
@@ -38,22 +38,12 @@ Column {
     }
 
     SessionButton {
-        id: lock
-
-        icon: "🔒"
-        command: ["loginctl", "lock-session"]
-
-        KeyNavigation.up: logout
-        KeyNavigation.down: shutdown
-    }
-
-    SessionButton {
         id: shutdown
 
-        icon: "⚡"
+        icon: "power_settings_new"
         command: ["systemctl", "poweroff"]
 
-        KeyNavigation.up: lock
+        KeyNavigation.up: logout
         KeyNavigation.down: hibernate
     }
 
@@ -72,8 +62,8 @@ Column {
     SessionButton {
         id: hibernate
 
-        icon: "😴"
-        command: ["systemctl", "hibernate"]
+        icon: "bedtime"
+        command: ["/run/wrappers/bin/sudo", "sh", "-c", "echo freeze > /sys/power/state"]
 
         KeyNavigation.up: shutdown
         KeyNavigation.down: reboot
@@ -82,13 +72,13 @@ Column {
     SessionButton {
         id: reboot
 
-        icon: "🔄"
+        icon: "restart_alt"
         command: ["systemctl", "reboot"]
 
         KeyNavigation.up: hibernate
     }
 
-    component SessionButton: Rectangle {
+    component SessionButton: StyledRect {
         id: button
 
         required property string icon
@@ -97,15 +87,9 @@ Column {
         implicitWidth: SessionConfig.sizes.button
         implicitHeight: SessionConfig.sizes.button
 
-        // Use transparent background with subtle border
-        color: button.hovered ? Qt.rgba(1, 1, 1, 0.1) : "transparent"
-        border.color: Qt.rgba(1, 1, 1, 0.3)
-        border.width: 1
         radius: Appearance.rounding.large
+        color: button.activeFocus ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainer
 
-        // Hover effect
-        property bool hovered: false
-        
         Keys.onEnterPressed: proc.startDetached()
         Keys.onReturnPressed: proc.startDetached()
         Keys.onEscapePressed: root.visibilities.session = false
@@ -116,20 +100,19 @@ Column {
             command: button.command
         }
 
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            
-            onEntered: button.hovered = true
-            onExited: button.hovered = false
-            onClicked: proc.startDetached()
+        StateLayer {
+            radius: parent.radius
+
+            function onClicked(): void {
+                proc.startDetached();
+            }
         }
 
-        Text {
+        MaterialIcon {
             anchors.centerIn: parent
 
             text: button.icon
-            color: "white"
+            color: button.activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
             font.pointSize: Appearance.font.size.extraLarge
         }
     }
