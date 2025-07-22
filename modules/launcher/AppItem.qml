@@ -20,6 +20,7 @@ Item {
         radius: Appearance.rounding.full
 
         function onClicked(): void {
+            console.log("AppItem clicked:", root.modelData?.name, "id:", root.modelData?.id);
             Apps.launch(root.modelData);
             root.visibilities.launcher = false;
         }

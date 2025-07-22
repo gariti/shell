@@ -32,14 +32,12 @@ Singleton {
         console.log("Apps.launch: Launching", entry.id, "with name", entry.name);
         
         // Use a simple Process for each launch
-        const procWrapper = launchProc.createObject(root);
+        const procWrapper = launchProc.createObject(root, {
+            appId: entry.id
+        });
         
-        if (procWrapper) {
-            procWrapper.process.command = ["/etc/nixos/caelestia-shell/scripts/launch-detached.sh", entry.id];
-            console.log("Apps.launch: Starting process for", entry.id);
-            procWrapper.process.start();
-        } else {
-            console.error("Apps.launch: Failed to create process for", entry.id);
+        if (!procWrapper) {
+            console.error("Apps.launch: Failed to create process wrapper for", entry.id);
         }
     }
     
@@ -47,16 +45,21 @@ Singleton {
         id: launchProc
         
         Item {
+            property string appId
+            
             Process {
-                id: process
+                id: proc
+                command: ["/etc/nixos/caelestia-shell/scripts/launch-detached.sh", appId]
+                running: true
+                
                 onStarted: {
-                    console.log("Apps.launch: Process started successfully");
+                    console.log("Apps.launch: Process started successfully for", appId);
                     // Destroy this process object after a delay to clean up
                     destroyTimer.start();
                 }
                 
                 onExited: (exitCode, exitStatus) => {
-                    console.log("Apps.launch: Process exited with code", exitCode, "status", exitStatus);
+                    console.log("Apps.launch: Process exited with code", exitCode, "status", exitStatus, "for", appId);
                     destroyTimer.start();
                 }
             }
