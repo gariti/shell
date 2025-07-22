@@ -3,6 +3,7 @@ pragma Singleton
 import "../utils/scripts/fuzzysort.js" as Fuzzy
 import Quickshell
 import Quickshell.Io
+import QtQuick
 
 Singleton {
     id: root
@@ -23,16 +24,48 @@ Singleton {
     }
 
     function launch(entry: DesktopEntry): void {
-        launchProc.entry = entry;
-        launchProc.startDetached();
+        if (!entry || !entry.id) {
+            console.error("Apps.launch: Invalid entry or missing id");
+            return;
+        }
+        
+        console.log("Apps.launch: Launching", entry.id, "with name", entry.name);
+        
+        // Use a simple Process for each launch
+        const procWrapper = launchProc.createObject(root);
+        
+        if (procWrapper) {
+            procWrapper.process.command = ["/etc/nixos/caelestia-shell/scripts/launch-detached.sh", entry.id];
+            console.log("Apps.launch: Starting process for", entry.id);
+            procWrapper.process.start();
+        } else {
+            console.error("Apps.launch: Failed to create process for", entry.id);
+        }
     }
-
-    Process {
+    
+    Component {
         id: launchProc
-
-        property DesktopEntry entry
-
-        // Use the detached launcher script to ensure proper process isolation
-        command: ["/etc/nixos/caelestia-shell/scripts/launch-detached.sh", `${entry?.id}`]
+        
+        Item {
+            Process {
+                id: process
+                onStarted: {
+                    console.log("Apps.launch: Process started successfully");
+                    // Destroy this process object after a delay to clean up
+                    destroyTimer.start();
+                }
+                
+                onExited: (exitCode, exitStatus) => {
+                    console.log("Apps.launch: Process exited with code", exitCode, "status", exitStatus);
+                    destroyTimer.start();
+                }
+            }
+            
+            Timer {
+                id: destroyTimer
+                interval: 100
+                onTriggered: parent.destroy()
+            }
+        }
     }
 }

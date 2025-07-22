@@ -9,15 +9,14 @@ fi
 
 APP_ID="$1"
 
-# Double fork to ensure complete detachment from parent process
-(
-    # First fork - this creates a child process
-    (
-        # Second fork and exec - this completely detaches from the shell
-        # and ensures the process is adopted by init (PID 1)
-        exec setsid gtk-launch "$APP_ID" </dev/null >/dev/null 2>&1 &
-    ) &
-) &
+# Log for debugging
+echo "launch-detached.sh: Launching $APP_ID" >> /tmp/launcher.log
 
-# Exit immediately, leaving no trace of connection to the parent
+# Simple approach: Use nohup with disown for maximum isolation
+nohup gtk-launch "$APP_ID" >/dev/null 2>&1 &
+LAUNCH_PID=$!
+disown $LAUNCH_PID
+
+echo "launch-detached.sh: Started $APP_ID with PID $LAUNCH_PID" >> /tmp/launcher.log
+
 exit 0

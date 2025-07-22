@@ -31,13 +31,7 @@ function set_wallpaper
         return 1
     end
     
-    # Kill existing swaybg processes
-    pkill -f "swaybg" 2>/dev/null
-    
-    # Start new swaybg instance
-    swaybg -i "$wallpaper_path" -m fill &
-    
-    # Persist wallpaper path for session restore (write to quickshell directory)
+    # Update QML state to trigger fade transition
     set -l state_dir "$HOME/.local/state/quickshell/wallpaper"
     mkdir -p $state_dir
     echo "$wallpaper_path" > $state_dir/last.txt
