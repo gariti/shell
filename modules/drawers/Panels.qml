@@ -5,7 +5,7 @@ import "../notifications" as Notifications
 import "../session" as Session
 import "../launcher" as Launcher
 import "../dashboard" as Dashboard
-import "../bar/popouts" as BarPopouts
+// import "../bar/popouts" as BarPopouts
 import Quickshell
 import QtQuick
 
@@ -21,7 +21,7 @@ Item {
     readonly property Session.Wrapper session: session
     readonly property Launcher.Wrapper launcher: launcher
     readonly property Dashboard.Wrapper dashboard: dashboard
-    readonly property BarPopouts.Wrapper popouts: popouts
+    // readonly property BarPopouts.Wrapper popouts: popouts
 
     anchors.fill: parent
     anchors.margins: BorderConfig.thickness
@@ -76,19 +76,19 @@ Item {
         anchors.top: parent.top
     }
 
-    BarPopouts.Wrapper {
-        id: popouts
+    // BarPopouts.Wrapper {
+    //     id: popouts
 
-        screen: root.screen
+    //     screen: root.screen
 
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.top
-        anchors.verticalCenterOffset: {
-            const off = root.popouts.currentCenter - BorderConfig.thickness;
-            const diff = root.height - Math.floor(off + implicitHeight / 2);
-            if (diff < 0)
-                return off + diff;
-            return off;
-        }
-    }
+    //     anchors.left: parent.left
+    //     anchors.verticalCenter: parent.top
+    //     anchors.verticalCenterOffset: {
+    //         const off = root.popouts.currentCenter - BorderConfig.thickness;
+    //         const diff = root.height - Math.floor(off + implicitHeight / 2);
+    //         if (diff < 0)
+    //             return off + diff;
+    //         return off;
+    //     }
+    // }
 }

@@ -12,7 +12,8 @@ Item {
     // Only show launcher on preferred display
     readonly property bool shouldShowLauncher: DisplayManager.getPreferredLauncherScreen() === screen
 
-    visible: height > 0 && shouldShowLauncher
+    // DEBUG: Force launcher to show on all screens for testing
+    visible: height > 0 // && shouldShowLauncher
     implicitHeight: 0
     implicitWidth: content.implicitWidth
 

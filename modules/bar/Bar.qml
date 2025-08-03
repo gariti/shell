@@ -1,7 +1,7 @@
 import "../../widgets"
 import "../../services-niri"
 import "../../config"
-import "popouts" as BarPopouts
+// import "popouts" as BarPopouts
 import "components"
 import "components/workspaces"
 import Quickshell
@@ -11,7 +11,7 @@ Item {
     id: root
 
     required property ShellScreen screen
-    required property BarPopouts.Wrapper popouts
+    // required property BarPopouts.Wrapper popouts
 
     // Add background rectangle for the bar
     Rectangle {
@@ -22,52 +22,56 @@ Item {
     }
 
     function checkPopout(y: real): void {
-        // Niri compatibility: add null checks to prevent errors
-        if (!activeWindow || !statusIcons || !tray) {
-            if (popouts) popouts.hasCurrent = false;
-            return;
-        }
+        // Popouts functionality has been disabled
+        return;
+        
+        // Original code commented out:
+        // // Niri compatibility: add null checks to prevent errors
+        // if (!activeWindow || !statusIcons || !tray) {
+        //     if (popouts) popouts.hasCurrent = false;
+        //     return;
+        // }
 
-        const spacing = Appearance.spacing.small;
-        const aw = activeWindow.child;
-        const awy = activeWindow.y + (aw ? aw.y : 0);
+        // const spacing = Appearance.spacing.small;
+        // const aw = activeWindow.child;
+        // const awy = activeWindow.y + (aw ? aw.y : 0);
 
-        const ty = tray.y;
-        const th = tray.implicitHeight;
-        const trayItems = tray.items;
+        // const ty = tray.y;
+        // const th = tray.implicitHeight;
+        // const trayItems = tray.items;
 
-        const n = statusIcons ? statusIcons.network : null;
-        const ny = (statusIcons ? statusIcons.y : 0) + (n ? n.y : 0) - spacing / 2;
+        // const n = statusIcons ? statusIcons.network : null;
+        // const ny = (statusIcons ? statusIcons.y : 0) + (n ? n.y : 0) - spacing / 2;
 
-        const b = statusIcons ? statusIcons.battery : null;
-        const by = (statusIcons ? statusIcons.y : 0) + (b ? b.y : 0) - spacing / 2;
+        // const b = statusIcons ? statusIcons.battery : null;
+        // const by = (statusIcons ? statusIcons.y : 0) + (b ? b.y : 0) - spacing / 2;
 
-        if (aw && y >= awy && y <= awy + aw.implicitHeight) {
-            popouts.currentName = "activewindow";
-            popouts.currentCenter = Qt.binding(() => (activeWindow ? activeWindow.y : 0) + (aw ? aw.y : 0) + (aw ? aw.implicitHeight : 0) / 2);
-            if (popouts) popouts.hasCurrent = true;
-        } else if (trayItems && y > ty && y < ty + th) {
-            const index = Math.floor(((y - ty) / th) * trayItems.count);
-            const item = trayItems.itemAt(index);
+        // if (aw && y >= awy && y <= awy + aw.implicitHeight) {
+        //     popouts.currentName = "activewindow";
+        //     popouts.currentCenter = Qt.binding(() => (activeWindow ? activeWindow.y : 0) + (aw ? aw.y : 0) + (aw ? aw.implicitHeight : 0) / 2);
+        //     if (popouts) popouts.hasCurrent = true;
+        // } else if (trayItems && y > ty && y < ty + th) {
+        //     const index = Math.floor(((y - ty) / th) * trayItems.count);
+        //     const item = trayItems.itemAt(index);
 
-            if (item) {
-                popouts.currentName = `traymenu${index}`;
-                popouts.currentCenter = Qt.binding(() => (tray ? tray.y : 0) + (item ? item.y : 0) + (item ? item.implicitHeight : 0) / 2);
-                if (popouts) popouts.hasCurrent = true;
-            } else {
-                if (popouts) popouts.hasCurrent = false;
-            }
-        } else if (n && y >= ny && y <= ny + n.implicitHeight + spacing) {
-            popouts.currentName = "network";
-            popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (n ? n.y : 0) + (n ? n.implicitHeight : 0) / 2);
-            if (popouts) popouts.hasCurrent = true;
-        } else if (b && y >= by && y <= by + b.implicitHeight + spacing) {
-            popouts.currentName = "battery";
-            popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (b ? b.y : 0) + (b ? b.implicitHeight : 0) / 2);
-            if (popouts) popouts.hasCurrent = true;
-        } else {
-            if (popouts) popouts.hasCurrent = false;
-        }
+        //     if (item) {
+        //         popouts.currentName = `traymenu${index}`;
+        //         popouts.currentCenter = Qt.binding(() => (tray ? tray.y : 0) + (item ? item.y : 0) + (item ? item.implicitHeight : 0) / 2);
+        //         if (popouts) popouts.hasCurrent = true;
+        //     } else {
+        //         if (popouts) popouts.hasCurrent = false;
+        //     }
+        // } else if (n && y >= ny && y <= ny + n.implicitHeight + spacing) {
+        //     popouts.currentName = "network";
+        //     popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (n ? n.y : 0) + (n ? n.implicitHeight : 0) / 2);
+        //     if (popouts) popouts.hasCurrent = true;
+        // } else if (b && y >= by && y <= by + b.implicitHeight + spacing) {
+        //     popouts.currentName = "battery";
+        //     popouts.currentCenter = Qt.binding(() => (statusIcons ? statusIcons.y : 0) + (b ? b.y : 0) + (b ? b.implicitHeight : 0) / 2);
+        //     if (popouts) popouts.hasCurrent = true;
+        // } else {
+        //     if (popouts) popouts.hasCurrent = false;
+        // }
     }
 
     anchors.top: parent.top

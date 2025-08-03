@@ -1,6 +1,6 @@
 import "../../services-niri"
 import "../../config"
-import "../bar/popouts" as BarPopouts
+// import "../bar/popouts" as BarPopouts
 import "../osd" as Osd
 import Quickshell
 import QtQuick
@@ -9,29 +9,29 @@ MouseArea {
     id: root
 
     required property ShellScreen screen
-    required property BarPopouts.Wrapper popouts
+    // required property BarPopouts.Wrapper popouts
     required property PersistentProperties visibilities
     required property Panels panels
     required property Item bar
 
     property bool osdHovered
     property point dragStart
-    property bool inPopoutArea: false
+    // property bool inPopoutArea: false
     property bool inDashboardArea: false // Track when mouse is in dashboard area
     property bool isTabChangeInProgress: false // Track if a tab change is in progress
     property int tabStabilityTimeout: 200 // Reduced from 500ms to 200ms - Time in ms to ignore mouse events during tab changes
     
     // Timer to delay popout closing 
-    Timer {
-        id: popoutCloseTimer
-        interval: 1000 // 1 second delay - very generous
-        onTriggered: {
-            // Only close if we're still not in the popout area AND not hovering over content
-            if (!inPopoutArea && !popouts.mouseInContent) {
-                popouts.hasCurrent = false;
-            }
-        }
-    }
+    // Timer {
+    //     id: popoutCloseTimer
+    //     interval: 1000 // 1 second delay - very generous
+    //     onTriggered: {
+    //         // Only close if we're still not in the popout area AND not hovering over content
+    //         if (!inPopoutArea && !popouts.mouseInContent) {
+    //             popouts.hasCurrent = false;
+    //         }
+    //     }
+    // }
 
     // Timer to delay OSD closing
     Timer {
@@ -67,9 +67,9 @@ MouseArea {
         id: focusLossTimer
         interval: 2000 // 2 second delay for focus loss detection
         onTriggered: {
-            if (!containsMouse && !popouts.mouseInContent && !panels.osd.mouseInContent && !panels.dashboard.mouseInContent) {
-                console.log("User appears to have moved away from shell - closing all popouts and drawers");
-                popouts.hasCurrent = false;
+            if (!containsMouse && !panels.osd.mouseInContent && !panels.dashboard.mouseInContent) {
+                console.log("User appears to have moved away from shell - closing all drawers");
+                // popouts.hasCurrent = false;
                 visibilities.osd = false;
                 osdHovered = false;
                 visibilities.dashboard = false;
@@ -117,15 +117,15 @@ MouseArea {
                     // Look for focused window changes
                     const hasFocusedWindow = windowsData.some(window => window.is_focused === true);
                     if (hasFocusedWindow) {
-                        console.log("Window focus changed to another application - closing all popouts and drawers");
+                        console.log("Window focus changed to another application - closing all drawers");
                         // Close all popouts and drawers when focus moves to another window
-                        popouts.hasCurrent = false;
+                        // popouts.hasCurrent = false;
                         visibilities.osd = false;
                         osdHovered = false;
                         visibilities.dashboard = false;
                         
                         // Stop all timers to prevent them from interfering
-                        popoutCloseTimer.stop();
+                        // popoutCloseTimer.stop();
                         osdCloseTimer.stop();
                         dashboardCloseTimer.stop();
                     }
@@ -135,16 +135,16 @@ MouseArea {
     }
 
     // Watch for changes in mouseInContent and stop timer if mouse is over content
-    Connections {
-        target: popouts
-        function onMouseInContentChanged() {
-            if (popouts.mouseInContent) {
-                console.log("Mouse in content - stopping close timer");
-                popoutCloseTimer.stop();
-                focusLossTimer.stop();
-            }
-        }
-    }
+    // Connections {
+    //     target: popouts
+    //     function onMouseInContentChanged() {
+    //         if (popouts.mouseInContent) {
+    //             console.log("Mouse in content - stopping close timer");
+    //             // popoutCloseTimer.stop();
+    //             focusLossTimer.stop();
+    //         }
+    //     }
+    // }
 
     // Watch for changes in OSD mouseInContent
     Connections {
@@ -233,14 +233,14 @@ MouseArea {
     // Close all popouts when the window loses focus
     onActiveFocusChanged: {
         if (!activeFocus) {
-            console.log("Shell lost focus - closing all popouts and drawers");
-            popouts.hasCurrent = false;
+            console.log("Shell lost focus - closing all drawers");
+            // popouts.hasCurrent = false;
             visibilities.osd = false;
             osdHovered = false;
             visibilities.dashboard = false;
             
             // Stop all timers
-            popoutCloseTimer.stop();
+            // popoutCloseTimer.stop();
             osdCloseTimer.stop();
             dashboardCloseTimer.stop();
         }
@@ -268,24 +268,24 @@ MouseArea {
                 dashboardCloseTimer.start();
             }
             // Only start the timer if there's a popout AND we're not in the generous hover area AND not over content
-            if (popouts.hasCurrent) {
-                // Check if we're in the generous popout area before starting timer
-                const popoutLeft = bar.implicitWidth;
-                const popoutRight = bar.implicitWidth + 500;
-                const popoutTop = -50;
-                const popoutBottom = height + 50;
-                
-                const inGenerousArea = mouseX >= popoutLeft && mouseX <= popoutRight && 
-                                     mouseY >= popoutTop && mouseY <= popoutBottom;
-                
-                if (!inGenerousArea && !popouts.mouseInContent) {
-                    popoutCloseTimer.start();
-                }
-            }
+            // if (popouts.hasCurrent) {
+            //     // Check if we're in the generous popout area before starting timer
+            //     const popoutLeft = bar.implicitWidth;
+            //     const popoutRight = bar.implicitWidth + 500;
+            //     const popoutTop = -50;
+            //     const popoutBottom = height + 50;
+            //     
+            //     const inGenerousArea = mouseX >= popoutLeft && mouseX <= popoutRight && 
+            //                          mouseY >= popoutTop && mouseY <= popoutBottom;
+            //     
+            //     if (!inGenerousArea && !popouts.mouseInContent) {
+            //         // popoutCloseTimer.start();
+            //     }
+            // }
         } else {
             // Mouse is back in the main interaction area, cancel all close timers
             focusLossTimer.stop();
-            popoutCloseTimer.stop();
+            // popoutCloseTimer.stop();
             osdCloseTimer.stop();
             dashboardCloseTimer.stop();
         }
@@ -314,14 +314,13 @@ MouseArea {
                 visibilities.session = false;
         }
 
-        // Show dashboard on hover with comprehensive bounds checking
-        const showDashboard = inTopPanel(panels.dashboard, x, y);
+        // Dashboard on hover disabled
+        const showDashboard = false;
         
         // Update dashboard area tracking immediately
         inDashboardArea = showDashboard;
         
-        // Only update visibility if we're not in the middle of a tab change
-        // OR if we're showing the dashboard (never prevent showing)
+        // Dashboard visibility disabled
         if (showDashboard || !isTabChangeInProgress) {
             visibilities.dashboard = showDashboard;
         }
@@ -338,32 +337,32 @@ MouseArea {
         }
 
         // Show popouts on hover - very generous bounds to prevent closing
-        const popout = panels.popouts;
+        // const popout = panels.popouts;
         
-        if (x < bar.implicitWidth) {
-            // Handle like part of bar
-            bar.checkPopout(y);
-            popoutCloseTimer.stop();
-        } else if (popouts.hasCurrent) {
-            // If a popout is active, be extremely generous about the hover area
-            const popoutLeft = bar.implicitWidth;
-            const popoutRight = bar.implicitWidth + 500; // Very wide area
-            const popoutTop = -50; // Extend above
-            const popoutBottom = parent.height + 50; // Extend below
-            
-            const inGenerousArea = x >= popoutLeft && x <= popoutRight && 
-                                 y >= popoutTop && y <= popoutBottom;
-            
-            if (inGenerousArea || popouts.mouseInContent) {
-                // Mouse is in the generous area OR over the content, keep popout open
-                popoutCloseTimer.stop();
-            } else {
-                // Mouse is outside the generous area AND not over content, start close timer if not already running
-                if (!popoutCloseTimer.running) {
-                    popoutCloseTimer.start();
-                }
-            }
-        }
+        // if (x < bar.implicitWidth) {
+        //     // Handle like part of bar
+        //     bar.checkPopout(y);
+        //     popoutCloseTimer.stop();
+        // } else if (popouts.hasCurrent) {
+        //     // If a popout is active, be extremely generous about the hover area
+        //     const popoutLeft = bar.implicitWidth;
+        //     const popoutRight = bar.implicitWidth + 500; // Very wide area
+        //     const popoutTop = -50; // Extend above
+        //     const popoutBottom = parent.height + 50; // Extend below
+        //     
+        //     const inGenerousArea = x >= popoutLeft && x <= popoutRight && 
+        //                          y >= popoutTop && y <= popoutBottom;
+        //     
+        //     if (inGenerousArea || popouts.mouseInContent) {
+        //         // Mouse is in the generous area OR over the content, keep popout open
+        //         popoutCloseTimer.stop();
+        //     } else {
+        //         // Mouse is outside the generous area AND not over content, start close timer if not already running
+        //         if (!popoutCloseTimer.running) {
+        //             popoutCloseTimer.start();
+        //         }
+        //     }
+        // }
     }
 
     Osd.Interactions {

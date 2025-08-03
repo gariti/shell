@@ -50,7 +50,7 @@ Variants {
 
             Variants {
                 id: regions
-                model: [panels.osd, panels.notifications, panels.session, panels.launcher, panels.dashboard, panels.popouts]
+                model: [panels.osd, panels.notifications, panels.session, panels.launcher, panels.dashboard]
 
                 Region {
                     required property Item modelData
@@ -116,7 +116,7 @@ Variants {
 
             Interactions {
                 screen: scope.modelData
-                popouts: panels.popouts
+                // popouts: panels.popouts
                 visibilities: visibilities
                 panels: panels
                 bar: bar
@@ -134,7 +134,7 @@ Variants {
                 id: bar
 
                 screen: scope.modelData
-                popouts: panels.popouts
+                // popouts: panels.popouts
             }
         }
     }

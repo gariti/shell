@@ -34,7 +34,45 @@ Singleton {
         }
 
         onNotification: notif => {
-            console.log("Notifs: Received notification:", notif.summary)
+            console.log("Notifs: Received notification from app:", notif.appName, "summary:", notif.summary, "body:", notif.body)
+            
+            // Filter out Bluetooth notifications - check for mouse/keyboard connection messages
+            const appNameLower = notif.appName.toLowerCase();
+            const summaryLower = notif.summary.toLowerCase();
+            const bodyLower = notif.body.toLowerCase();
+            
+            // Log all details to help debug
+            console.log("Notifs: App name:", notif.appName);
+            console.log("Notifs: Summary:", notif.summary);
+            console.log("Notifs: Body:", notif.body);
+            
+            if (appNameLower === "blueman" || 
+                appNameLower === "blueman-applet" ||
+                appNameLower === "org.blueman.applet" ||
+                appNameLower.includes("bluetooth") ||
+                summaryLower.includes("bluetooth") ||
+                bodyLower.includes("bluetooth") ||
+                summaryLower.includes("device connected") ||
+                summaryLower.includes("device disconnected") ||
+                bodyLower.includes("device connected") ||
+                bodyLower.includes("device disconnected") ||
+                summaryLower.includes("connected") ||
+                summaryLower.includes("disconnected") ||
+                (summaryLower.includes("mouse") && (summaryLower.includes("connected") || summaryLower.includes("disconnected"))) ||
+                (summaryLower.includes("keyboard") && (summaryLower.includes("connected") || summaryLower.includes("disconnected"))) ||
+                bodyLower.includes("mouse connected") ||
+                bodyLower.includes("mouse disconnected") ||
+                bodyLower.includes("keyboard connected") ||
+                bodyLower.includes("keyboard disconnected") ||
+                // Also check for device names
+                summaryLower.includes("mx mchncl") ||
+                summaryLower.includes("logi pop") ||
+                bodyLower.includes("mx mchncl") ||
+                bodyLower.includes("logi pop")) {
+                console.log("Notifs: Filtering out Bluetooth/device connection notification")
+                return;
+            }
+            
             notif.tracked = true;
 
             root.list.push(notifComp.createObject(root, {
