@@ -47,7 +47,7 @@ StyledText {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
-        onClicked: launchWorkspaceApps()
+        onClicked: launchDesktopMenu()
         cursorShape: Qt.PointingHandCursor
         
         onEntered: {
@@ -103,18 +103,14 @@ StyledText {
             // Map workspace names to NerdFont icons
             switch (workspaceName) {
                 case "code":
-                    console.log("  Returning code icon");
-                    return ""; // Code/terminal icon
+                    return "󰅬";
                 case "browsing":
-                    console.log("  Returning browsing icon");
-                    return ""; // Browser icon
+                    return "";
                 case "finance":
-                    console.log("  Returning finance icon");
-                    return ""; // Dollar sign icon
+                    return "";
                 case "social":
                 case "social media":
-                    console.log("  Returning social media icon");
-                    return "\uf27a"; // Social media icon
+                    return "󰙯"; // Social media icon
                 case "home":
                     console.log("  Returning home icon");
                     return "\uf015"; // Home icon
@@ -189,6 +185,13 @@ StyledText {
         const parts = command.split(" ");
         const fullCommand = ["niri", "msg", "action", "spawn", "--"].concat(parts);
         launchProcess.command = fullCommand;
+        launchProcess.startDetached();
+    }
+    
+    // Function to launch desktop context menu
+    function launchDesktopMenu() {
+        console.log("Launching desktop context menu");
+        launchProcess.command = ["/etc/nixos/scripts/desktop-right-click-menu.sh"];
         launchProcess.startDetached();
     }
 
