@@ -35,7 +35,7 @@ Singleton {
 
     // Modular feature toggles
     readonly property var features: QtObject {
-        readonly property bool wallpaperSupport: true
+        readonly property bool wallpaperSupport: false
         readonly property bool systemTray: true
         readonly property bool notifications: true
         readonly property bool mediaControls: true

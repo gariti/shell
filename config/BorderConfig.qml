@@ -8,7 +8,7 @@ Singleton {
     id: root
 
     // Use exact same color as panel for perfect consistency
-    readonly property color colour: "#000000"  // OLED black - matches panel exactly
+    readonly property color colour: Colours.palette.m3surfaceContainer  // Match panel background exactly
     readonly property int thickness: Appearance.padding.normal
     readonly property int rounding: Appearance.rounding.large
 }

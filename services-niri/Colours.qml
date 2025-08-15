@@ -17,6 +17,8 @@ Singleton {
     readonly property Colours current: Colours {}
     readonly property Colours preview: Colours {}
     readonly property Transparency transparency: Transparency {}
+    
+    signal colorsLoaded()
 
     function alpha(c: color, layer: bool): color {
         if (!c || !transparency.enabled)
@@ -38,14 +40,30 @@ Singleton {
         for (const line of data.trim().split("\n")) {
             let [name, colour] = line.split(" ");
             name = name.trim();
-            name = colourNames.includes(name) ? name : `m3${name}`;
-            if (colours.hasOwnProperty(name))
+            // Handle terminal colors (color0-color15) and other colors
+            if (name.startsWith("color") && /^color\d+$/.test(name)) {
+                // Terminal colors - keep as is
+            } else {
+                name = colourNames.includes(name) ? name : `m3${name}`;
+            }
+            if (colours.hasOwnProperty(name)) {
+                const oldValue = colours[name];
                 colours[name] = `#${colour.trim()}`;
+                if (name === "m3secondary" || name === "m3primary" || name === "m3tertiary") {
+                    console.log("Colours: Updated", name, "from", oldValue, "to", colours[name]);
+                }
+            }
         }
 
         if (!isPreview || (isPreview && endPreviewOnNextChange)) {
             showPreview = false;
             endPreviewOnNextChange = false;
+        }
+        
+        // Emit signal when colors are loaded (for non-preview updates)
+        if (!isPreview) {
+            console.log("Colours: Emitting colorsLoaded signal");
+            colorsLoaded();
         }
     }
 
@@ -168,5 +186,23 @@ Singleton {
         property color sapphire: "#BDC2FF"
         property color blue: "#C7BFFF"
         property color lavender: "#EAB5ED"
+        
+        // Terminal colors (0-15) from wallust
+        property color color0: "#453E3C"
+        property color color1: "#A17B6A"
+        property color color2: "#778477"
+        property color color3: "#8A8068"
+        property color color4: "#B47D55"
+        property color color5: "#989D7F"
+        property color color6: "#DAA76A"
+        property color color7: "#E4CBAC"
+        property color color8: "#A08E78"
+        property color color9: "#A17B6A"
+        property color color10: "#778477"
+        property color color11: "#8A8068"
+        property color color12: "#B47D55"
+        property color color13: "#989D7F"
+        property color color14: "#DAA76A"
+        property color color15: "#E4CBAC"
     }
 }

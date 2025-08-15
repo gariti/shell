@@ -23,6 +23,43 @@ MouseArea {
         else if (modelData.hasMenu)
             menu.open();
     }
+    
+    // Function to get dynamic color for tray icons based on their type
+    function getTrayIconColor() {
+        const iconSource = String(modelData.icon);
+        
+        // Use specific colors for different app types
+        if (iconSource.includes("bluetooth") || 
+            iconSource.includes("blueman") ||
+            iconSource.includes("bluetoothctl") ||
+            iconSource.includes("bluetooth-symbolic")) {
+            return Colours.palette.teal;      // Teal for bluetooth
+        } else if (iconSource.includes("network") || 
+                  iconSource.includes("wifi") || 
+                  iconSource.includes("nm-") ||
+                  iconSource.includes("preferences-system-network")) {
+            return Colours.palette.blue;      // Blue for network
+        } else if (iconSource.includes("Alacritty") || iconSource.includes("alacritty")) {
+            return Colours.palette.green;     // Green for terminal
+        } else if (iconSource.includes("discord")) {
+            return Colours.palette.mauve;     // Purple for Discord
+        } else if (iconSource.includes("brave") || iconSource.includes("chrome") || iconSource.includes("firefox")) {
+            return Colours.palette.peach;     // Peach for browsers
+        } else if (iconSource.includes("code") || iconSource.includes("vscode")) {
+            return Colours.palette.sky;       // Sky for code editors
+        } else {
+            // Use a rotating color based on icon name for variety
+            const colors = [
+                Colours.palette.red,
+                Colours.palette.yellow,
+                Colours.palette.flamingo,
+                Colours.palette.pink,
+                Colours.palette.lavender
+            ];
+            const hash = iconSource.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+            return colors[hash % colors.length];
+        }
+    }
 
     // TODO custom menu
     QsMenuAnchor {
@@ -108,7 +145,7 @@ MouseArea {
                     return "apps";
                 }
             }
-            color: Colours.palette.m3onSurface
+            color: getTrayIconColor()
             font.pointSize: Math.max(parent.width * 0.6, 16) // Increased minimum size to prevent warnings
             anchors.centerIn: parent
         }

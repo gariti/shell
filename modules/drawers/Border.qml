@@ -16,7 +16,7 @@ Item {
         id: rect
 
         anchors.fill: parent
-        color: "#000000"
+        color: Colours.palette.m3surfaceContainer
         opacity: 1.0  // Keep source opaque
         visible: false
     }

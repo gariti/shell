@@ -10,7 +10,7 @@ import QtQuick
 Item {
     id: root
 
-    property color colour: Colours.palette.m3secondary
+    property color colour: Colours.palette.sapphire  // Base color, but individual icons override this
 
     readonly property Item network: network
     readonly property real bs: network.y
@@ -18,15 +18,15 @@ Item {
     readonly property Item battery: battery
 
     clip: true
-    implicitWidth: Math.max(network.implicitWidth, battery.implicitWidth)
-    implicitHeight: network.implicitHeight + battery.implicitHeight + battery.anchors.topMargin
+    implicitWidth: Math.max(network.implicitWidth, bluetooth.implicitWidth, battery.implicitWidth)
+    implicitHeight: network.implicitHeight + bluetooth.implicitHeight + bluetooth.anchors.topMargin + battery.implicitHeight + battery.anchors.topMargin
 
     MaterialIcon {
         id: network
 
         animate: true
         text: Network.active ? Icons.getNetworkIcon(Network.active.strength ?? 0) : "wifi_off"
-        color: root.colour
+        color: Network.active ? Colours.palette.blue : Colours.palette.red
 
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -38,31 +38,30 @@ Item {
 
     Process {
         id: wifiManager
-        // Try common WiFi management applications in order of preference
-        command: ["sh", "-c", "which nm-connection-editor >/dev/null 2>&1 && nm-connection-editor || which nmtui >/dev/null 2>&1 && alacritty -e nmtui || which iwgtk >/dev/null 2>&1 && iwgtk || which gnome-control-center >/dev/null 2>&1 && gnome-control-center wifi || which systemsettings5 >/dev/null 2>&1 && systemsettings5 kcm_networkmanagement || notify-send 'WiFi Manager' 'No WiFi management application found'"]
+        command: ["/etc/nixos/scripts/rofi-wifi-menu.sh"]
     }
 
-    // MaterialIcon {
-    //     id: bluetooth
+    MaterialIcon {
+        id: bluetooth
 
-    //     anchors.horizontalCenter: network.horizontalCenter
-    //     anchors.top: network.bottom
-    //     anchors.topMargin: Appearance.spacing.small
+        anchors.horizontalCenter: network.horizontalCenter
+        anchors.top: network.bottom
+        anchors.topMargin: Appearance.spacing.small
 
-    //     animate: true
-    //     text: Bluetooth.powered ? "bluetooth" : "bluetooth_disabled"
-    //     color: root.colour
+        animate: true
+        text: Bluetooth.powered ? "bluetooth" : "bluetooth_disabled"
+        color: Bluetooth.powered ? Colours.palette.teal : Colours.palette.maroon
 
-    //     MouseArea {
-    //         anchors.fill: parent
-    //         onClicked: bluetoothManager.startDetached()
-    //     }
-    // }
+        MouseArea {
+            anchors.fill: parent
+            onClicked: bluetoothManager.startDetached()
+        }
+    }
 
-    // Process {
-    //     id: bluetoothManager
-    //     command: ["sh", "-c", "which blueman-manager >/dev/null 2>&1 && blueman-manager || which gnome-control-center >/dev/null 2>&1 && gnome-control-center bluetooth || which systemsettings5 >/dev/null 2>&1 && systemsettings5 kcm_bluetooth || notify-send 'Bluetooth Manager' 'No Bluetooth management application found'"]
-    // }
+    Process {
+        id: bluetoothManager
+        command: ["rofi-bluetooth"]
+    }
 
     // Column {
     //     id: devices
@@ -91,12 +90,15 @@ Item {
     MaterialIcon {
         id: battery
 
-        anchors.horizontalCenter: network.horizontalCenter
-        anchors.top: network.bottom
+        anchors.horizontalCenter: bluetooth.horizontalCenter
+        anchors.top: bluetooth.bottom
         anchors.topMargin: Appearance.spacing.small
 
         animate: true
+        
         text: {
+            // Ensure icon updates when power profile changes
+            const currentProfile = PowerProfiles.profile;
             if (!UPower.displayDevice.isLaptopBattery) {
                 if (PowerProfiles.profile === PowerProfile.PowerSaver)
                     return "energy_savings_leaf";
@@ -107,6 +109,38 @@ Item {
 
             const perc = UPower.displayDevice.percentage;
             const charging = !UPower.onBattery;
+            
+            // Power mode specific battery icon sets
+            if (PowerProfiles.profile === PowerProfile.PowerSaver) {
+                // ECO MODE: Green energy focused icons
+                if (charging) {
+                    // Eco-charging: show leaf for high battery, plus for charging
+                    if (perc >= 0.8) return "energy_savings_leaf";  // High charge = eco leaf
+                    if (perc >= 0.6) return "battery_plus";         // Mid charge = battery plus
+                    if (perc >= 0.4) return "battery_charging_50";  // Lower levels show charging
+                    return "battery_charging_30";
+                } else {
+                    // Not charging: always show eco leaf to emphasize power saving
+                    return "energy_savings_leaf";
+                }
+            }
+            
+            if (PowerProfiles.profile === PowerProfile.Performance) {
+                // PERFORMANCE MODE: High-power themed icons
+                if (charging) {
+                    // Performance charging: show power symbols for high performance
+                    if (perc >= 0.8) return "flash_on";             // High charge = flash/power
+                    if (perc >= 0.6) return "rocket_launch";        // Mid charge = rocket
+                    return "battery_charging_full";                 // Low charge = full charging
+                } else {
+                    // Not charging: show performance symbols based on battery level
+                    if (perc >= 0.7) return "rocket_launch";        // High battery = rocket
+                    if (perc >= 0.4) return "flash_on";             // Mid battery = flash
+                    return "power";                                 // Low battery = power symbol
+                }
+            }
+            
+            // BALANCED MODE: Standard battery icons with actual levels
             if (perc === 1)
                 return charging ? "battery_charging_full" : "battery_full";
             let level = Math.floor(perc * 7);
@@ -114,7 +148,21 @@ Item {
                 level--;
             return charging ? `battery_charging_${(level + 3) * 10}` : `battery_${level}_bar`;
         }
-        color: !UPower.onBattery || UPower.displayDevice.percentage > 0.2 ? root.colour : Colours.palette.m3error
+        color: {
+            // Color coding for power profiles using wallpaper colors
+            if (PowerProfiles.profile === PowerProfile.PowerSaver)
+                return Colours.palette.green;       // Green for eco/power saving
+            if (PowerProfiles.profile === PowerProfile.Performance)
+                return Colours.palette.red;         // Red for high performance
+            
+            // Dynamic battery level colors
+            const perc = UPower.displayDevice.percentage;
+            if (perc > 0.8) return Colours.palette.green;      // High battery - green
+            if (perc > 0.6) return Colours.palette.yellow;     // Mid-high battery - yellow
+            if (perc > 0.4) return Colours.palette.peach;      // Mid battery - peach
+            if (perc > 0.2) return Colours.palette.maroon;     // Low battery - maroon
+            return Colours.palette.red;                        // Critical battery - red
+        }
         fill: 1
 
         MouseArea {
@@ -125,43 +173,7 @@ Item {
 
     Process {
         id: batteryManager
-        command: ["sh", "-c", `
-            if which gnome-power-manager >/dev/null 2>&1; then
-                gnome-power-manager
-            elif which gnome-control-center >/dev/null 2>&1; then
-                gnome-control-center power
-            elif which xfce4-power-manager-settings >/dev/null 2>&1; then
-                xfce4-power-manager-settings
-            elif which powertop >/dev/null 2>&1; then
-                alacritty -e sudo powertop
-            else
-                # Show battery information in terminal as fallback
-                alacritty -e sh -c '
-                    echo "=== Battery Information ==="
-                    echo
-                    if command -v upower >/dev/null 2>&1; then
-                        upower -i \$(upower -e | grep "BAT")
-                    elif [ -f /sys/class/power_supply/BAT0/capacity ]; then
-                        echo "Battery Level: \$(cat /sys/class/power_supply/BAT0/capacity)%"
-                        echo "Status: \$(cat /sys/class/power_supply/BAT0/status)"
-                        echo "Health: \$(cat /sys/class/power_supply/BAT0/health 2>/dev/null || echo Unknown)"
-                    else
-                        echo "No battery information available"
-                    fi
-                    echo
-                    echo "=== Power Profile ==="
-                    if [ -f /sys/firmware/acpi/platform_profile ]; then
-                        echo "Current: \$(cat /sys/firmware/acpi/platform_profile)"
-                        echo "Available: \$(cat /sys/firmware/acpi/platform_profile_choices)"
-                    else
-                        echo "No power profile controls available"
-                    fi
-                    echo
-                    echo "Press Enter to close..."
-                    read
-                '
-            fi
-        `]
+        command: ["/etc/nixos/scripts/power-profile-toggle.sh"]
     }
 
     Behavior on implicitWidth {

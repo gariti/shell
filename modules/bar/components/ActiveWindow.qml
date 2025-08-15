@@ -10,7 +10,15 @@ Item {
     id: root
 
     required property Brightness.Monitor monitor
-    property color colour: Colours.palette.m3primary
+    property color dynamicColour: getActiveWindowColor()
+    property color colour: dynamicColour
+    
+    // Function to get dynamic color for active window
+    function getActiveWindowColor() {
+        // Use primary color for window title to make it stand out
+        // This gives a consistent, prominent color that changes with the wallpaper
+        return Colours.palette.m3primary;
+    }
     readonly property Item child: child
 
     implicitWidth: child.implicitWidth
@@ -135,6 +143,14 @@ Item {
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: Appearance.anim.curves.standard
             }
+        }
+    }
+    
+    // Update color when colors are loaded (theme refresh)
+    Connections {
+        target: Colours
+        function onColorsLoaded() {
+            dynamicColour = getActiveWindowColor();
         }
     }
 }

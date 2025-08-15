@@ -66,6 +66,7 @@ GridLayout {
         }
     }
 
+
     Rect {
         Layout.row: 0
         Layout.column: 5

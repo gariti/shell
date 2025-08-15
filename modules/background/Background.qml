@@ -24,11 +24,10 @@ Variants {
         anchors.left: true
         anchors.right: true
 
-        Wallpaper {}
         Rectangle {
             anchors.fill: parent
             color: "#000000"  // OLED black background color
-            opacity: 0.0  // Keep as fallback but transparent when wallpaper loads
+            opacity: 1.0  // Solid background since wallpaper is handled by wpgtk
         }
     }
 }

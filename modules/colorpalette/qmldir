@@ -1,0 +1,4 @@
+module colorpalette
+
+ColorPaletteEdge 1.0 ColorPaletteEdge.qml
+ColorPaletteTop 1.0 ColorPaletteTop.qml

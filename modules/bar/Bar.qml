@@ -13,12 +13,28 @@ Item {
     required property ShellScreen screen
     // required property BarPopouts.Wrapper popouts
 
-    // Add background rectangle for the bar
+    // Add background rectangle for the bar with subtle wallpaper color
     Rectangle {
         anchors.fill: parent
-        color: "#000000"  // OLED black background
-        opacity: Colours.transparency.enabled ? Colours.transparency.base : 1  // Apply transparency directly since Bar is not inside Backgrounds
+        color: Colours.palette.m3surfaceContainer  // Use wallpaper-derived surface color
+        opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
         z: -1  // Ensure it's behind other elements
+        
+        // Add subtle gradient overlay using wallpaper colors
+        gradient: Gradient {
+            GradientStop { 
+                position: 0.0
+                color: Qt.rgba(Colours.palette.m3surfaceContainer.r, 
+                              Colours.palette.m3surfaceContainer.g, 
+                              Colours.palette.m3surfaceContainer.b, 0.9) 
+            }
+            GradientStop { 
+                position: 1.0
+                color: Qt.rgba(Colours.palette.m3surface.r, 
+                              Colours.palette.m3surface.g, 
+                              Colours.palette.m3surface.b, 0.8) 
+            }
+        }
     }
 
     function checkPopout(y: real): void {
@@ -102,18 +118,67 @@ Item {
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.topMargin: Appearance.padding.small  // Changed from 'large' to 'small' for less margin
+            anchors.topMargin: Appearance.padding.small
+        }
+
+        ColorPalette {
+            id: colorPalette
+
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: osIcon.bottom
+            anchors.topMargin: Appearance.spacing.small
         }
 
         StyledRect {
             id: workspaces
 
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: osIcon.bottom
+            anchors.top: colorPalette.bottom
             anchors.topMargin: Appearance.spacing.normal
 
             radius: Appearance.rounding.full
-            color: Colours.palette.m3surfaceContainer
+            color: getWorkspaceContainerColor()
+            
+            // Function to get container color based on current workspace
+            function getWorkspaceContainerColor() {
+                if (NiriService.currentWorkspaceIsNamed && NiriService.currentWorkspaceName) {
+                    const workspaceName = NiriService.currentWorkspaceName.toLowerCase();
+                    
+                    // Use subtle tinted versions of workspace colors for container
+                    switch (workspaceName) {
+                        case "code":
+                            return Qt.rgba(Colours.palette.blue.r, Colours.palette.blue.g, Colours.palette.blue.b, 0.2);
+                        case "browsing":
+                            return Qt.rgba(Colours.palette.green.r, Colours.palette.green.g, Colours.palette.green.b, 0.2);
+                        case "finance":
+                            return Qt.rgba(Colours.palette.yellow.r, Colours.palette.yellow.g, Colours.palette.yellow.b, 0.2);
+                        case "social":
+                        case "social media":
+                            return Qt.rgba(Colours.palette.pink.r, Colours.palette.pink.g, Colours.palette.pink.b, 0.2);
+                        case "home":
+                            return Qt.rgba(Colours.palette.rosewater.r, Colours.palette.rosewater.g, Colours.palette.rosewater.b, 0.2);
+                        default:
+                            return Qt.rgba(Colours.palette.lavender.r, Colours.palette.lavender.g, Colours.palette.lavender.b, 0.2);
+                    }
+                }
+                // Default surface container color
+                return Colours.palette.m3surfaceContainer;
+            }
+            
+            // Update container color when workspace changes
+            Connections {
+                target: NiriService
+                function onCurrentWorkspaceNameChanged() {
+                    workspaces.color = workspaces.getWorkspaceContainerColor();
+                }
+                function onCurrentWorkspaceIsNamedChanged() {
+                    workspaces.color = workspaces.getWorkspaceContainerColor();
+                }
+                function onCurrentMonitorWorkspaceIndexChanged() {
+                    workspaces.color = workspaces.getWorkspaceContainerColor();
+                }
+            }
 
             implicitWidth: workspacesInner.implicitWidth + Appearance.padding.small * 2
             implicitHeight: workspacesInner.implicitHeight + Appearance.padding.small * 2

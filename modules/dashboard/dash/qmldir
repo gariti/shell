@@ -1,6 +1,7 @@
 module dash
 
 Calendar 1.0 Calendar.qml
+ColorPalette 1.0 ColorPalette.qml
 DateTime 1.0 DateTime.qml
 Media 1.0 Media.qml
 Resources 1.0 Resources.qml
